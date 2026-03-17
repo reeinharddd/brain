@@ -118,6 +118,34 @@ section "Hooks"
 opt "pre-tool-use/block-env-writes.sh"   "test -f $BRAIN_DIR/hooks/pre-tool-use/block-env-writes.sh"
 opt "post-tool-use/run-linter.sh"        "test -f $BRAIN_DIR/hooks/post-tool-use/run-linter.sh"
 
+# ── Docker MCP Stack ─────────────────────────────────────────
+section "Docker MCP Stack (optional — all tools always available)"
+if command -v docker &>/dev/null; then
+  opt "docker compose file"    "test -f $BRAIN_DIR/docker/docker-compose.yml"
+  opt "docker .env configured" "test -f $BRAIN_DIR/docker/.env"
+
+  # Check if stack is running by testing ports
+  DOCKER_RUNNING=0
+  for port in 3001 3002 3003 3005; do
+    if curl -sf --max-time 1 "http://localhost:$port/sse" &>/dev/null 2>&1; then
+      ((DOCKER_RUNNING++))
+    fi
+  done
+
+  if [ $DOCKER_RUNNING -gt 0 ]; then
+    echo -e "  ${GREEN}✓${RESET} MCP stack running ($DOCKER_RUNNING/4 services healthy)"
+    echo -e "  ${BLUE}→${RESET}  Mode: ${BOLD}Docker${RESET} (URL-based connections)"
+  else
+    echo -e "  ${YELLOW}⚠${RESET}  MCP stack not running ${YELLOW}(optional)${RESET}"
+    echo -e "  ${BLUE}→${RESET}  Mode: ${BOLD}npx${RESET} (on-demand, spawns per session)"
+    echo -e "     To switch to Docker mode: ~/.brain/docker/start.sh up"
+    ((WARN++))
+  fi
+else
+  echo -e "  ${YELLOW}⚠${RESET}  docker not found — running in npx mode ${YELLOW}(optional)${RESET}"
+  ((WARN++))
+fi
+
 # ── Summary ──────────────────────────────────────────────────
 echo ""
 echo "────────────────────────────────────────────"

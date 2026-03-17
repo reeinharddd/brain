@@ -1,0 +1,141 @@
+# ═══════════════════════════════════════════════════════════
+#  brain/docker/docker-compose.yml
+#
+#  MCP Stack — all servers run as persistent SSE services
+#  via supergateway (stdio → HTTP bridge)
+#
+#  Usage:
+#    cd ~/.brain/docker
+#    cp .env.example .env && nano .env   # fill HOST_HOME and tokens
+#    docker compose up -d                # start all (standard profile)
+#    docker compose --profile github up -d  # + github MCP
+#    docker compose down                 # stop all
+#
+#  Agents connect via URL instead of spawning npx:
+#    memory:   http://localhost:3001/sse
+#    fs:       http://localhost:3002/sse
+#    thinking: http://localhost:3003/sse
+#    github:   http://localhost:3004/sse  (profile: github)
+#    context7: http://localhost:3005/sse
+# ═══════════════════════════════════════════════════════════
+
+name: brain-mcp-stack
+
+x-mcp-base: &mcp-base
+  image: node:20-alpine
+  restart: unless-stopped
+  # Cache npm packages across containers to avoid repeated downloads
+  volumes:
+    - npm_cache:/root/.npm
+
+services:
+
+  # ── Memory MCP ─────────────────────────────────────────────
+  # Persistent knowledge graph. State survives restarts via volume.
+  mcp-memory:
+    <<: *mcp-base
+    container_name: brain-mcp-memory
+    command: >
+      sh -c "npx -y supergateway
+        --stdio 'npx -y @modelcontextprotocol/server-memory'
+        --port 8000
+        --host 0.0.0.0"
+    ports:
+      - "${MCP_MEMORY_PORT:-3001}:8000"
+    volumes:
+      - npm_cache:/root/.npm
+      - mcp_memory_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Filesystem MCP ─────────────────────────────────────────
+  # Gives agents structured access to your home directory.
+  # Mounted read-write — agents can create/edit files.
+  mcp-filesystem:
+    <<: *mcp-base
+    container_name: brain-mcp-filesystem
+    command: >
+      sh -c "npx -y supergateway
+        --stdio 'npx -y @modelcontextprotocol/server-filesystem /workspace'
+        --port 8000
+        --host 0.0.0.0"
+    ports:
+      - "${MCP_FILESYSTEM_PORT:-3002}:8000"
+    volumes:
+      - npm_cache:/root/.npm
+      - ${HOST_HOME:-~}:/workspace
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Sequential Thinking MCP ────────────────────────────────
+  # Structured step-by-step reasoning. Stateless — no volume needed.
+  mcp-sequential-thinking:
+    <<: *mcp-base
+    container_name: brain-mcp-sequential
+    command: >
+      sh -c "npx -y supergateway
+        --stdio 'npx -y @modelcontextprotocol/server-sequential-thinking'
+        --port 8000
+        --host 0.0.0.0"
+    ports:
+      - "${MCP_SEQUENTIAL_PORT:-3003}:8000"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Context7 MCP ───────────────────────────────────────────
+  # Real-time library documentation. Stateless.
+  mcp-context7:
+    <<: *mcp-base
+    container_name: brain-mcp-context7
+    command: >
+      sh -c "npx -y supergateway
+        --stdio 'npx -y @upstash/context7-mcp@latest'
+        --port 8000
+        --host 0.0.0.0"
+    ports:
+      - "${MCP_CONTEXT7_PORT:-3005}:8000"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── GitHub MCP ─────────────────────────────────────────────
+  # Only starts when you run: docker compose --profile github up -d
+  # Requires GITHUB_TOKEN in .env
+  mcp-github:
+    <<: *mcp-base
+    container_name: brain-mcp-github
+    profiles: [github]
+    command: >
+      sh -c "npx -y supergateway
+        --stdio 'npx -y @modelcontextprotocol/server-github'
+        --port 8000
+        --host 0.0.0.0"
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    ports:
+      - "${MCP_GITHUB_PORT:-3004}:8000"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+# ── Volumes ──────────────────────────────────────────────────
+volumes:
+  npm_cache:
+    # Shared npm cache across all containers — packages downloaded once
+    name: brain-npm-cache
+  mcp_memory_data:
+    # Persistent memory store — survives container restarts
+    name: brain-mcp-memory-data

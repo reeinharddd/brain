@@ -1,0 +1,49 @@
+{
+  "//": "Docker mode — MCPs connect via URL (requires: ~/.brain/docker/start.sh up)",
+  "//2": "Switch to this with: ln -sf ~/.brain/adapters/claude-code/settings.docker.json ~/.claude/settings.json",
+  "mcpServers": {
+    "memory": {
+      "url": "http://localhost:3001/sse"
+    },
+    "filesystem": {
+      "url": "http://localhost:3002/sse"
+    },
+    "sequential-thinking": {
+      "url": "http://localhost:3003/sse"
+    },
+    "context7": {
+      "url": "http://localhost:3005/sse"
+    },
+    "github": {
+      "url": "http://localhost:3004/sse"
+    }
+  },
+  "permissions": {
+    "allow": ["Bash", "Read", "Write", "WebFetch"],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/reeinharrrd/.brain/hooks/pre-tool-use/block-env-writes.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/reeinharrrd/.brain/hooks/post-tool-use/run-linter.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
