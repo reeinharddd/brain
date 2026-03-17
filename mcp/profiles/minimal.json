@@ -1,0 +1,10 @@
+{
+  "//": "Minimal MCP profile — engram + filesystem only",
+  "profile": "minimal",
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
+    }
+  }
+}

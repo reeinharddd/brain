@@ -1,0 +1,65 @@
+providers:
+
+  # ── Primary provider ──────────────────────────────────────
+  claude:
+    available: true
+    notes: "Default provider. Set ANTHROPIC_API_KEY in your shell profile."
+    models:
+      fast:     claude-haiku-4-5-20251001
+      standard: claude-sonnet-4-6
+      powerful: claude-opus-4-6
+
+  # ── Alternative providers (activate when needed) ──────────
+  openai:
+    available: false       # set to true after: export OPENAI_API_KEY=...
+    notes: "Activate if you have an OpenAI API key"
+    models:
+      fast:     gpt-4o-mini
+      standard: gpt-4o
+      powerful: gpt-5
+
+  gemini:
+    available: true        # Free tier available via CLI
+    notes: "Free 1M context via Gemini CLI. Great for large codebase analysis."
+    models:
+      fast:     gemini-2.5-flash
+      standard: gemini-2.5-pro
+      powerful: gemini-2.5-ultra
+
+  local:
+    available: false       # set to true after: ollama serve
+    base_url: http://localhost:11434
+    notes: "Activate if you have Ollama installed. Great for privacy-sensitive work."
+    models:
+      fast:     qwen2.5-coder:7b
+      standard: qwen2.5-coder:32b
+      powerful: deepseek-coder-v3:latest
+
+# ── Task routing ─────────────────────────────────────────────
+# Maps task types to model tiers. Orchestrator reads this.
+task_routing:
+  exploration:     fast      # read-only, search, grep, browsing
+  documentation:   fast      # generate docs, README, ADRs
+  summarization:   fast      # summarize, extract, classify
+  implementation:  standard  # coding, feature building
+  debugging:       standard  # error analysis, root cause
+  review:          standard  # code review, security audit
+  planning:        powerful  # architecture, spec, major decisions
+  system-design:   powerful  # multi-component architecture
+
+# ── Fallback chain ───────────────────────────────────────────
+# Order of providers to try when the primary is unavailable
+fallback_chain:
+  - claude
+  - gemini
+  - openai
+  - local
+
+# ── Cost guidance ────────────────────────────────────────────
+cost_guidance:
+  principle: "Use the cheapest model that can do the job well."
+  rules:
+    - "Never use `powerful` for tasks that `fast` can handle"
+    - "Prefer `gemini` free tier for large context reads"
+    - "Use `local` for any task involving private/sensitive data"
+    - "Use `standard` for 90% of coding tasks"

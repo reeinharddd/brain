@@ -1,0 +1,89 @@
+mcps:
+
+  engram:
+    package: "engram mcp"           # local binary, installed via go install or binary
+    required: true
+    profile: [minimal, standard, full]
+    purpose: Persistent cross-session memory, git-synced across machines
+    when_to_use: always — provides the memory layer for all agents
+    setup: |
+      Install: go install github.com/derekg/engram@latest
+      Or: download binary from releases
+      Run: engram serve --port 3333
+    notes: Required. Without this, agent memory is lost on session end.
+
+  filesystem:
+    package: "@modelcontextprotocol/server-filesystem"
+    required: false
+    profile: [minimal, standard, full]
+    purpose: Structured file system operations with explicit path scoping
+    when_to_use: when agents need structured FS access beyond basic Read/Write tools
+    setup: "npx -y @modelcontextprotocol/server-filesystem [allowed-dirs]"
+
+  context7:
+    package: "@upstash/context7-mcp"
+    required: false
+    profile: [standard, full]
+    purpose: Real-time, up-to-date library documentation retrieval
+    when_to_use: when working with third-party libraries (avoids hallucinated docs)
+    setup: "npx -y @upstash/context7-mcp"
+    notes: Dramatically improves accuracy for library-specific work.
+
+  sequential-thinking:
+    package: "@modelcontextprotocol/server-sequential-thinking"
+    required: false
+    profile: [standard, full]
+    purpose: Structured step-by-step reasoning for complex problems
+    when_to_use: architectural decisions, debugging unknown issues, multi-step planning
+    setup: "npx -y @modelcontextprotocol/server-sequential-thinking"
+
+  github:
+    package: "@modelcontextprotocol/server-github"
+    required: false
+    profile: [standard, full]
+    env_required: [GITHUB_TOKEN]
+    purpose: GitHub API operations — PRs, issues, repo management
+    when_to_use: when working with GitHub repositories programmatically
+    setup: |
+      export GITHUB_TOKEN=your_token
+      npx -y @modelcontextprotocol/server-github
+    notes: Set GITHUB_TOKEN in your shell profile. Never commit it.
+
+  playwright:
+    package: "@playwright/mcp"
+    required: false
+    profile: [full]
+    purpose: Browser automation, E2E testing, visual verification, scraping
+    when_to_use: frontend testing, capturing UI state, browser-based workflows
+    setup: "npx -y @playwright/mcp"
+    notes: Heavy — only add to per-project configs, not global.
+
+  postgres:
+    package: "@modelcontextprotocol/server-postgres"
+    required: false
+    profile: [full]
+    env_required: [DATABASE_URL]
+    purpose: Direct database queries for schema inspection and data operations
+    when_to_use: database-heavy projects (configure per-project, not globally)
+    setup: |
+      export DATABASE_URL=postgresql://user:pass@host/db
+      npx -y @modelcontextprotocol/server-postgres
+    notes: NEVER configure globally. Always per-project. Limit to read-only if possible.
+
+  slack:
+    package: "@modelcontextprotocol/server-slack"
+    required: false
+    profile: [full]
+    env_required: [SLACK_BOT_TOKEN]
+    purpose: Send messages, create channels, read history for team coordination
+    when_to_use: when coordination or notification via Slack is needed
+    setup: "export SLACK_BOT_TOKEN=... && npx -y @modelcontextprotocol/server-slack"
+
+  linear:
+    package: "@linear/mcp-server"
+    required: false
+    profile: [full]
+    env_required: [LINEAR_API_KEY]
+    purpose: Linear issue tracking integration
+    when_to_use: when managing project issues, sprints, or roadmap in Linear
+    setup: "export LINEAR_API_KEY=... && npx -y @linear/mcp-server"

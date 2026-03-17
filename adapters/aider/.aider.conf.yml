@@ -1,0 +1,21 @@
+# AUTO-GENERATED — DO NOT EDIT DIRECTLY
+# Source: ~/.brain/rules/canonical.md + modules/
+# Generated: 2026-03-17 15:46:51
+
+# Model (override per-project as needed)
+# model: claude-sonnet-4-5
+
+# System prompt from brain repo
+system-prompt: /home/reeinharrrd/.brain/adapters/aider/system-prompt.md
+
+# Git settings
+auto-commits: false
+dirty-commits: true
+commit-prompt: "Conventional Commits format: <type>(<scope>): <description>"
+
+# Output
+pretty: true
+stream: true
+
+# Safety
+no-auto-accept-architect: true

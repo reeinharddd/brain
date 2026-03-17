@@ -1,0 +1,41 @@
+# .gitignore for brain repo
+
+# Never commit environment-specific state
+.env
+*.env
+.env.*
+!.env.example
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor state
+.vscode/settings.json
+.idea/
+*.swp
+*~
+
+# Generated adapter content (generated from source — optionally commit these)
+# Uncomment the lines below if you want to EXCLUDE generated adapter files:
+# adapters/claude-code/CLAUDE.md
+# adapters/cursor/.cursorrules
+# adapters/windsurf/.windsurfrules
+# adapters/gemini/GEMINI.md
+
+# Memory chunks (these sync via Engram git sync — handled separately)
+# memory/chunks/*.json  ← leave committed for cross-machine sync
+
+# Temporary files
+*.tmp
+*.log
+/tmp/
