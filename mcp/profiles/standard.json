@@ -2,6 +2,10 @@
   "//": "Standard MCP profile — filesystem + context7 + sequential-thinking + github",
   "profile": "standard",
   "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]

@@ -107,7 +107,7 @@ opt "settings.json references MCP" "grep -q 'mcpServers' $HOME/.claude/settings.
 section "Memory"
 opt "memory/manifest.json"    "test -f $BRAIN_DIR/memory/manifest.json"
 opt "memory/chunks/ exists"   "test -d $BRAIN_DIR/memory/chunks"
-opt "engram installed"        "command -v engram"
+opt "MCP memory reachable"    "npx -y @modelcontextprotocol/server-memory --help 2>/dev/null | head -1"
 
 # ── Providers ────────────────────────────────────────────────
 section "Providers"

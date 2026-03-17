@@ -1,16 +1,15 @@
 mcps:
 
-  engram:
-    package: "engram mcp"           # local binary, installed via go install or binary
+  memory:
+    package: "@modelcontextprotocol/server-memory"
     required: true
     profile: [minimal, standard, full]
-    purpose: Persistent cross-session memory, git-synced across machines
+    purpose: Persistent in-session and cross-session memory via knowledge graph
     when_to_use: always — provides the memory layer for all agents
     setup: |
-      Install: go install github.com/derekg/engram@latest
-      Or: download binary from releases
-      Run: engram serve --port 3333
-    notes: Required. Without this, agent memory is lost on session end.
+      # No install needed — runs via npx
+      npx -y @modelcontextprotocol/server-memory
+    notes: Official MCP memory server. Stores entities and relations in a local JSON file.
 
   filesystem:
     package: "@modelcontextprotocol/server-filesystem"

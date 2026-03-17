@@ -2,6 +2,10 @@
   "//": "Full MCP profile — all MCPs. Use for heavy sessions only.",
   "profile": "full",
   "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
