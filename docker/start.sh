@@ -25,10 +25,12 @@ fail() { echo -e "  ${RED}✗${RESET} $1"; }
 ensure_env() {
   if [ ! -f "$ENV_FILE" ]; then
     cp "$DOCKER_DIR/.env.example" "$ENV_FILE"
-    # Auto-fill HOST_HOME
+    warn ".env created from template"
+  fi
+  # Always ensure HOST_HOME is set to the real value (not the placeholder)
+  if grep -q "your-username\|HOST_HOME=$" "$ENV_FILE" 2>/dev/null; then
     sed -i "s|HOST_HOME=.*|HOST_HOME=$HOME|" "$ENV_FILE"
-    warn ".env created from template — HOST_HOME set to $HOME"
-    warn "Edit $ENV_FILE to add GITHUB_TOKEN if needed"
+    ok "HOST_HOME set to $HOME"
   fi
 }
 
