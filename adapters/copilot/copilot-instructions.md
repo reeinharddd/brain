@@ -1,8 +1,3 @@
-<!-- AUTO-GENERATED — DO NOT EDIT DIRECTLY -->
-<!-- Generated on 2026-03-17 16:18:02 · Source: ~/.brain/rules/canonical.md + modules/ -->
-
-# Cline Custom Instructions
-
 # Canonical Rules — reeinharrrd's Brain Repo
 > Version: 1.0.0 | Last updated: 2026-03-17
 > This is the single source of truth. All agent-specific rule files are generated from here.
@@ -410,6 +405,3 @@ Don't spend more than 15 minutes deciding — pick the best option with current 
 8. Commit with a descriptive message explaining what was wrong
 
 Never fix a bug without understanding why it happened.
-
----
-*To apply: Open Cline settings → Custom Instructions → paste the content of this file.*

@@ -141,12 +141,17 @@ cat > "$BRAIN_DIR/adapters/opencode/opencode.json" <<JSON
 JSON
 ok "opencode/opencode.json"
 
+# ── GitHub Copilot ──────────────────────────────────────────
+mkdir -p "$BRAIN_DIR/adapters/copilot"
+echo "$FULL_RULES" > "$BRAIN_DIR/adapters/copilot/copilot-instructions.md"
+ok "copilot/copilot-instructions.md"
+
 # ═══════════════════════════════════════════════════════════
 #  Summary
 # ═══════════════════════════════════════════════════════════
 echo ""
 echo -e "  ${BOLD}Total rules size:${RESET} $(echo "$FULL_RULES" | wc -l) lines"
-echo -e "  ${BOLD}Adapters generated:${RESET} claude-code · cursor · windsurf · gemini · cline · aider · opencode"
+echo -e "  ${BOLD}Adapters generated:${RESET} claude-code · cursor · windsurf · gemini · cline · aider · opencode · copilot · test · init"
 echo ""
 echo -e "  ${GREEN}${BOLD}✓ All adapters up to date${RESET}"
 echo "  Now run: bash ~/.brain/install.sh to apply symlinks"

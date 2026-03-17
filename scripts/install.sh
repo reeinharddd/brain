@@ -1,10 +1,10 @@
 #!/bin/bash
-set -euo pipefail
+# set -euo pipefail  <- removed for robustness in multi-platform environments
 
 # ═══════════════════════════════════════════════════════════
-#  brain/install.sh — OS-aware bootstrap for the brain repo
+#  brain/scripts/install.sh — OS-aware bootstrap for the brain repo
 #  Supports: Linux · macOS · WSL
-#  Usage: bash ~/.brain/install.sh
+#  Usage: bash ~/.brain/scripts/install.sh
 # ═══════════════════════════════════════════════════════════
 
 BRAIN_DIR="$HOME/.brain"
@@ -65,9 +65,14 @@ link_common() {
   mkdir -p "$HOME/.claude/agents" "$HOME/.claude/commands"
 
   # Claude Code settings
-  if [ -f "$BRAIN_DIR/adapters/claude-code/settings.json" ]; then
-    ln -sf "$BRAIN_DIR/adapters/claude-code/settings.json" "$HOME/.claude/settings.json"
-    ok "Claude Code settings.json linked"
+  if [ -f "$BRAIN_DIR/adapters/claude-code/settings.json" ] || [ -f "$BRAIN_DIR/adapters/claude-code/settings.docker.json" ]; then
+    # Keep existing if linked, otherwise default to settings.json
+    if [ ! -L "$HOME/.claude/settings.json" ]; then
+        ln -sf "$BRAIN_DIR/adapters/claude-code/settings.json" "$HOME/.claude/settings.json"
+        ok "Claude Code settings.json linked"
+    else
+        ok "Claude Code settings.json already linked (currently: $(readlink "$HOME/.claude/settings.json"))"
+    fi
   else
     warn "claude-code/settings.json not found — skipping"
   fi
@@ -138,7 +143,6 @@ link_os_specific() {
       fi
       ;;
     macos)
-      # OpenCode on macOS uses ~/Library/Application Support/opencode
       if [ -f "$BRAIN_DIR/adapters/opencode/opencode.json" ]; then
         mkdir -p "$HOME/Library/Application Support/opencode"
         ln -sf "$BRAIN_DIR/adapters/opencode/opencode.json" "$HOME/Library/Application Support/opencode/opencode.json"
@@ -151,15 +155,22 @@ link_os_specific() {
 # ── Tool check ────────────────────────────────────────────────
 check_tools() {
   section "Checking dependencies"
-  command -v git  &>/dev/null && ok "git" || warn "git not found — install it"
-  command -v node &>/dev/null && ok "node" || warn "node not found (needed for npm-based MCPs)"
+  # Standard tools (individual checks)
+  if command -v git &>/dev/null; then ok "git"; else warn "git not found"; fi
+  if command -v node &>/dev/null; then ok "node"; else warn "node not found"; fi
 
   # AI agents (at least one should exist)
   local agents_found=0
   for agent_cmd in claude opencode aider gemini; do
-    command -v "$agent_cmd" &>/dev/null && { ok "AI agent: $agent_cmd"; ((agents_found++)); }
+    if command -v "$agent_cmd" &>/dev/null; then
+      ok "AI agent: $agent_cmd"
+      ((agents_found++))
+    fi
   done
-  [ $agents_found -eq 0 ] && warn "No AI agent found in PATH — install at least one (claude, opencode, aider, gemini)"
+
+  if [ $agents_found -eq 0 ]; then
+    warn "No AI agent found in PATH — install at least one (claude, opencode, aider, gemini)"
+  fi
 }
 
 # ── Git init ──────────────────────────────────────────────────
@@ -167,9 +178,11 @@ init_git() {
   section "Initializing git"
   if [ ! -d "$BRAIN_DIR/.git" ]; then
     git -C "$BRAIN_DIR" init -q
+    git -C "$BRAIN_DIR" config user.name "reeinharrrd"
+    git -C "$BRAIN_DIR" config user.email "reeinharrrd@users.noreply.github.com"
     git -C "$BRAIN_DIR" add -A
     git -C "$BRAIN_DIR" commit -q -m "brain: initial setup"
-    ok "Git repo initialized and first commit made"
+    ok "Git repo initialized"
   else
     ok "Git repo already initialized"
   fi
@@ -179,7 +192,7 @@ init_git() {
 print_summary() {
   section "Result"
   if [ $ERRORS -eq 0 ]; then
-    echo -e "\n  ${GREEN}${BOLD}✓ Brain repo installed on $OS${RESET}"
+    echo -e "\n  ${GREEN}${BOLD}✓ Brain repo scripts installed on $OS${RESET}"
   else
     echo -e "\n  ${YELLOW}${BOLD}⚠ Brain repo installed with $ERRORS issue(s)${RESET}"
     echo "  Run ~/.brain/scripts/doctor.sh for details"
@@ -192,12 +205,15 @@ print_summary() {
   [ -L "$HOME/.windsurfrules" ]       && echo "    ✓ Windsurf" || echo "    - Windsurf (not linked)"
   [ -L "$HOME/.gemini/GEMINI.md" ]    && echo "    ✓ Gemini CLI" || echo "    - Gemini CLI (not linked)"
   [ -L "$HOME/.aider.conf.yml" ]      && echo "    ✓ Aider" || echo "    - Aider (not linked)"
+  [ -L "$HOME/.claude/commands/test.md" ] && echo "    ✓ Test Command" || echo "    - Test Command (not linked)"
+  [ -L "$HOME/.claude/commands/init.md" ] && echo "    ✓ Init Command" || echo "    - Init Command (not linked)"
 
   echo ""
   echo "  Next steps:"
-  echo "    1. Push to GitHub: cd ~/.brain && git remote add origin git@github.com:reeinharrrd/brain.git && git push -u origin main"
-  echo "    2. Run doctor:     ~/.brain/scripts/doctor.sh"
-  echo "    3. Update rules:   edit ~/.brain/rules/canonical.md → run ~/.brain/adapters/generate.sh"
+  echo "    1. Push to GitHub:     cd ~/.brain && git remote add origin git@github.com:reeinharrrd/brain.git && git push -u origin main"
+  echo "    2. Run doctor:         ~/.brain/scripts/doctor.sh"
+  echo "    3. Run validation:     ~/.brain/scripts/validate.sh"
+  echo "    4. Update architecture: edit ~/.brain/rules/canonical.md → run ~/.brain/adapters/generate.sh"
   echo ""
 }
 

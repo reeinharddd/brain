@@ -1,5 +1,5 @@
 <!-- AUTO-GENERATED — DO NOT EDIT DIRECTLY -->
-<!-- Generated on 2026-03-17 15:46:51 · Source: ~/.brain/rules/canonical.md + modules/ -->
+<!-- Generated on 2026-03-17 16:18:02 · Source: ~/.brain/rules/canonical.md + modules/ -->
 
 # Canonical Rules — reeinharrrd's Brain Repo
 > Version: 1.0.0 | Last updated: 2026-03-17

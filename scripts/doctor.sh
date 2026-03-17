@@ -45,7 +45,7 @@ section "Brain repo integrity"
 check "~/.brain exists"         "test -d $BRAIN_DIR"
 check "rules/canonical.md"      "test -f $BRAIN_DIR/rules/canonical.md"
 check "adapters/generate.sh"    "test -f $BRAIN_DIR/adapters/generate.sh"
-check "install.sh"              "test -f $BRAIN_DIR/install.sh"
+check "install.sh"              "test -f $BRAIN_DIR/scripts/install.sh"
 check "git repo initialized"    "test -d $BRAIN_DIR/.git"
 opt   "remote origin set"       "git -C $BRAIN_DIR remote get-url origin"
 
@@ -153,7 +153,7 @@ if [ $FAIL -gt 0 ]; then
   echo -e "  ${RED}${BOLD}✗ Result: $PASS passed · $WARN warnings · $FAIL failed${RESET}"
   echo ""
   echo "  To fix failures:"
-  echo "    bash ~/.brain/install.sh"
+  echo "    bash ~/.brain/scripts/install.sh"
   echo ""
   exit 1
 elif [ $WARN -gt 0 ]; then
