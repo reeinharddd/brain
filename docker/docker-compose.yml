@@ -1,98 +1,24 @@
-# ═══════════════════════════════════════════════════════════
+# ===========================================================
 #  brain/docker/docker-compose.yml
 #
-#  Note: This stack is currently empty because we pivoted to 
-#  "Docker On-Demand" via direct 'docker run' commands in 
-#  agent settings. This avoids SSE bridge bugs (supergateway).
-#
-#  To run a persistent service, add it back here.
-# ═══════════════════════════════════════════════════════════
+#  Persistent helper services only.
+#  Core MCP servers run more reliably in stdio or on-demand mode
+#  from the generated adapter settings, instead of behind SSE bridges.
+# ===========================================================
 
-name: brain-mcp-stack
+name: brain-persistent-helpers
 
 services:
-
-  # ── Memory MCP ─────────────────────────────────────────────
-  mcp-memory:
-    image: node:20-alpine
-    container_name: brain-mcp-memory
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: brain-qdrant
     restart: unless-stopped
-    command: npx -y supergateway --port 3001 --stdio "npx -y @modelcontextprotocol/server-memory /root/.local/share/model-context-protocol/server-memory"
     ports:
-      - "3001:3001"
+      - "6333:6333"
     volumes:
-      - /home/reeinharrrd/.brain/memory:/root/.local/share/model-context-protocol/server-memory
+      - qdrant_data:/qdrant/storage
 
-  # ── Filesystem MCP ─────────────────────────────────────────
-  mcp-filesystem:
-    image: node:20-alpine
-    container_name: brain-mcp-filesystem
-    restart: unless-stopped
-    command: npx -y supergateway --port 3002 --stdio "npx -y @modelcontextprotocol/server-filesystem /workspace"
-    ports:
-      - "3002:3002"
-    volumes:
-      - /home/reeinharrrd:/workspace
-
-  # ── GitHub MCP ─────────────────────────────────────────────
-  mcp-github:
-    image: node:20-alpine
-    container_name: brain-mcp-github
-    restart: unless-stopped
-    command: npx -y supergateway --port 3004 --stdio "npx -y @modelcontextprotocol/server-github"
-    ports:
-      - "3004:3004"
-    environment:
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-
-  # ── Sequential Thinking MCP ────────────────────────────────
-  mcp-sequential-thinking:
-    image: node:20-alpine
-    container_name: brain-mcp-sequential-thinking
-    restart: unless-stopped
-    command: npx -y supergateway --port 3003 --stdio "npx -y @modelcontextprotocol/server-sequential-thinking"
-    ports:
-      - "3003:3003"
-
-  # ── Context7 MCP ───────────────────────────────────────────
-  mcp-context7:
-    image: node:20-alpine
-    container_name: brain-mcp-context7
-    restart: unless-stopped
-    command: npx -y supergateway --port 3005 --stdio "npx -y @modelcontextprotocol/server-context7"
-    ports:
-      - "3005:3005"
-
-  # ── Skill-Ninja MCP ────────────────────────────────────────
-  mcp-skill-ninja:
-    image: node:20-bullseye
-    container_name: brain-mcp-skill-ninja
-    restart: unless-stopped
-    command: npx -y supergateway --port 3006 --stdio "npx -y aktsmm/skill-ninja-mcp-server"
-    ports:
-      - "3006:3006"
-
-  # ── DuckDuckGo MCP ──────────────────────────────────────────
-  mcp-duckduckgo:
-    image: node:20-alpine
-    container_name: brain-mcp-duckduckgo
-    restart: unless-stopped
-    command: npx -y supergateway --port 3007 --stdio "npx -y @modelcontextprotocol/server-duckduckgo"
-    ports:
-      - "3007:3007"
-
-  # ── Crawl4AI MCP ────────────────────────────────────────────
-  mcp-crawl4ai:
-    image: node:20-alpine
-    container_name: brain-mcp-crawl4ai
-    restart: unless-stopped
-    command: tail -f /dev/null
-
-  # ── Context-Awesome MCP ─────────────────────────────────────
-  mcp-context-awesome:
-    image: node:20-alpine
-    container_name: brain-mcp-context-awesome
-    restart: unless-stopped
-    command: npx -y supergateway --port 3009 --stdio "npx -y bh-rat/context-awesome"
-    ports:
-      - "3009:3009"
+volumes:
+  qdrant_data:
+    name: brain-qdrant-data
+    external: true

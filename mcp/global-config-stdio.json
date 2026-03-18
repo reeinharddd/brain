@@ -12,21 +12,25 @@
       "command": "/home/reeinharrrd/.local/bin/npx-nvm",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
+    "context7": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
     "github": {
       "command": "/home/reeinharrrd/.local/bin/npx-nvm",
       "args": ["-y", "@modelcontextprotocol/server-github"]
     },
     "skill-ninja": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
-      "args": ["-y", "aktsmm/skill-ninja-mcp-server"]
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
     },
     "duckduckgo": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
-      "args": ["-y", "@modelcontextprotocol/server-duckduckgo"]
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "mcp/duckduckgo:latest"]
     },
     "context-awesome": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
-      "args": ["-y", "bh-rat/context-awesome"]
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "bh-rat/context-awesome:latest"]
     }
   }
 }

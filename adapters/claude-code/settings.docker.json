@@ -1,21 +1,34 @@
 {
-  "//": "Docker mode — MCPs connect via URL (requires: ~/.brain/docker/start.sh up)",
+  "//": "Docker mode - Hybrid stable MCP setup without SSE bridge dependency.",
   "//2": "Switch to this with: ln -sf ~/.brain/adapters/claude-code/settings.docker.json ~/.claude/settings.json",
   "mcpServers": {
     "memory": {
-      "url": "http://localhost:3001/sse"
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory",
+        "/home/reeinharrrd/.brain/memory"
+      ]
     },
     "filesystem": {
-      "url": "http://localhost:3002/sse"
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/reeinharrrd"
+      ]
     },
     "sequential-thinking": {
-      "url": "http://localhost:3003/sse"
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
     "context7": {
-      "url": "http://localhost:3005/sse"
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
     },
     "github": {
-      "url": "http://localhost:3004/sse"
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
     }
   },
   "permissions": {

@@ -142,6 +142,7 @@ Never pollute the brain repo with project-specific knowledge.
 Never put global reasoning rules inside a project.
 
 
+
 ## Module: Code Style
 
 
@@ -192,6 +193,7 @@ When writing code in any language:
 4. Ask which pattern to follow if you see multiple valid options in the existing codebase
 
 
+
 ## Module: Communication
 
 
@@ -231,6 +233,7 @@ Don't waste tokens on retries with the same bad context.
 - Code tasks -> Code + brief explanation only
 - Architecture/planning -> Structured with headers, as long as needed
 - Never pad responses. Quality > quantity.
+
 
 
 ## Module: Git
@@ -313,6 +316,162 @@ When updating `~/.brain/`:
 - Never commit environment-specific state (no hardcoded paths, no secrets)
 
 
+# Memory Protocol - Engram
+
+This module extends the base memory rules with an explicit operating protocol.
+
+## Progressive disclosure
+
+Always retrieve memory in layers:
+
+1. `mem_search`
+2. `mem_timeline`
+3. `mem_get_observation`
+
+Do not jump to full payload retrieval unless the summary and timeline were not
+enough for the current task.
+
+## Stable topic keys
+
+Prefer semantic topic keys that survive multiple sessions.
+
+Format:
+
+`{project}:{domain}:{concept}`
+
+Examples:
+
+- `brain:architecture:sdd-dag`
+- `brain:decisions:guardian-local-mode`
+- `brain:patterns:skill-context-injection`
+
+## Session closure
+
+For substantial work:
+
+1. save or update the relevant topic key
+2. write a `mem_session_summary`
+3. include namespace, decision, validation result, unresolved risk, and next step
+
+## Agent guidance
+
+- `orchestrator`: check prior memory before planning and at archive time
+- `researcher`: search memory before exploration
+- `architect`: search prior decisions before proposing or designing
+- `implementer`: avoid broad memory retrieval; use only narrow, relevant context
+- `debugger`: search similar bugs before root-cause analysis
+
+## Namespace
+
+When a project root is known, derive the namespace with:
+
+`~/.brain/scripts/memory-namespace.sh [project_root]`
+
+The namespace isolates project memory while global rules remain shared.
+
+
+## Module: Memory Protocol
+
+### Topic keys and upserts
+
+When storing persistent memory, prefer stable topic keys over ad-hoc duplicates.
+
+1. First call `mem_suggest_topic_key` or the equivalent topic-key selection step
+2. Reuse an existing topic key when the new information extends the same decision or concept
+3. Only create a new topic key when the subject is materially different
+
+### Progressive disclosure
+
+To minimize token usage, memory retrieval must happen in layers:
+
+1. `mem_search` for a high-level summary of relevant memories
+2. `mem_timeline` for chronological context on the shortlisted topic
+3. `mem_get_observation` only for the exact observation that needs full detail
+
+Do not pull full memory payloads before the summary and timeline indicate they are relevant.
+
+### Session closure
+
+At the end of any significant task or session:
+
+1. Save a concise `mem_session_summary`
+2. Include the final decision, validation result, unresolved risks, and next step
+3. Attach the project namespace when available
+
+### Multi-project namespace convention
+
+When a project root is known, derive a stable namespace with:
+
+`~/.brain/scripts/memory-namespace.sh [project_root]`
+
+Use that namespace for reads and writes so project memory stays isolated while global rules remain shared.
+
+
+## Module: Spec-Driven Development
+
+### Batch 1 foundation rules
+
+The brain repo uses a two-layer context model:
+
+1. Global rules come only from `rules/canonical.md` and `rules/modules/*.md`
+2. Project context is injected dynamically from the current repository
+
+Do not hardcode project-specific framework guidance inside global adapters.
+Project-specific guidance must be generated on demand from the active repo.
+
+### Dynamic skill injection protocol
+
+Before planning or implementation in any project:
+
+1. Detect the stack with `~/.brain/scripts/detect-stack.sh [project_root]`
+2. Render only matching skill contexts with `~/.brain/scripts/render-skill-context.sh [project_root]`
+3. Load only the generated skill context for the current project
+4. State which stack tags were detected when they materially affect decisions
+
+If no stack-specific skill matches, continue with the global rules only.
+
+### SDD DAG
+
+For substantial work, follow this DAG in order:
+
+1. Explore
+2. Propose
+3. Spec
+4. Design
+5. Tasks
+6. Implement
+7. Verify
+8. Archive
+
+Each phase must produce an artifact or explicit handoff note.
+Do not skip directly from vague intent to implementation.
+
+### Phase contracts
+
+- Explore -> inputs: user goal, repo state; outputs: constraints, assumptions, detected stack
+- Propose -> inputs: exploration notes; outputs: candidate approaches and tradeoffs
+- Spec -> inputs: chosen proposal; outputs: acceptance criteria and boundaries
+- Design -> inputs: spec; outputs: architecture, flow, interfaces, UX if relevant
+- Tasks -> inputs: design; outputs: atomic executable work items
+- Implement -> inputs: tasks; outputs: smallest effective code or doc changes
+- Verify -> inputs: implementation; outputs: test and validation evidence
+- Archive -> inputs: verification results; outputs: docs, handover, memory summary
+
+### Delegate-first behavior
+
+The orchestrator coordinates the DAG and specialist routing.
+Specialists should receive:
+
+- goal
+- constraints
+- relevant files
+- phase name
+- expected output artifact
+
+Avoid mixing artifacts from different phases in one response unless the task is tiny.
+
+
+
 ## Module: Security
 
 
@@ -384,6 +543,7 @@ Always keep in mind: Injection, Broken Auth, Sensitive Data Exposure, XXE, Broke
 Security Misconfiguration, XSS, Insecure Deserialization, Known Vulnerable Components, Insufficient Logging.
 
 When building web-facing features, check each one is addressed.
+
 
 
 ## Module: Workflow

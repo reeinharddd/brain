@@ -14,6 +14,7 @@ BRAIN_DIR="$HOME/.brain"
 SOURCE="$BRAIN_DIR/rules/canonical.md"
 MODULES_DIR="$BRAIN_DIR/rules/modules"
 NPX_CMD="/home/reeinharrrd/.local/bin/npx-nvm" # Use wrapper to avoid ENOENT in IDEs
+BUILD_RULES_SCRIPT="$BRAIN_DIR/scripts/build-rules.sh"
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BOLD='\033[1m'; RESET='\033[0m'
 ok()   { echo -e "  ${GREEN}✓${RESET} $1"; }
@@ -22,19 +23,13 @@ warn() { echo -e "  ${YELLOW}⚠${RESET}  $1"; }
 echo -e "\n${BOLD}── Generating rule adapters${RESET}"
 
 # ── Assemble full rules from canonical + modules ─────────────
-if [ ! -f "$SOURCE" ]; then
-  echo "ERROR: $SOURCE not found. Cannot generate adapters." >&2
+if [ ! -x "$BUILD_RULES_SCRIPT" ]; then
+  echo "ERROR: $BUILD_RULES_SCRIPT not found or not executable." >&2
   exit 1
 fi
 
-FULL_RULES=$(cat "$SOURCE")
-
-if [ -d "$MODULES_DIR" ]; then
-  for module in "$MODULES_DIR"/*.md; do
-    [ -f "$module" ] || continue
-    FULL_RULES="${FULL_RULES}"$'\n\n'"$(cat "$module")"
-  done
-fi
+FULL_RULES="$("$BUILD_RULES_SCRIPT" --stdout)"
+"$BUILD_RULES_SCRIPT" >/dev/null
 
 TIMESTAMP="Generated on $(date '+%Y-%m-%d %H:%M:%S') · Source: ~/.brain/rules/canonical.md + modules/"
 HEADER_COMMENT="<!-- AUTO-GENERATED — DO NOT EDIT DIRECTLY -->\n<!-- $TIMESTAMP -->\n\n"
@@ -141,6 +136,10 @@ OPENCODE_CONTENT=$(cat <<JSON
       "command": "$NPX_CMD",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
+    "context7": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
     "github": {
       "command": "$NPX_CMD",
       "args": ["-y", "@modelcontextprotocol/server-github"]
@@ -171,26 +170,48 @@ ok "opencode/opencode.json"
 # ═══════════════════════════════════════════════════════════
 #  8. Global IDE MCP Config — mcp/global-config.json
 # ═══════════════════════════════════════════════════════════
-# This file is used by Cursor, VS Code, and others to connect
-# to the persistent Docker MCP stack via SSE.
+# This file is used by IDEs that support command-based MCP configs.
 GLOBAL_MCP_CONTENT=$(cat <<JSON
 {
   "mcpServers": {
-    "memory": { "url": "http://localhost:3001/sse" },
-    "filesystem": { "url": "http://localhost:3002/sse" },
-    "sequential-thinking": { "url": "http://localhost:3003/sse" },
-    "github": { "url": "http://localhost:3004/sse" },
-    "context7": { "url": "http://localhost:3005/sse" },
-    "skill-ninja": { "url": "http://localhost:3006/sse" },
-    "duckduckgo": { "url": "http://localhost:3007/sse" },
-    "crawl4ai": { "url": "http://localhost:3008/sse" },
-    "context-awesome": { "url": "http://localhost:3009/sse" }
+    "memory": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-memory", "${BRAIN_DIR}/memory"]
+    },
+    "filesystem": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
+    },
+    "sequential-thinking": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "context7": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "github": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "skill-ninja": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
+    },
+    "duckduckgo": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "mcp/duckduckgo:latest"]
+    },
+    "context-awesome": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "bh-rat/context-awesome:latest"]
+    }
   }
 }
 JSON
 )
 write_adapter "$BRAIN_DIR/mcp/global-config.json" "$GLOBAL_MCP_CONTENT"
-ok "mcp/global-config.json (SSE/Docker)"
+ok "mcp/global-config.json (Hybrid command mode)"
 
 # ═══════════════════════════════════════════════════════════
 #  9. Native MCP Config (stdio) — mcp/global-config-stdio.json
@@ -210,6 +231,10 @@ GLOBAL_STDIO_MCP_CONTENT=$(cat <<JSON
     "sequential-thinking": {
       "command": "$NPX_CMD",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "context7": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
     },
     "github": {
       "command": "$NPX_CMD",
@@ -233,7 +258,7 @@ JSON
 )
 write_adapter "$BRAIN_DIR/mcp/global-config-stdio.json" "$GLOBAL_STDIO_MCP_CONTENT"
 write_adapter "$BRAIN_DIR/adapters/claude-desktop/claude_desktop_config.json" "$GLOBAL_STDIO_MCP_CONTENT"
-ok "mcp/global-config-stdio.json + claude-desktop (Native stdio)"
+ok "mcp/global-config-stdio.json + claude-desktop (Hybrid stdio)"
 
 # ── GitHub Copilot ──────────────────────────────────────────
 mkdir -p "$BRAIN_DIR/adapters/copilot"

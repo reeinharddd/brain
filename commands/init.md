@@ -3,6 +3,7 @@
 
 ## Description
 This command sets up the necessary symlinks in the current directory to enable "brain" functionality for project-specific tools like Cursor and GitHub Copilot.
+It also generates a stack-aware project context file at `.brain/skill-context.md` and installs a git-native pre-commit Guardian hook.
 
 ## Execution
 Execute the initialization script from your terminal:

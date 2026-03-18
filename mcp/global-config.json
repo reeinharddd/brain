@@ -1,13 +1,36 @@
 {
   "mcpServers": {
-    "memory": { "url": "http://localhost:3001/sse" },
-    "filesystem": { "url": "http://localhost:3002/sse" },
-    "sequential-thinking": { "url": "http://localhost:3003/sse" },
-    "github": { "url": "http://localhost:3004/sse" },
-    "context7": { "url": "http://localhost:3005/sse" },
-    "skill-ninja": { "url": "http://localhost:3006/sse" },
-    "duckduckgo": { "url": "http://localhost:3007/sse" },
-    "crawl4ai": { "url": "http://localhost:3008/sse" },
-    "context-awesome": { "url": "http://localhost:3009/sse" }
+    "memory": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-memory", "/home/reeinharrrd/.brain/memory"]
+    },
+    "filesystem": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/reeinharrrd"]
+    },
+    "sequential-thinking": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "context7": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "github": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "skill-ninja": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
+    },
+    "duckduckgo": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "mcp/duckduckgo:latest"]
+    },
+    "context-awesome": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "bh-rat/context-awesome:latest"]
+    }
   }
 }

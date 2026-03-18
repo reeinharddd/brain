@@ -1,5 +1,5 @@
 {
-  "//": "Persistent Mode \u2014 Always-on AI brain (Docker Exec).",
+  "//": "Persistent Mode - Hybrid stable MCP setup.",
   "//2": "To activate: ln -sf ~/.brain/adapters/claude-code/settings.persistent.json ~/.claude/settings.json",
   "mcpServers": {
     "memory": {
@@ -33,30 +33,37 @@
       ]
     },
     "context7": {
-      "url": "http://localhost:3005/sse"
-    },
-    "skill-ninja": {
       "command": "/home/reeinharrrd/.local/bin/npx-nvm",
       "args": [
         "-y",
-        "aktsmm/skill-ninja-mcp-server"
+        "@upstash/context7-mcp@latest"
+      ]
+    },
+    "skill-ninja": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "aktsmm/skill-ninja-mcp-server:latest"
       ]
     },
     "duckduckgo": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "command": "docker",
       "args": [
-        "-y",
-        "@modelcontextprotocol/server-duckduckgo"
+        "run",
+        "-i",
+        "--rm",
+        "mcp/duckduckgo:latest"
       ]
     },
-    "crawl4ai": {
-      "url": "http://localhost:3008/sse"
-    },
     "context-awesome": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "command": "docker",
       "args": [
-        "-y",
-        "bh-rat/context-awesome"
+        "run",
+        "-i",
+        "--rm",
+        "bh-rat/context-awesome:latest"
       ]
     }
   }
