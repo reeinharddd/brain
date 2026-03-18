@@ -17,12 +17,13 @@ Or at the end of a work session. Can also be triggered mid-session when switchin
 
 ## What this command does
 
-1. **Summarizes what was accomplished** in this session
-2. **Lists what is in progress** (partially done tasks)
-3. **Lists what is pending** (next steps, blockers)
-4. **Captures key decisions** made during the session
-5. **Saves everything to Engram** with the project tag
-6. **Produces a handover document** ready for the next agent/session
+1. **Captures the active SDD state** when the work used explicit phases
+2. **Summarizes what was accomplished** in this session
+3. **Lists what is in progress** (partially done tasks)
+4. **Lists what is pending** (next steps, blockers)
+5. **Captures key decisions** made during the session
+6. **Saves everything to Engram** with the project namespace or tag
+7. **Produces a handover document** ready for the next agent/session
 
 ## The Handover Document
 
@@ -72,13 +73,23 @@ Look back at what was done:
 Fill in each section of the template above. Be specific — the next agent has no memory of what happened here.
 
 ### Step 3: Save to Engram
-Tag with: `[project-name]`, `handover`, `[date]`
+- Use the project namespace when available
+- Save or update the relevant session topic
+- Call `mem_session_summary` for substantial work
 
-### Step 4: Commit if needed
-If there are uncommitted changes: stage, commit, and push before the session ends.
+### Step 4: Record the DAG state
+If the session used explicit SDD artifacts, capture:
+- current phase
+- completed artifacts
+- pending artifacts
+- verification status
+
+### Step 5: Commit if needed
+If there are uncommitted changes: stage, commit, and push before the session ends when appropriate.
 
 ## When NOT to skip this
 
 - Never end a session with uncommitted changes and no handover if the work will continue
 - Never assume the next session will remember what happened in this one
 - Never hand off without specifying the exact next step
+- Never treat `/handover` as complete if the memory summary and next step are missing

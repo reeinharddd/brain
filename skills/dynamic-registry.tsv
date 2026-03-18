@@ -1,0 +1,10 @@
+# skill_id	title	detect_tags	context_path	summary
+bash-platform	Bash Platform	bash,shell,docker	skills/contexts/bash-platform.md	Bash-first automation, portability, idempotent scripting
+markdown-specs	Markdown Specs	markdown,docs	skills/contexts/markdown-specs.md	Specs, ADRs, and handoff artifacts in plain Markdown
+node-typescript	Node and TypeScript	nodejs,typescript	skills/contexts/node-typescript.md	Node runtime, package scripts, TypeScript safety rules
+react-ui	React UI	react	skills/contexts/react-ui.md	Component boundaries, state ownership, testing guidance
+nextjs-app	Next.js App	nextjs	skills/contexts/nextjs-app.md	App Router, server/client boundaries, data fetching rules
+python-service	Python Service	python	skills/contexts/python-service.md	Python packaging, uv, typing, and service structure
+go-service	Go Service	go	skills/contexts/go-service.md	Go module layout, explicit errors, table-driven tests
+clean-architecture	Clean Architecture	clean-architecture	skills/contexts/clean-architecture.md	Ports/adapters, use cases, dependency direction
+monorepo-workspace	Monorepo Workspace	monorepo	skills/contexts/monorepo-workspace.md	Workspace boundaries, package ownership, task graph discipline

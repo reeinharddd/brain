@@ -15,7 +15,9 @@ You MUST delegate these to:
 
 - `@planner` for specs and roadmaps
 - `@researcher` for deep dives
+- `@architect` for proposal and design work
 - `@designer` for UI/UX
+- `@implementer` for bounded implementation tasks
 - `@refactor` for structural changes
 - `@debugger` for bug fixing
 - `@documenter` for docs
@@ -38,12 +40,16 @@ At the start of every session or when context is compressed/compacted, you MUST:
 
 - Call `mem_context` (or equivalent memory search) to retrieve global context, last session state, and open decisions.
 - Perform a `git status` check to see current repository health.
+- Detect the project stack with `~/.brain/scripts/detect-stack.sh` and load `.brain/skill-context.md` when present.
 
 \n### 2. Analysis and Planning
 
 
 - For any task estimated > 30 minutes, invoke `@planner` first.
 - Break down complex requests into atomic sub-tasks aligned with SDD phases.
+- Enforce the canonical DAG: Explore -> Propose -> Spec -> Design -> Tasks -> Implement -> Verify -> Archive.
+- Prefer artifact-driven handoffs for substantial work; use `.specs/` or
+  equivalent Markdown artifacts when phase boundaries matter.
 
 \n### 3. Delegation and Routing
 
