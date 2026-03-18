@@ -1,0 +1,16 @@
+# MCP Server Port Allocation
+# Prevents port conflicts by assigning unique ports to each server
+
+port_allocation:
+  memory: 8001
+  filesystem: 8002
+  context7: 8003
+  sequential-thinking: 8004
+  github: 8005
+  playwright: 8006
+  postgres: 8007
+  slack: 8008
+  linear: 8009
+
+# Port range: 8001-8099 reserved for MCP servers
+# Avoid conflicts with other services using port 8000

@@ -1,0 +1,50 @@
+{
+  "//": "Docker On-Demand Mode — Tools run in isolated containers ONLY when called.",
+  "//2": "To activate: ln -sf ~/.brain/adapters/claude-code/settings.docker-on-demand.json ~/.claude/settings.json",
+  "mcpServers": {
+    "memory": {
+      "//": "Core brain memory — persistent via host-bound volume",
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-v", "/home/reeinharrrd/.brain/memory:/root/.local/share/model-context-protocol/server-memory",
+        "node:20-alpine",
+        "npx", "-y", "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "filesystem": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-v", "/home/reeinharrrd:/workspace",
+        "node:20-alpine",
+        "npx", "-y", "@modelcontextprotocol/server-filesystem", "/workspace"
+      ]
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-e", "GITHUB_TOKEN=YOUR_GITHUB_TOKEN_HERE",
+        "node:20-alpine",
+        "npx", "-y", "@modelcontextprotocol/server-github"
+      ]
+    },
+    "sequential-thinking": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "node:20-alpine",
+        "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "context7": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "node:20-alpine",
+        "npx", "-y", "@upstash/context7-mcp@latest"
+      ]
+    }
+  }
+}

@@ -1,0 +1,212 @@
+# ═══════════════════════════════════════════════════════════
+#  brain/docker/docker-compose.full.yml
+#  
+#  Complete MCP Stack - All servers including GitHub and optional services
+#  Usage: docker compose -f docker-compose.full.yml --env-file .env up -d
+# ═══════════════════════════════════════════════════════════
+
+name: brain-mcp-stack-full
+
+services:
+
+  # ── Core MCP Servers ─────────────────────────────────────────────
+  mcp-memory:
+    image: node:20-alpine
+    container_name: brain-mcp-memory
+    restart: unless-stopped
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-memory" 
+      --port 8001 --host 0.0.0.0
+    ports:
+      - "${MCP_MEMORY_PORT:-3001}:8001"
+    volumes:
+      - mcp_memory_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8001/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-filesystem:
+    image: node:20-alpine
+    container_name: brain-mcp-filesystem
+    restart: unless-stopped
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-filesystem /workspace" 
+      --port 8002 --host 0.0.0.0
+    ports:
+      - "${MCP_FILESYSTEM_PORT:-3002}:8002"
+    volumes:
+      - ${HOST_HOME:-~}:/workspace
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8002/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-sequential-thinking:
+    image: node:20-alpine
+    container_name: brain-mcp-sequential
+    restart: unless-stopped
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-sequential-thinking" 
+      --port 8003 --host 0.0.0.0
+    ports:
+      - "${MCP_SEQUENTIAL_PORT:-3003}:8003"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8003/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-context7:
+    image: node:20-alpine
+    container_name: brain-mcp-context7
+    restart: unless-stopped
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @upstash/context7-mcp@latest" 
+      --port 8005 --host 0.0.0.0
+    ports:
+      - "${MCP_CONTEXT7_PORT:-3005}:8005"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8005/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Extended MCP Servers ───────────────────────────────────────────
+  mcp-github:
+    image: node:20-alpine
+    container_name: brain-mcp-github
+    restart: unless-stopped
+    profiles: [extended]
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-github" 
+      --port 8004 --host 0.0.0.0
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    ports:
+      - "${MCP_GITHUB_PORT:-3004}:8004"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8004/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-postgres:
+    image: node:20-alpine
+    container_name: brain-mcp-postgres
+    restart: unless-stopped
+    profiles: [extended]
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-postgres" 
+      --port 8006 --host 0.0.0.0
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - "${MCP_POSTGRES_PORT:-3006}:8006"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8006/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-slack:
+    image: node:20-alpine
+    container_name: brain-mcp-slack
+    restart: unless-stopped
+    profiles: [extended]
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-slack" 
+      --port 8007 --host 0.0.0.0
+    environment:
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
+    ports:
+      - "${MCP_SLACK_PORT:-3007}:8007"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8007/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-linear:
+    image: node:20-alpine
+    container_name: brain-mcp-linear
+    restart: unless-stopped
+    profiles: [extended]
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @linear/mcp-server" 
+      --port 8008 --host 0.0.0.0
+    environment:
+      - LINEAR_API_KEY=${LINEAR_API_KEY}
+    ports:
+      - "${MCP_LINEAR_PORT:-3008}:8008"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8008/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Skills as MCP Servers ──────────────────────────────────────────
+  mcp-research-skill:
+    image: node:20-alpine
+    container_name: brain-mcp-research
+    restart: unless-stopped
+    profiles: [skills]
+    working_dir: /app
+    command: >
+      sh -c "
+      apk add --no-cache curl &&
+      npx -y supergateway 
+      --stdio 'node /app/research-server.js' 
+      --port 8009 --host 0.0.0.0
+      "
+    ports:
+      - "${MCP_RESEARCH_PORT:-3009}:8009"
+    volumes:
+      - ./skills:/app:ro
+      - ${HOST_HOME:-~}/.claude/skills:/skills:ro
+    environment:
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8009/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  mcp-frontend-skill:
+    image: node:20-alpine
+    container_name: brain-mcp-frontend
+    restart: unless-stopped
+    profiles: [skills]
+    working_dir: /app
+    command: >
+      sh -c "
+      apk add --no-cache curl &&
+      npx -y supergateway 
+      --stdio 'node /app/frontend-server.js' 
+      --port 8010 --host 0.0.0.0
+      "
+    ports:
+      - "${MCP_FRONTEND_PORT:-3010}:8010"
+    volumes:
+      - ./skills:/app:ro
+      - ${HOST_HOME:-~}/.claude/skills:/skills:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8010/sse"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+# ── Volumes ──────────────────────────────────────────────────
+volumes:
+  mcp_memory_data:
+    name: brain-mcp-memory-data

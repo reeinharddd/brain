@@ -13,6 +13,7 @@ set -euo pipefail
 BRAIN_DIR="$HOME/.brain"
 SOURCE="$BRAIN_DIR/rules/canonical.md"
 MODULES_DIR="$BRAIN_DIR/rules/modules"
+NPX_CMD="/home/reeinharrrd/.local/bin/npx-nvm" # Use wrapper to avoid ENOENT in IDEs
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BOLD='\033[1m'; RESET='\033[0m'
 ok()   { echo -e "  ${GREEN}✓${RESET} $1"; }
@@ -122,24 +123,117 @@ content = sys.stdin.read()
 print(json.dumps(content))
 " 2>/dev/null || echo '"[rules — run generate.sh with python3 available]"')
 
-cat > "$BRAIN_DIR/adapters/opencode/opencode.json" <<JSON
+OPENCODE_CONTENT=$(cat <<JSON
 {
   "//": "AUTO-GENERATED — DO NOT EDIT DIRECTLY. Source: ~/.brain/rules/",
   "model": "anthropic/claude-sonnet-4-5",
   "systemPrompt": $ESCAPED_RULES,
   "mcpServers": {
+    "memory": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-memory", "${BRAIN_DIR}/memory"]
+    },
     "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "\${HOME}"]
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
     },
     "sequential-thinking": {
-      "command": "npx",
+      "command": "$NPX_CMD",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "github": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "skill-ninja": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
+    },
+    "duckduckgo": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "mcp/duckduckgo:latest"]
+    },
+    "crawl4ai": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "unclecode/crawl4ai:latest"]
+    },
+    "context-awesome": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "bh-rat/context-awesome:latest"]
     }
   }
 }
 JSON
+)
+write_adapter "$BRAIN_DIR/adapters/opencode/opencode.json" "$OPENCODE_CONTENT"
 ok "opencode/opencode.json"
+
+# ═══════════════════════════════════════════════════════════
+#  8. Global IDE MCP Config — mcp/global-config.json
+# ═══════════════════════════════════════════════════════════
+# This file is used by Cursor, VS Code, and others to connect
+# to the persistent Docker MCP stack via SSE.
+GLOBAL_MCP_CONTENT=$(cat <<JSON
+{
+  "mcpServers": {
+    "memory": { "url": "http://localhost:3001/sse" },
+    "filesystem": { "url": "http://localhost:3002/sse" },
+    "sequential-thinking": { "url": "http://localhost:3003/sse" },
+    "github": { "url": "http://localhost:3004/sse" },
+    "context7": { "url": "http://localhost:3005/sse" },
+    "skill-ninja": { "url": "http://localhost:3006/sse" },
+    "duckduckgo": { "url": "http://localhost:3007/sse" },
+    "crawl4ai": { "url": "http://localhost:3008/sse" },
+    "context-awesome": { "url": "http://localhost:3009/sse" }
+  }
+}
+JSON
+)
+write_adapter "$BRAIN_DIR/mcp/global-config.json" "$GLOBAL_MCP_CONTENT"
+ok "mcp/global-config.json (SSE/Docker)"
+
+# ═══════════════════════════════════════════════════════════
+#  9. Native MCP Config (stdio) — mcp/global-config-stdio.json
+# ═══════════════════════════════════════════════════════════
+# For use with Claude Desktop, Cursor (individual tools), etc.
+GLOBAL_STDIO_MCP_CONTENT=$(cat <<JSON
+{
+  "mcpServers": {
+    "memory": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-memory", "${BRAIN_DIR}/memory"]
+    },
+    "filesystem": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
+    },
+    "sequential-thinking": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "github": {
+      "command": "$NPX_CMD",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "skill-ninja": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
+    },
+    "duckduckgo": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "mcp/duckduckgo:latest"]
+    },
+    "context-awesome": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "bh-rat/context-awesome:latest"]
+    }
+  }
+}
+JSON
+)
+write_adapter "$BRAIN_DIR/mcp/global-config-stdio.json" "$GLOBAL_STDIO_MCP_CONTENT"
+write_adapter "$BRAIN_DIR/adapters/claude-desktop/claude_desktop_config.json" "$GLOBAL_STDIO_MCP_CONTENT"
+ok "mcp/global-config-stdio.json + claude-desktop (Native stdio)"
 
 # ── GitHub Copilot ──────────────────────────────────────────
 mkdir -p "$BRAIN_DIR/adapters/copilot"

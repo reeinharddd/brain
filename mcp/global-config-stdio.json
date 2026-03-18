@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "memory": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-memory", "/home/reeinharrrd/.brain/memory"]
+    },
+    "filesystem": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/reeinharrrd"]
+    },
+    "sequential-thinking": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "github": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "skill-ninja": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "aktsmm/skill-ninja-mcp-server"]
+    },
+    "duckduckgo": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "@modelcontextprotocol/server-duckduckgo"]
+    },
+    "context-awesome": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": ["-y", "bh-rat/context-awesome"]
+    }
+  }
+}

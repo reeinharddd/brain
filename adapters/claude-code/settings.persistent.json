@@ -1,0 +1,63 @@
+{
+  "//": "Persistent Mode \u2014 Always-on AI brain (Docker Exec).",
+  "//2": "To activate: ln -sf ~/.brain/adapters/claude-code/settings.persistent.json ~/.claude/settings.json",
+  "mcpServers": {
+    "memory": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory",
+        "/home/reeinharrrd/.brain/memory"
+      ]
+    },
+    "filesystem": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/reeinharrrd"
+      ]
+    },
+    "github": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ]
+    },
+    "sequential-thinking": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "context7": {
+      "url": "http://localhost:3005/sse"
+    },
+    "skill-ninja": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "aktsmm/skill-ninja-mcp-server"
+      ]
+    },
+    "duckduckgo": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-duckduckgo"
+      ]
+    },
+    "crawl4ai": {
+      "url": "http://localhost:3008/sse"
+    },
+    "context-awesome": {
+      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
+      "args": [
+        "-y",
+        "bh-rat/context-awesome"
+      ]
+    }
+  }
+}

@@ -61,11 +61,22 @@ run_generate() {
 link_common() {
   section "Linking common files"
 
+  # Docker Environment
+  if [ ! -f "$BRAIN_DIR/docker/.env" ] && [ -f "$BRAIN_DIR/docker/.env.example" ]; then
+    cp "$BRAIN_DIR/docker/.env.example" "$BRAIN_DIR/docker/.env"
+    sed -i "s|HOST_HOME=.*|HOST_HOME=$HOME|g" "$BRAIN_DIR/docker/.env"
+    ok "Docker .env initialized from example"
+  fi
+
   # Claude Code directories
   mkdir -p "$HOME/.claude/agents" "$HOME/.claude/commands"
 
   # Claude Code settings
-  if [ -f "$BRAIN_DIR/adapters/claude-code/settings.json" ] || [ -f "$BRAIN_DIR/adapters/claude-code/settings.docker.json" ]; then
+  # Default to Docker Persistent for a warm-start experience
+  if [ -f "$BRAIN_DIR/adapters/claude-code/settings.persistent.json" ]; then
+    ln -sf "$BRAIN_DIR/adapters/claude-code/settings.persistent.json" "$HOME/.claude/settings.json"
+    ok "Claude Code: Persistent Mode activated"
+  elif [ -f "$BRAIN_DIR/adapters/claude-code/settings.json" ]; then
     # Keep existing if linked, otherwise default to settings.json
     if [ ! -L "$HOME/.claude/settings.json" ]; then
         ln -sf "$BRAIN_DIR/adapters/claude-code/settings.json" "$HOME/.claude/settings.json"
@@ -171,6 +182,26 @@ check_tools() {
   if [ $agents_found -eq 0 ]; then
     warn "No AI agent found in PATH — install at least one (claude, opencode, aider, gemini)"
   fi
+
+  # Docker Pre-pull for Persistent MCPs
+  if command -v docker &>/dev/null; then
+    section "Pre-pulling Docker MCPs (Bootstrap Speedup)"
+    local images=(
+      "node:20-alpine"
+      "mcp/github"
+      "mcp/duckduckgo"
+      "mcp/sequentialthinking"
+      "mcp/google-maps"
+    )
+    for img in "${images[@]}"; do
+      if [[ "$(docker images -q "$img" 2>/dev/null)" == "" ]]; then
+        info "Pulling $img..."
+        docker pull -q "$img" &>/dev/null || warn "Failed to pull $img (skipping)"
+      else
+        ok "$img already present"
+      fi
+    done
+  fi
 }
 
 # ── Git init ──────────────────────────────────────────────────
@@ -222,6 +253,15 @@ detect_os
 run_generate
 link_common
 link_os_specific
+# Centralize and sync MCP configs
+if [ -f "$BRAIN_DIR/scripts/mcp-sync.sh" ]; then
+  bash "$BRAIN_DIR/scripts/mcp-sync.sh"
+fi
 check_tools
 init_git
 print_summary
+
+# Auto-run doctor
+if [ -f "$BRAIN_DIR/scripts/doctor.sh" ]; then
+  bash "$BRAIN_DIR/scripts/doctor.sh"
+fi

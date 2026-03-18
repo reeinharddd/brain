@@ -1,6 +1,6 @@
-## Module: Code Style
+\n## Module: Code Style
 
-### Universal (applies to every language)
+\n### Universal (applies to every language)
 
 **Naming conventions**
 - Variables and functions: descriptive, intent-revealing names
@@ -10,13 +10,13 @@
 - Avoid abbreviations unless universally understood (e.g., `id`, `url`, `api`)
 
 **Function design**
-- Max 30 lines per function as a soft limit — if longer, consider extracting
+- Max 30 lines per function as a soft limit - if longer, consider extracting
 - Single responsibility: one function does one thing
 - Pure functions preferred when possible (no side effects, easier to test)
-- Functions that can fail should communicate failure explicitly (return error/Result, throw exception — document which)
+- Functions that can fail should communicate failure explicitly (return error/Result, throw exception - document which)
 
 **File organization**
-- Imports/dependencies at the top, grouped: stdlib → external → internal
+- Imports/dependencies at the top, grouped: stdlib -> external -> internal
 - Constants and types/interfaces before functions
 - Helper functions after the main function that uses them, or in a separate helpers file
 - Max 300 lines per file as a soft limit
@@ -28,8 +28,8 @@
 - Trailing newline at end of every file
 
 **Complexity**
-- Cyclomatic complexity per function: aim for ≤ 10
-- Nesting depth: ≤ 3 levels. Use early returns to reduce nesting
+- Cyclomatic complexity per function: aim for <= 10
+- Nesting depth: <= 3 levels. Use early returns to reduce nesting
 - Ternary operators: only for simple, readable cases. Never nested ternaries
 
 **Dead code**
@@ -37,7 +37,7 @@
 - Remove unused imports, unused variables, unused functions
 - If something is "for later", open a TODO issue instead of leaving dead code
 
-### Language-specific hints (AI guidance)
+\n### Language-specific hints (AI guidance)
 
 When writing code in any language:
 1. Follow the idiomatic style of THAT language (e.g., error handling in Go vs. Python vs. Rust)

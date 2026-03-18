@@ -1,8 +1,11 @@
 # ═══════════════════════════════════════════════════════════
 #  brain/docker/docker-compose.yml
 #
-#  MCP Stack — all servers run as persistent SSE services
-#  via supergateway (stdio → HTTP bridge)
+#  Note: This stack is currently empty because we pivoted to 
+#  "Docker On-Demand" via direct 'docker run' commands in 
+#  agent settings. This avoids SSE bridge bugs (supergateway).
+#
+#  To run a persistent service, add it back here.
 # ═══════════════════════════════════════════════════════════
 
 name: brain-mcp-stack
@@ -14,94 +17,82 @@ services:
     image: node:20-alpine
     container_name: brain-mcp-memory
     restart: unless-stopped
-    command: >
-      npx -y supergateway 
-      --stdio "npx -y @modelcontextprotocol/server-memory" 
-      --port 8000 --host 0.0.0.0
+    command: npx -y supergateway --port 3001 --stdio "npx -y @modelcontextprotocol/server-memory /root/.local/share/model-context-protocol/server-memory"
     ports:
-      - "${MCP_MEMORY_PORT:-3001}:8000"
+      - "3001:3001"
     volumes:
-      - mcp_memory_data:/data
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      - /home/reeinharrrd/.brain/memory:/root/.local/share/model-context-protocol/server-memory
 
   # ── Filesystem MCP ─────────────────────────────────────────
   mcp-filesystem:
     image: node:20-alpine
     container_name: brain-mcp-filesystem
     restart: unless-stopped
-    command: >
-      npx -y supergateway 
-      --stdio "npx -y @modelcontextprotocol/server-filesystem /workspace" 
-      --port 8000 --host 0.0.0.0
+    command: npx -y supergateway --port 3002 --stdio "npx -y @modelcontextprotocol/server-filesystem /workspace"
     ports:
-      - "${MCP_FILESYSTEM_PORT:-3002}:8000"
+      - "3002:3002"
     volumes:
-      - ${HOST_HOME:-~}:/workspace
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      - /home/reeinharrrd:/workspace
+
+  # ── GitHub MCP ─────────────────────────────────────────────
+  mcp-github:
+    image: node:20-alpine
+    container_name: brain-mcp-github
+    restart: unless-stopped
+    command: npx -y supergateway --port 3004 --stdio "npx -y @modelcontextprotocol/server-github"
+    ports:
+      - "3004:3004"
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
 
   # ── Sequential Thinking MCP ────────────────────────────────
   mcp-sequential-thinking:
     image: node:20-alpine
-    container_name: brain-mcp-sequential
+    container_name: brain-mcp-sequential-thinking
     restart: unless-stopped
-    command: >
-      npx -y supergateway 
-      --stdio "npx -y @modelcontextprotocol/server-sequential-thinking" 
-      --port 8000 --host 0.0.0.0
+    command: npx -y supergateway --port 3003 --stdio "npx -y @modelcontextprotocol/server-sequential-thinking"
     ports:
-      - "${MCP_SEQUENTIAL_PORT:-3003}:8000"
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      - "3003:3003"
 
   # ── Context7 MCP ───────────────────────────────────────────
   mcp-context7:
     image: node:20-alpine
     container_name: brain-mcp-context7
     restart: unless-stopped
-    command: >
-      npx -y supergateway 
-      --stdio "npx -y @upstash/context7-mcp@latest" 
-      --port 8000 --host 0.0.0.0
+    command: npx -y supergateway --port 3005 --stdio "npx -y @modelcontextprotocol/server-context7"
     ports:
-      - "${MCP_CONTEXT7_PORT:-3005}:8000"
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      - "3005:3005"
 
-  # ── GitHub MCP ─────────────────────────────────────────────
-  mcp-github:
-    image: node:20-alpine
-    container_name: brain-mcp-github
-    profiles: [github]
+  # ── Skill-Ninja MCP ────────────────────────────────────────
+  mcp-skill-ninja:
+    image: node:20-bullseye
+    container_name: brain-mcp-skill-ninja
     restart: unless-stopped
-    command: >
-      npx -y supergateway 
-      --stdio "npx -y @modelcontextprotocol/server-github" 
-      --port 8000 --host 0.0.0.0
-    environment:
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    command: npx -y supergateway --port 3006 --stdio "npx -y aktsmm/skill-ninja-mcp-server"
     ports:
-      - "${MCP_GITHUB_PORT:-3004}:8000"
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/sse"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      - "3006:3006"
 
-# ── Volumes ──────────────────────────────────────────────────
-volumes:
-  mcp_memory_data:
-    name: brain-mcp-memory-data
+  # ── DuckDuckGo MCP ──────────────────────────────────────────
+  mcp-duckduckgo:
+    image: node:20-alpine
+    container_name: brain-mcp-duckduckgo
+    restart: unless-stopped
+    command: npx -y supergateway --port 3007 --stdio "npx -y @modelcontextprotocol/server-duckduckgo"
+    ports:
+      - "3007:3007"
+
+  # ── Crawl4AI MCP ────────────────────────────────────────────
+  mcp-crawl4ai:
+    image: node:20-alpine
+    container_name: brain-mcp-crawl4ai
+    restart: unless-stopped
+    command: tail -f /dev/null
+
+  # ── Context-Awesome MCP ─────────────────────────────────────
+  mcp-context-awesome:
+    image: node:20-alpine
+    container_name: brain-mcp-context-awesome
+    restart: unless-stopped
+    command: npx -y supergateway --port 3009 --stdio "npx -y bh-rat/context-awesome"
+    ports:
+      - "3009:3009"

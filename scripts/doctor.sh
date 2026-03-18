@@ -124,21 +124,15 @@ if command -v docker &>/dev/null; then
   opt "docker compose file"    "test -f $BRAIN_DIR/docker/docker-compose.yml"
   opt "docker .env configured" "test -f $BRAIN_DIR/docker/.env"
 
-  # Check if stack is running by testing ports
-  DOCKER_RUNNING=0
-  for port in 3001 3002 3003 3005; do
-    if curl -sf --max-time 1 "http://localhost:$port/sse" &>/dev/null 2>&1; then
-      ((DOCKER_RUNNING++))
-    fi
-  done
-
-  if [ $DOCKER_RUNNING -gt 0 ]; then
-    echo -e "  ${GREEN}✓${RESET} MCP stack running ($DOCKER_RUNNING/4 services healthy)"
-    echo -e "  ${BLUE}→${RESET}  Mode: ${BOLD}Docker${RESET} (URL-based connections)"
+  # Check for On-Demand vs Persistent
+  if grep -q "\"command\": \"docker\"" "$HOME/.claude/settings.json" 2>/dev/null && grep -q "\"run\"" "$HOME/.claude/settings.json" 2>/dev/null; then
+    echo -e "  ${GREEN}✓${RESET} Architecture: ${BOLD}Zero-Background On-Demand${RESET}"
+    echo -e "  ${BLUE}→${RESET}  Tools spawn containers as needed (perfect isolation)."
+    echo -e "     No background SSE bridges required (no more 'Already connected' bugs)."
   else
-    echo -e "  ${YELLOW}⚠${RESET}  MCP stack not running ${YELLOW}(optional)${RESET}"
-    echo -e "  ${BLUE}→${RESET}  Mode: ${BOLD}npx${RESET} (on-demand, spawns per session)"
-    echo -e "     To switch to Docker mode: ~/.brain/docker/start.sh up"
+    echo -e "  ${YELLOW}⚠${RESET}  Not in Docker On-Demand mode ${YELLOW}(optional)${RESET}"
+    echo -e "  ${BLUE}→${RESET}  Mode: ${BOLD}npx / stdio${RESET}"
+    echo -e "     To switch to Docker On-Demand: ln -sf ~/.brain/adapters/claude-code/settings.docker-on-demand.json ~/.claude/settings.json"
     ((WARN++))
   fi
 else

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "memory": { "url": "http://localhost:3001/sse" },
+    "filesystem": { "url": "http://localhost:3002/sse" },
+    "sequential-thinking": { "url": "http://localhost:3003/sse" },
+    "github": { "url": "http://localhost:3004/sse" },
+    "context7": { "url": "http://localhost:3005/sse" },
+    "skill-ninja": { "url": "http://localhost:3006/sse" },
+    "duckduckgo": { "url": "http://localhost:3007/sse" },
+    "crawl4ai": { "url": "http://localhost:3008/sse" },
+    "context-awesome": { "url": "http://localhost:3009/sse" }
+  }
+}

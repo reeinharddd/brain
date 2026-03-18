@@ -49,9 +49,13 @@ cmd_up() {
   echo -e "  ${BOLD}MCP endpoints:${RESET}"
   echo "    memory:   http://localhost:3001/sse"
   echo "    fs:       http://localhost:3002/sse"
-  echo "    thinking: http://localhost:3003/sse"
-  echo "    context7: http://localhost:3005/sse"
-  [ "$github_profile" != "" ] && echo "    github:   http://localhost:3004/sse"
+  echo "    sequential: http://localhost:3003/sse"
+  echo "    github:     http://localhost:3004/sse"
+  echo "    context7:   http://localhost:3005/sse"
+  echo "    ninja:      http://localhost:3006/sse"
+  echo "    duckgo:     http://localhost:3007/sse"
+  echo "    crawl4ai:   http://localhost:3008/sse"
+  echo "    awesome:    http://localhost:3009/sse"
   echo ""
   echo -e "  ${BOLD}Next:${RESET} switch your Claude Code settings to Docker mode:"
   echo "    ln -sf ~/.brain/adapters/claude-code/settings.docker.json ~/.claude/settings.json"
@@ -75,8 +79,8 @@ cmd_status() {
 
   echo ""
   echo -e "  ${BOLD}Health check:${RESET}"
-  local ports=(3001 3002 3003 3005)
-  local names=("memory" "filesystem" "sequential" "context7")
+  local ports=(3001 3002 3003 3004 3005 3006 3007 3008 3009)
+  local names=("memory" "filesystem" "sequential" "github" "context7" "ninja" "duckgo" "crawl4ai" "awesome")
   for i in "${!ports[@]}"; do
     local port="${ports[$i]}"
     local name="${names[$i]}"

@@ -5,9 +5,9 @@ mcps:
     required: true
     profile: [minimal, standard, full]
     purpose: Persistent in-session and cross-session memory via knowledge graph
-    when_to_use: always — provides the memory layer for all agents
+    when_to_use: always - provides the memory layer for all agents
     setup: |
-      # No install needed — runs via npx
+      # No install needed - runs via npx
       npx -y @modelcontextprotocol/server-memory
     notes: Official MCP memory server. Stores entities and relations in a local JSON file.
 
@@ -41,7 +41,7 @@ mcps:
     required: false
     profile: [standard, full]
     env_required: [GITHUB_TOKEN]
-    purpose: GitHub API operations — PRs, issues, repo management
+    purpose: GitHub API operations - PRs, issues, repo management
     when_to_use: when working with GitHub repositories programmatically
     setup: |
       export GITHUB_TOKEN=your_token
@@ -55,7 +55,7 @@ mcps:
     purpose: Browser automation, E2E testing, visual verification, scraping
     when_to_use: frontend testing, capturing UI state, browser-based workflows
     setup: "npx -y @playwright/mcp"
-    notes: Heavy — only add to per-project configs, not global.
+    notes: Heavy - only add to per-project configs, not global.
 
   postgres:
     package: "@modelcontextprotocol/server-postgres"

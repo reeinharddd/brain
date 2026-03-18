@@ -1,0 +1,79 @@
+skills:
+
+  # ── Internal Brain Skills (Scripts/Rules) ──────────────────
+  engram:
+    type: internal
+    path: ~/.brain/memory/engram/
+    purpose: Long-term memory management and cross-session context sync
+    when_to_use: at session start and when a new architectural decision is made
+    scripts: [engram.py]
+    capabilities: [save_decision, retrieve_context, group_concepts]
+
+  project-initializer:
+    type: internal
+    path: ~/.brain/skills/project-initializer/
+    purpose: Rapidly scaffold new project structures based on reeinharrrd's standards
+    when_to_use: at the start of any new repo creation
+    scripts: [scaffold.sh]
+    capabilities: [create_tree, generate_readme, set_linters]
+
+  commit-styler:
+    type: internal
+    path: ~/.brain/skills/git/
+    purpose: Automated enforcement of Conventional Commits
+    when_to_use: Finalizing any coding task to ensure history quality
+    capabilities: [format_msg, check_breaking, assign_scope]
+
+  # ── External AI Skills (MCP / Agentic) ──────────────────────
+  data-processor:
+    type: external
+    path: ~/.brain/skills/data-processor/
+    purpose: JSON/CSV/XML cleaning and restructuring for LLM consumption
+    when_to_use: Handling large datasets or misformatted config files
+    capabilities: [clean_json, convert_csv_to_json, redact_pii]
+
+  security-guard:
+    type: external
+    path: ~/.brain/skills/security-guard/
+    purpose: Automated OWASP-top-10 scanning and secret leak detection
+    when_to_use: Every time a new external dependency is added
+    capabilities: [scan_secrets, audit_dependencies, check_cors]
+
+  recursive-researcher:
+    type: external
+    path: ~/.brain/skills/researcher/
+    purpose: Multi-step depth-first research and fact extraction
+    when_to_use: Investigating complex technical topics or cross-referencing sources
+    capabilities: [crawl_depth, extract_facts, generate_summary]
+
+  site-analyzer:
+    type: external
+    path: ~/.brain/skills/site-analyzer/
+    purpose: Depth-first crawling of sources.md targets to discover new MCPs/Skills
+    when_to_use: Automating the self-improvement loop of the brain repo
+    scripts: [analyze.sh]
+    capabilities: [parse_sources, crawl_depth, extract_definitions]
+
+  skill-ninja:
+    type: external
+    purpose: Automated discovery and installation of agent skills (SKILL.md)
+    when_to_use: Expanding capabilities with community-contributed skills
+    capabilities: [search_skills, install_skill, list_installed]
+
+  duckduckgo:
+    type: external
+    purpose: Privacy-preserving free web search
+    when_to_use: Researching real-time data without API keys
+    capabilities: [web_search, answer_query]
+
+  crawl4ai:
+    type: external
+    purpose: Multi-page AI-friendly crawling and markdown extraction
+    when_to_use: Depth-first research of entire domains or repositories
+    capabilities: [crawl_site, extract_content, generate_markdown]
+
+  context-awesome:
+    type: external
+    purpose: MCP interface for curated awesome lists and resource discovery
+    when_to_use: Researching high-quality tools, libraries, or patterns
+    capabilities: [search_awesome, get_resource_details]

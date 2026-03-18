@@ -1,15 +1,15 @@
-## Module: Git
+\n## Module: Git
 
-### Commit messages
+\n### Commit messages
 
 Use Conventional Commits format:
-```
+```text
 <type>(<scope>): <short description>
 
 [optional body]
 
 [optional footer]
-```
+```text
 
 **Types**: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
 
@@ -20,23 +20,23 @@ Use Conventional Commits format:
 - Reference issues: `Closes #123`, `Fixes #456`
 
 **Good examples**:
-```
+```text
 feat(auth): add JWT refresh token rotation
 
 Prevents token replay attacks by invalidating the old refresh token
 when a new one is issued. The old token becomes invalid immediately.
 
 Closes #89
-```
+```text
 
-```
+```text
 fix(api): handle null user_id in payment endpoint
 
 Caused 500 errors when unauthenticated requests reached the payment
 handler. Added early return with 401 response.
-```
+```text
 
-### Branch strategy
+\n## Branch strategy
 
 - `main` / `master`: always deployable, protected
 - `develop`: integration branch (if using GitFlow)
@@ -44,16 +44,16 @@ handler. Added early return with 401 response.
 - Fix branches: `fix/<issue-number>-<description>`
 - Hotfixes: `hotfix/<description>`
 
-### Workflow rules
+\n## Workflow rules
 
-1. **Never force-push to main/master** — use revert commits instead
-2. **Never commit secrets** — use pre-commit hooks or `.gitignore`
-3. **Keep commits atomic** — each commit should be one logical change
-4. **Review your diff before committing** — `git diff --staged`
-5. **Pull before pushing** — always fetch/pull to avoid diverged history
+1. **Never force-push to main/master** - use revert commits instead
+2. **Never commit secrets** - use pre-commit hooks or `.gitignore`
+3. **Keep commits atomic** - each commit should be one logical change
+4. **Review your diff before committing** - `git diff --staged`
+5. **Pull before pushing** - always fetch/pull to avoid diverged history
 6. **Sign commits** when working on security-sensitive projects
 
-### PR / MR conventions
+\n## PR / MR conventions
 
 - Title: same format as commit message
 - Description: What changed, why, how to test
@@ -62,9 +62,11 @@ handler. Added early return with 401 response.
 - Don't merge your own PRs without review (unless solo project)
 - Keep PRs small: aim for < 400 lines changed per PR
 
-### Brain repo specific
+\n## Brain repo specific
 
 When updating `~/.brain/`:
+
+
 - Commit prefix: `brain: ` (e.g., `brain: add debugging agent`)
 - Always run `adapters/generate.sh` after modifying `rules/`
 - Commit the generated artifacts alongside the source change
