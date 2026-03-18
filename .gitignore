@@ -39,3 +39,8 @@ desktop.ini
 *.tmp
 *.log
 /tmp/
+
+# Local generated context and run artifacts
+/.brain/
+/logs/*
+!/logs/.gitkeep

@@ -1,164 +1,176 @@
 #!/bin/bash
-# ═══════════════════════════════════════════════════════════
-#  brain/doctor.sh — Full diagnostic of the brain repo chain
-#  Usage: ~/.brain/scripts/doctor.sh [--fix]
-#  Exit codes: 0 = all good, 1 = failures found
-# ═══════════════════════════════════════════════════════════
+# doctor.sh - integrity and runtime checks for the brain repo
 
-BRAIN_DIR="$HOME/.brain"
-PASS=0; WARN=0; FAIL=0
+set -euo pipefail
 
-# ── Colors ───────────────────────────────────────────────────
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-BLUE='\033[0;34m'; BOLD='\033[1m'; RESET='\033[0m'
+BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
+FIX=0
+VERBOSE=0
+JSON_OUTPUT=0
+PASS=0
+FAIL=0
+WARN=0
+RESULTS=()
 
-section() { echo -e "\n${BOLD}── $1${RESET}"; }
+for arg in "$@"; do
+  case "$arg" in
+    --fix) FIX=1 ;;
+    --verbose) VERBOSE=1 ;;
+    --json) JSON_OUTPUT=1 ;;
+    *)
+      echo "ERROR: unknown option: $arg" >&2
+      exit 1
+      ;;
+  esac
+done
 
-check() {
-  local label="$1"; local cmd="$2"
-  if eval "$cmd" &>/dev/null 2>&1; then
-    echo -e "  ${GREEN}✓${RESET} $label"; ((PASS++))
+json_escape() {
+  python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
+}
+
+record_result() {
+  local name="$1"
+  local status="$2"
+  local severity="${3:-}"
+  local detail="${4:-}"
+  local entry
+
+  if [ -n "$severity" ]; then
+    entry=$(printf '{"name":%s,"status":"%s","severity":"%s","detail":%s}' \
+      "$(printf '%s' "$name" | json_escape)" \
+      "$status" \
+      "$severity" \
+      "$(printf '%s' "$detail" | json_escape)")
   else
-    echo -e "  ${RED}✗${RESET} $label"; ((FAIL++))
+    entry=$(printf '{"name":%s,"status":"%s","detail":%s}' \
+      "$(printf '%s' "$name" | json_escape)" \
+      "$status" \
+      "$(printf '%s' "$detail" | json_escape)")
+  fi
+  RESULTS+=("$entry")
+}
+
+print_line() {
+  local prefix="$1"
+  local name="$2"
+  local detail="${3:-}"
+  if [ "$JSON_OUTPUT" -eq 0 ]; then
+    if [ -n "$detail" ]; then
+      echo "  $prefix $name - $detail"
+    else
+      echo "  $prefix $name"
+    fi
   fi
 }
 
-opt() {
-  local label="$1"; local cmd="$2"
-  if eval "$cmd" &>/dev/null 2>&1; then
-    echo -e "  ${GREEN}✓${RESET} $label"; ((PASS++))
+assert_check() {
+  local name="$1"
+  local command="$2"
+  local severity="${3:-error}"
+  local detail="${4:-}"
+
+  if eval "$command" >/dev/null 2>&1; then
+    PASS=$((PASS + 1))
+    record_result "$name" "pass" "" "$detail"
+    [ "$VERBOSE" -eq 1 ] && print_line "PASS" "$name" "$detail"
   else
-    echo -e "  ${YELLOW}⚠${RESET}  $label ${YELLOW}(optional)${RESET}"; ((WARN++))
+    if [ "$severity" = "warning" ]; then
+      WARN=$((WARN + 1))
+      record_result "$name" "warn" "warning" "$detail"
+      print_line "WARN" "$name" "$detail"
+    else
+      FAIL=$((FAIL + 1))
+      record_result "$name" "fail" "error" "$detail"
+      print_line "FAIL" "$name" "$detail"
+    fi
   fi
 }
 
-# ── Core tools ───────────────────────────────────────────────
-section "Core tools"
-check "git"           "command -v git"
-check "node >= 18"    "node -e 'process.exit(parseInt(process.versions.node) >= 18 ? 0 : 1)'"
-opt   "go"            "command -v go"
-opt   "uv (python)"   "command -v uv"
-opt   "docker"        "command -v docker"
-
-# ── Brain repo integrity ──────────────────────────────────────
-section "Brain repo integrity"
-check "~/.brain exists"         "test -d $BRAIN_DIR"
-check "rules/canonical.md"      "test -f $BRAIN_DIR/rules/canonical.md"
-check "adapters/generate.sh"    "test -f $BRAIN_DIR/adapters/generate.sh"
-check "install.sh"              "test -f $BRAIN_DIR/scripts/install.sh"
-check "git repo initialized"    "test -d $BRAIN_DIR/.git"
-opt   "remote origin set"       "git -C $BRAIN_DIR remote get-url origin"
-
-# ── Rule modules ─────────────────────────────────────────────
-section "Rule modules"
-for module in communication code-style git security workflow; do
-  check "modules/$module.md" "test -f $BRAIN_DIR/rules/modules/$module.md"
-done
-
-# ── Generated adapters ───────────────────────────────────────
-section "Generated adapters"
-check "claude-code/CLAUDE.md"        "test -f $BRAIN_DIR/adapters/claude-code/CLAUDE.md"
-check "cursor/.cursorrules"          "test -f $BRAIN_DIR/adapters/cursor/.cursorrules"
-check "windsurf/.windsurfrules"      "test -f $BRAIN_DIR/adapters/windsurf/.windsurfrules"
-check "gemini/GEMINI.md"             "test -f $BRAIN_DIR/adapters/gemini/GEMINI.md"
-opt   "opencode/opencode.json"       "test -f $BRAIN_DIR/adapters/opencode/opencode.json"
-opt   "aider/.aider.conf.yml"        "test -f $BRAIN_DIR/adapters/aider/.aider.conf.yml"
-opt   "cline instructions"           "test -f $BRAIN_DIR/adapters/cline/cline_custom_instructions.md"
-
-# ── Symlinks ─────────────────────────────────────────────────
-section "Active symlinks"
-check "CLAUDE.md → ~/.claude/CLAUDE.md"           "test -L $HOME/.claude/CLAUDE.md"
-opt   "settings.json → ~/.claude/settings.json"   "test -L $HOME/.claude/settings.json"
-check ".cursorrules → ~/.cursorrules"             "test -L $HOME/.cursorrules"
-check ".windsurfrules → ~/.windsurfrules"         "test -L $HOME/.windsurfrules"
-check "GEMINI.md → ~/.gemini/GEMINI.md"           "test -L $HOME/.gemini/GEMINI.md"
-opt   "aider → ~/.aider.conf.yml"                 "test -L $HOME/.aider.conf.yml"
-opt   "opencode → ~/.config/opencode/"            "test -L $HOME/.config/opencode/opencode.json"
-
-# ── AI agents ────────────────────────────────────────────────
-section "AI agents (at least one required)"
-opt "claude (Claude Code)"     "command -v claude"
-opt "opencode"                 "command -v opencode"
-opt "aider"                    "command -v aider"
-opt "gemini (Gemini CLI)"      "command -v gemini"
-opt "cursor"                   "command -v cursor"
-opt "cline (VS Code ext)"      "code --list-extensions 2>/dev/null | grep -q 'saoudrizwan.claude-dev'"
-
-# ── Agents defined ───────────────────────────────────────────
-section "Global agents defined"
-for agent in orchestrator researcher planner designer reviewer debugger refactor documenter guardian; do
-  opt "agents/$agent.md" "test -f $BRAIN_DIR/agents/$agent.md"
-done
-
-# ── Commands defined ─────────────────────────────────────────
-section "Global commands defined"
-for cmd in plan review research handover update-brain standup; do
-  opt "commands/$cmd.md" "test -f $BRAIN_DIR/commands/$cmd.md"
-done
-
-# ── MCP config ───────────────────────────────────────────────
-section "MCP configuration"
-opt "registry.yml"            "test -f $BRAIN_DIR/mcp/registry.yml"
-opt "profiles/minimal.json"   "test -f $BRAIN_DIR/mcp/profiles/minimal.json"
-opt "profiles/standard.json"  "test -f $BRAIN_DIR/mcp/profiles/standard.json"
-opt "settings.json references MCP" "grep -q 'mcpServers' $HOME/.claude/settings.json 2>/dev/null"
-
-# ── Memory ───────────────────────────────────────────────────
-section "Memory"
-opt "memory/manifest.json"    "test -f $BRAIN_DIR/memory/manifest.json"
-opt "memory/chunks/ exists"   "test -d $BRAIN_DIR/memory/chunks"
-opt "MCP memory reachable"    "npx -y @modelcontextprotocol/server-memory --help 2>/dev/null | head -1"
-
-# ── Providers ────────────────────────────────────────────────
-section "Providers"
-opt "providers/providers.yml" "test -f $BRAIN_DIR/providers/providers.yml"
-
-# ── Hooks ────────────────────────────────────────────────────
-section "Hooks"
-opt "pre-tool-use/block-env-writes.sh"   "test -f $BRAIN_DIR/hooks/pre-tool-use/block-env-writes.sh"
-opt "post-tool-use/run-linter.sh"        "test -f $BRAIN_DIR/hooks/post-tool-use/run-linter.sh"
-
-# ── Docker MCP Stack ─────────────────────────────────────────
-section "Docker MCP Stack (optional — all tools always available)"
-if command -v docker &>/dev/null; then
-  opt "docker compose file"    "test -f $BRAIN_DIR/docker/docker-compose.yml"
-  opt "docker .env configured" "test -f $BRAIN_DIR/docker/.env"
-
-  # Check for On-Demand vs Persistent
-  if grep -q "\"command\": \"docker\"" "$HOME/.claude/settings.json" 2>/dev/null && grep -q "\"run\"" "$HOME/.claude/settings.json" 2>/dev/null; then
-    echo -e "  ${GREEN}✓${RESET} Architecture: ${BOLD}Zero-Background On-Demand${RESET}"
-    echo -e "  ${BLUE}→${RESET}  Tools spawn containers as needed (perfect isolation)."
-    echo -e "     No background SSE bridges required (no more 'Already connected' bugs)."
-  else
-    echo -e "  ${YELLOW}⚠${RESET}  Not in Docker On-Demand mode ${YELLOW}(optional)${RESET}"
-    echo -e "  ${BLUE}→${RESET}  Mode: ${BOLD}npx / stdio${RESET}"
-    echo -e "     To switch to Docker On-Demand: ln -sf ~/.brain/adapters/claude-code/settings.docker-on-demand.json ~/.claude/settings.json"
-    ((WARN++))
+if [ "$FIX" -eq 1 ]; then
+  if [ -x "$BRAIN_DIR/adapters/generate.sh" ]; then
+    bash "$BRAIN_DIR/adapters/generate.sh" >/dev/null 2>&1 || true
   fi
-else
-  echo -e "  ${YELLOW}⚠${RESET}  docker not found — running in npx mode ${YELLOW}(optional)${RESET}"
-  ((WARN++))
 fi
 
-# ── Summary ──────────────────────────────────────────────────
-echo ""
-echo "────────────────────────────────────────────"
-if [ $FAIL -gt 0 ]; then
-  echo -e "  ${RED}${BOLD}✗ Result: $PASS passed · $WARN warnings · $FAIL failed${RESET}"
+assert_check "brain_dir_exists" "[ -d '$BRAIN_DIR' ]"
+assert_check "git_repo_exists" "[ -d '$BRAIN_DIR/.git' ]"
+assert_check "canonical_exists" "[ -s '$BRAIN_DIR/rules/canonical.md' ]"
+assert_check "modules_dir_exists" "[ -d '$BRAIN_DIR/rules/modules' ]"
+assert_check "compiled_manifest_exists" "[ -f '$BRAIN_DIR/rules/compiled/manifest.md' ]"
+assert_check "build_rules_executable" "[ -x '$BRAIN_DIR/scripts/build-rules.sh' ]"
+
+assert_check "orchestrator_exists" "[ -f '$BRAIN_DIR/agents/orchestrator.md' ]"
+assert_check "researcher_exists" "[ -f '$BRAIN_DIR/agents/researcher.md' ]"
+assert_check "planner_exists" "[ -f '$BRAIN_DIR/agents/planner.md' ]"
+assert_check "architect_exists" "[ -f '$BRAIN_DIR/agents/architect.md' ]"
+assert_check "implementer_exists" "[ -f '$BRAIN_DIR/agents/implementer.md' ]"
+assert_check "reviewer_exists" "[ -f '$BRAIN_DIR/agents/reviewer.md' ]"
+assert_check "debugger_exists" "[ -f '$BRAIN_DIR/agents/debugger.md' ]"
+
+assert_check "generate_sh_exists" "[ -x '$BRAIN_DIR/adapters/generate.sh' ]"
+assert_check "detect_stack_exists" "[ -x '$BRAIN_DIR/scripts/detect-stack.sh' ]"
+assert_check "render_skill_context_exists" "[ -x '$BRAIN_DIR/scripts/render-skill-context.sh' ]"
+assert_check "memory_namespace_exists" "[ -x '$BRAIN_DIR/scripts/memory-namespace.sh' ]"
+assert_check "contextualize_exists" "[ -x '$BRAIN_DIR/skills/codebase-contextualizer/contextualize.sh' ]"
+assert_check "handover_exists" "[ -f '$BRAIN_DIR/commands/handover.md' ]"
+assert_check "guardian_runner_exists" "[ -x '$BRAIN_DIR/guardian/run.sh' ]"
+assert_check "guardian_wrapper_exists" "[ -x '$BRAIN_DIR/scripts/guardian.sh' ]"
+assert_check "install_hooks_exists" "[ -x '$BRAIN_DIR/scripts/install-hooks.sh' ]"
+assert_check "guardian_env_example_exists" "[ -f '$BRAIN_DIR/providers/guardian.env.example' ]"
+assert_check "pre_commit_exists" "[ -f '$BRAIN_DIR/hooks/pre-commit.sh' ]"
+
+assert_check "git_available" "command -v git"
+assert_check "bash_available" "command -v bash"
+assert_check "curl_available" "command -v curl"
+assert_check "python3_available" "command -v python3"
+assert_check "node_available" "command -v node" "warning"
+assert_check "docker_available" "command -v docker" "warning"
+
+assert_check "claude_adapter_exists" "[ -f '$BRAIN_DIR/adapters/claude-code/CLAUDE.md' ]"
+assert_check "gemini_adapter_exists" "[ -f '$BRAIN_DIR/adapters/gemini/GEMINI.md' ]"
+assert_check "cursor_adapter_exists" "[ -f '$BRAIN_DIR/adapters/cursor/.cursorrules' ]"
+assert_check "opencode_adapter_exists" "[ -f '$BRAIN_DIR/adapters/opencode/opencode.json' ]" "warning"
+
+assert_check "rules_hook_injects_modules" "grep -q 'rules/modules' '$BRAIN_DIR/hooks/pre-tool-use/inject-global-rules.sh'"
+assert_check "sdd_flow_defined" "grep -q 'Explore -> Propose -> Spec' '$BRAIN_DIR/docs/sdd/flow.md'"
+assert_check "memory_rule_has_namespace" "grep -q 'memory-namespace.sh' '$BRAIN_DIR/rules/modules/memory.md'"
+assert_check "memory_protocol_exists" "[ -f '$BRAIN_DIR/rules/modules/memory-protocol.md' ]"
+assert_check "handover_mentions_engram" "grep -Eiq 'engram|mem_session_summary' '$BRAIN_DIR/commands/handover.md'"
+assert_check "guardian_has_head_fallback" "grep -q 'AUTO_FALLBACK_TO_HEAD' '$BRAIN_DIR/guardian/run.sh'"
+
+assert_check "stack_detection_runs" "bash '$BRAIN_DIR/scripts/detect-stack.sh' '$BRAIN_DIR' >/dev/null"
+assert_check "skill_context_write_runs" "bash '$BRAIN_DIR/scripts/render-skill-context.sh' --write '$BRAIN_DIR' >/dev/null"
+assert_check "context_pack_build_runs" "bash '$BRAIN_DIR/skills/codebase-contextualizer/contextualize.sh' '$BRAIN_DIR' >/dev/null"
+assert_check "memory_test_runs" "bash '$BRAIN_DIR/scripts/test-memory.sh' >/dev/null" "warning"
+assert_check "stdio_memory_handshake" "bash '$BRAIN_DIR/scripts/test-stdio-mcp.sh' memory >/dev/null" "warning"
+assert_check "stdio_filesystem_handshake" "bash '$BRAIN_DIR/scripts/test-stdio-mcp.sh' filesystem >/dev/null" "warning"
+assert_check "stdio_sequential_handshake" "bash '$BRAIN_DIR/scripts/test-stdio-mcp.sh' sequential >/dev/null" "warning"
+assert_check "stdio_context7_handshake" "bash '$BRAIN_DIR/scripts/test-stdio-mcp.sh' context7 >/dev/null" "warning"
+
+assert_check "vector_config_exists" "[ -f '$BRAIN_DIR/memory/vector-config.json' ]" "warning"
+assert_check "vector_sync_script_exists" "[ -x '$BRAIN_DIR/scripts/vector-sync-qdrant.sh' ]" "warning"
+assert_check "vector_context_index_exists" "[ -f '$BRAIN_DIR/.brain/codebase-context.ndjson' ]" "warning"
+assert_check "vector_http_reachable" "curl -sf http://localhost:6333/collections >/dev/null" "warning" "qdrant live check"
+
+TOTAL=$((PASS + FAIL + WARN))
+
+if [ "$JSON_OUTPUT" -eq 1 ]; then
+  printf '{"total":%d,"pass":%d,"fail":%d,"warn":%d,"results":[%s]}\n' \
+    "$TOTAL" "$PASS" "$FAIL" "$WARN" "$(IFS=,; echo "${RESULTS[*]}")"
+else
   echo ""
-  echo "  To fix failures:"
-  echo "    bash ~/.brain/scripts/install.sh"
-  echo ""
+  echo "Brain Doctor"
+  echo "Total: $TOTAL  Pass: $PASS  Fail: $FAIL  Warn: $WARN"
+  if [ "$FAIL" -gt 0 ]; then
+    echo "Status: FAIL"
+  elif [ "$WARN" -gt 0 ]; then
+    echo "Status: WARN"
+  else
+    echo "Status: PASS"
+  fi
+fi
+
+if [ "$FAIL" -gt 0 ]; then
   exit 1
-elif [ $WARN -gt 0 ]; then
-  echo -e "  ${YELLOW}${BOLD}⚠ Result: $PASS passed · $WARN warnings · 0 failed${RESET}"
-  echo ""
-  echo "  Warnings are optional tools/integrations not yet set up."
-  echo "  Add them when needed. Run install.sh if you just installed something."
-  exit 0
-else
-  echo -e "  ${GREEN}${BOLD}✓ Result: $PASS passed · 0 warnings · 0 failed${RESET}"
-  echo ""
-  echo "  Brain repo is fully operational."
-  exit 0
 fi
+exit 0

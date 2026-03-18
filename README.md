@@ -50,6 +50,44 @@ bash ~/.brain/install.sh
 bash ~/.brain/doctor.sh
 ```
 
+## Operating Modes
+
+The stable runtime path is:
+
+- Core MCPs via `stdio` or docker on-demand
+- Qdrant as the only persistent helper service
+
+Bring up the persistent helper:
+
+```bash
+bash ~/.brain/docker/start.sh up
+```
+
+Check health:
+
+```bash
+bash ~/.brain/docker/start.sh status
+bash ~/.brain/scripts/test-docker-mcp.sh
+```
+
+The legacy SSE compose stack is experimental and should not be treated as the default production path.
+
+## Real Environment Validation
+
+Before a push intended for real-world testing:
+
+```bash
+bash ~/.brain/scripts/smoke-real-env.sh
+bash ~/.brain/scripts/benchmark-brain.sh
+```
+
+Artifacts are written under:
+
+- `~/.brain/logs/real-runs/`
+- `~/.brain/logs/benchmarks/`
+
+Use [real-env-metrics-template.md](/home/reeinharrrd/.brain/docs/reports/real-env-metrics-template.md) to compare runs and track regressions.
+
 ## Update rules
 
 ```bash
