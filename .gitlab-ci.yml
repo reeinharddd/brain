@@ -1,0 +1,17 @@
+stages:
+  - review
+
+guardian:
+  stage: review
+  image: python:3.11
+  before_script:
+    - apt-get update && apt-get install -y git
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" --depth=1 || true
+  script:
+    - |
+      if [ -n "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-}" ]; then
+        RANGE="origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}...HEAD"
+      else
+        RANGE="HEAD~1...HEAD"
+      fi
+      bash guardian/run.sh --diff-range "$RANGE" --pr-mode --threshold critical
