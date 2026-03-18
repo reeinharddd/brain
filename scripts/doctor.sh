@@ -72,7 +72,9 @@ assert_check() {
   if eval "$command" >/dev/null 2>&1; then
     PASS=$((PASS + 1))
     record_result "$name" "pass" "" "$detail"
-    [ "$VERBOSE" -eq 1 ] && print_line "PASS" "$name" "$detail"
+    if [ "$VERBOSE" -eq 1 ]; then
+      print_line "PASS" "$name" "$detail"
+    fi
   else
     if [ "$severity" = "warning" ]; then
       WARN=$((WARN + 1))

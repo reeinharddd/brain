@@ -40,7 +40,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/reeinharrrd/.brain/hooks/pre-tool-use/block-env-writes.sh"
+            "command": "bash",
+            "args": ["-lc", "exec bash \"$HOME/.brain/hooks/pre-tool-use/block-env-writes.sh\""]
           }
         ]
       }
@@ -51,7 +52,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/reeinharrrd/.brain/hooks/post-tool-use/run-linter.sh"
+            "command": "bash",
+            "args": ["-lc", "exec bash \"$HOME/.brain/hooks/post-tool-use/run-linter.sh\""]
           }
         ]
       }

@@ -13,12 +13,26 @@ set -euo pipefail
 BRAIN_DIR="$HOME/.brain"
 SOURCE="$BRAIN_DIR/rules/canonical.md"
 MODULES_DIR="$BRAIN_DIR/rules/modules"
-NPX_CMD="/home/reeinharrrd/.local/bin/npx-nvm" # Use wrapper to avoid ENOENT in IDEs
 BUILD_RULES_SCRIPT="$BRAIN_DIR/scripts/build-rules.sh"
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BOLD='\033[1m'; RESET='\033[0m'
 ok()   { echo -e "  ${GREEN}✓${RESET} $1"; }
 warn() { echo -e "  ${YELLOW}⚠${RESET}  $1"; }
+json_string() {
+  python3 -c 'import json, sys; print(json.dumps(sys.argv[1]))' "$1"
+}
+
+PORTABLE_NPX_SHELL='if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec "$NPX_BIN"'
+PORTABLE_BASH_CMD=$(json_string "bash")
+PORTABLE_LC_ARG=$(json_string "-lc")
+PORTABLE_MEMORY_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @modelcontextprotocol/server-memory \"\$HOME/.brain/memory\"")
+PORTABLE_FILESYSTEM_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @modelcontextprotocol/server-filesystem \"\$HOME\"")
+PORTABLE_SEQUENTIAL_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @modelcontextprotocol/server-sequential-thinking")
+PORTABLE_CONTEXT7_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @upstash/context7-mcp@latest")
+PORTABLE_GITHUB_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @modelcontextprotocol/server-github")
+PORTABLE_BLOCK_ENV_CMD=$(json_string "exec bash \"\$HOME/.brain/hooks/pre-tool-use/block-env-writes.sh\"")
+PORTABLE_RUN_LINTER_CMD=$(json_string "exec bash \"\$HOME/.brain/hooks/post-tool-use/run-linter.sh\"")
+PORTABLE_HOOK_BASH_CMD=$(json_string "bash")
 
 echo -e "\n${BOLD}── Generating rule adapters${RESET}"
 
@@ -125,24 +139,24 @@ OPENCODE_CONTENT=$(cat <<JSON
   "systemPrompt": $ESCAPED_RULES,
   "mcpServers": {
     "memory": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-memory", "${BRAIN_DIR}/memory"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_MEMORY_CMD]
     },
     "filesystem": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_FILESYSTEM_CMD]
     },
     "sequential-thinking": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_SEQUENTIAL_CMD]
     },
     "context7": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_CONTEXT7_CMD]
     },
     "github": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-github"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
     },
     "skill-ninja": {
       "command": "docker",
@@ -175,24 +189,24 @@ GLOBAL_MCP_CONTENT=$(cat <<JSON
 {
   "mcpServers": {
     "memory": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-memory", "${BRAIN_DIR}/memory"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_MEMORY_CMD]
     },
     "filesystem": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_FILESYSTEM_CMD]
     },
     "sequential-thinking": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_SEQUENTIAL_CMD]
     },
     "context7": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_CONTEXT7_CMD]
     },
     "github": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-github"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
     },
     "skill-ninja": {
       "command": "docker",
@@ -221,24 +235,24 @@ GLOBAL_STDIO_MCP_CONTENT=$(cat <<JSON
 {
   "mcpServers": {
     "memory": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-memory", "${BRAIN_DIR}/memory"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_MEMORY_CMD]
     },
     "filesystem": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_FILESYSTEM_CMD]
     },
     "sequential-thinking": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_SEQUENTIAL_CMD]
     },
     "context7": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_CONTEXT7_CMD]
     },
     "github": {
-      "command": "$NPX_CMD",
-      "args": ["-y", "@modelcontextprotocol/server-github"]
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
     },
     "skill-ninja": {
       "command": "docker",
@@ -258,6 +272,113 @@ JSON
 )
 write_adapter "$BRAIN_DIR/mcp/global-config-stdio.json" "$GLOBAL_STDIO_MCP_CONTENT"
 write_adapter "$BRAIN_DIR/adapters/claude-desktop/claude_desktop_config.json" "$GLOBAL_STDIO_MCP_CONTENT"
+
+# ═══════════════════════════════════════════════════════════
+#  10. Claude Code persistent and docker settings
+# ═══════════════════════════════════════════════════════════
+CLAUDE_PERSISTENT_CONTENT=$(cat <<JSON
+{
+  "//": "Persistent Mode - Hybrid stable MCP setup.",
+  "//2": "To activate: ln -sf ~/.brain/adapters/claude-code/settings.persistent.json ~/.claude/settings.json",
+  "mcpServers": {
+    "memory": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_MEMORY_CMD]
+    },
+    "filesystem": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_FILESYSTEM_CMD]
+    },
+    "github": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
+    },
+    "sequential-thinking": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_SEQUENTIAL_CMD]
+    },
+    "context7": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_CONTEXT7_CMD]
+    },
+    "skill-ninja": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
+    },
+    "duckduckgo": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "mcp/duckduckgo:latest"]
+    },
+    "context-awesome": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "bh-rat/context-awesome:latest"]
+    }
+  }
+}
+JSON
+)
+write_adapter "$BRAIN_DIR/adapters/claude-code/settings.persistent.json" "$CLAUDE_PERSISTENT_CONTENT"
+
+CLAUDE_DOCKER_CONTENT=$(cat <<JSON
+{
+  "//": "Docker mode - Hybrid stable MCP setup without SSE bridge dependency.",
+  "//2": "Switch to this with: ln -sf ~/.brain/adapters/claude-code/settings.docker.json ~/.claude/settings.json",
+  "mcpServers": {
+    "memory": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_MEMORY_CMD]
+    },
+    "filesystem": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_FILESYSTEM_CMD]
+    },
+    "sequential-thinking": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_SEQUENTIAL_CMD]
+    },
+    "context7": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_CONTEXT7_CMD]
+    },
+    "github": {
+      "command": $PORTABLE_BASH_CMD,
+      "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
+    }
+  },
+  "permissions": {
+    "allow": ["Bash", "Read", "Write", "WebFetch"],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": $PORTABLE_HOOK_BASH_CMD,
+            "args": [$PORTABLE_LC_ARG, $PORTABLE_BLOCK_ENV_CMD]
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": $PORTABLE_HOOK_BASH_CMD,
+            "args": [$PORTABLE_LC_ARG, $PORTABLE_RUN_LINTER_CMD]
+          }
+        ]
+      }
+    ]
+  }
+}
+JSON
+)
+write_adapter "$BRAIN_DIR/adapters/claude-code/settings.docker.json" "$CLAUDE_DOCKER_CONTENT"
 ok "mcp/global-config-stdio.json + claude-desktop (Hybrid stdio)"
 
 # ── GitHub Copilot ──────────────────────────────────────────

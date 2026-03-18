@@ -1,12 +1,12 @@
 # Compiled Rules Manifest
 
-- Source: /home/reeinharrrd/.brain/rules/canonical.md
+- Source: rules/canonical.md
 - Modules:
-  - /home/reeinharrrd/.brain/rules/modules/code-style.md
-  - /home/reeinharrrd/.brain/rules/modules/communication.md
-  - /home/reeinharrrd/.brain/rules/modules/git.md
-  - /home/reeinharrrd/.brain/rules/modules/memory-protocol.md
-  - /home/reeinharrrd/.brain/rules/modules/memory.md
-  - /home/reeinharrrd/.brain/rules/modules/sdd.md
-  - /home/reeinharrrd/.brain/rules/modules/security.md
-  - /home/reeinharrrd/.brain/rules/modules/workflow.md
+  - rules/modules/code-style.md
+  - rules/modules/communication.md
+  - rules/modules/git.md
+  - rules/modules/memory-protocol.md
+  - rules/modules/memory.md
+  - rules/modules/sdd.md
+  - rules/modules/security.md
+  - rules/modules/workflow.md

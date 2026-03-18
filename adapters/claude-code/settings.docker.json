@@ -3,32 +3,24 @@
   "//2": "Switch to this with: ln -sf ~/.brain/adapters/claude-code/settings.docker.json ~/.claude/settings.json",
   "mcpServers": {
     "memory": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-memory",
-        "/home/reeinharrrd/.brain/memory"
-      ]
+      "command": "bash",
+      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-memory \"$HOME/.brain/memory\""]
     },
     "filesystem": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/home/reeinharrrd"
-      ]
+      "command": "bash",
+      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-filesystem \"$HOME\""]
     },
     "sequential-thinking": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "command": "bash",
+      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-sequential-thinking"]
     },
     "context7": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "command": "bash",
+      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @upstash/context7-mcp@latest"]
     },
     "github": {
-      "command": "/home/reeinharrrd/.local/bin/npx-nvm",
-      "args": ["-y", "@modelcontextprotocol/server-github"]
+      "command": "bash",
+      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-github"]
     }
   },
   "permissions": {
@@ -42,7 +34,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/reeinharrrd/.brain/hooks/pre-tool-use/block-env-writes.sh"
+            "command": "bash",
+            "args": ["-lc", "exec bash \"$HOME/.brain/hooks/pre-tool-use/block-env-writes.sh\""]
           }
         ]
       }
@@ -53,7 +46,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/reeinharrrd/.brain/hooks/post-tool-use/run-linter.sh"
+            "command": "bash",
+            "args": ["-lc", "exec bash \"$HOME/.brain/hooks/post-tool-use/run-linter.sh\""]
           }
         ]
       }

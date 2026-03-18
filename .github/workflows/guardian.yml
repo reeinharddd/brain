@@ -10,6 +10,8 @@ on:
 jobs:
   guardian:
     runs-on: ubuntu-latest
+    env:
+      BRAIN_DIR: ${{ github.workspace }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,4 +33,4 @@ jobs:
             RANGE="HEAD~1...HEAD"
           fi
 
-          bash guardian/run.sh --diff-range "$RANGE" --pr-mode --threshold critical
+          bash "$BRAIN_DIR/guardian/run.sh" --diff-range "$RANGE" --pr-mode --threshold critical

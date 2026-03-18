@@ -2,12 +2,25 @@
 
 set -euo pipefail
 
-BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REQUESTED_BRAIN_DIR="${BRAIN_DIR:-}"
+
+if [ -n "$REQUESTED_BRAIN_DIR" ] && [ -d "$REQUESTED_BRAIN_DIR" ]; then
+  REQUESTED_BRAIN_DIR="$(cd "$REQUESTED_BRAIN_DIR" && pwd)"
+fi
+
+if [ -n "$REQUESTED_BRAIN_DIR" ] && [ "$REQUESTED_BRAIN_DIR" = "$REPO_ROOT" ]; then
+  BRAIN_DIR="$REQUESTED_BRAIN_DIR"
+else
+  BRAIN_DIR="$REPO_ROOT"
+fi
+
 GUARDIAN_DIR="$BRAIN_DIR/guardian"
 CHECKS_DIR="$GUARDIAN_DIR/checks"
 OUTPUTS_DIR="$GUARDIAN_DIR/outputs"
 GUARDIAN_LIB="$GUARDIAN_DIR/lib.sh"
-GUARDIAN_REPO_ROOT="${GUARDIAN_REPO_ROOT:-$PWD}"
+GUARDIAN_REPO_ROOT="${GUARDIAN_REPO_ROOT:-$BRAIN_DIR}"
 START_TS="$(date +%s%3N 2>/dev/null || date +%s000)"
 
 MODE="staged"
@@ -80,7 +93,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-if [ ! -d "$GUARDIAN_REPO_ROOT/.git" ]; then
+if ! git -C "$GUARDIAN_REPO_ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "ERROR: guardian must run inside a git repository" >&2
   exit 1
 fi

@@ -40,6 +40,7 @@ build_rules() {
 
 write_artifacts() {
   local full_rules="$1"
+  local relative_source="rules/canonical.md"
 
   mkdir -p "$COMPILED_DIR"
   printf '%s\n' "$full_rules" > "$COMPILED_DIR/full.md"
@@ -47,10 +48,10 @@ write_artifacts() {
   {
     echo "# Compiled Rules Manifest"
     echo
-    echo "- Source: $SOURCE"
+    echo "- Source: $relative_source"
     echo "- Modules:"
     while IFS= read -r module; do
-      echo "  - $module"
+      echo "  - ${module#"$BRAIN_DIR"/}"
     done < <(collect_modules)
   } > "$COMPILED_DIR/manifest.md"
 }

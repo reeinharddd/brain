@@ -1,7 +1,7 @@
 # Prompt Alignment Report
 
 Date: 2026-03-18
-Repo: /home/reeinharrrd/.brain
+Repo: `~/.brain`
 
 ## Goal
 
@@ -15,6 +15,7 @@ repo's Bash-and-Markdown-first identity.
 - dynamic stack detection and skill-context injection
 - shift-left local validation with Guardian
 - portable "second brain" framing across IDEs and adapters
+- runtime resolution for `npx`/`npx-nvm` and `HOME`-based paths
 
 ## Adopted from Prompt 2
 

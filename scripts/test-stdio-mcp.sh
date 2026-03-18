@@ -5,7 +5,24 @@ set -euo pipefail
 
 [ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
 
-NPX_CMD="${NPX_CMD:-$HOME/.local/bin/npx-nvm}"
+resolve_npx_cmd() {
+  if [ -n "${NPX_CMD:-}" ] && command -v "${NPX_CMD%% *}" >/dev/null 2>&1; then
+    printf '%s\n' "$NPX_CMD"
+    return 0
+  fi
+  if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then
+    printf '%s\n' "npx-nvm"
+    return 0
+  fi
+  if command -v npx >/dev/null 2>&1; then
+    printf '%s\n' "npx"
+    return 0
+  fi
+  echo "ERROR: neither npx-nvm nor npx is available" >&2
+  exit 1
+}
+
+NPX_CMD="$(resolve_npx_cmd)"
 SERVICE="${1:-}"
 OUT_FILE="$(mktemp)"
 trap 'rm -f "$OUT_FILE"' EXIT

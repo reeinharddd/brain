@@ -86,7 +86,7 @@ Artifacts are written under:
 - `~/.brain/logs/real-runs/`
 - `~/.brain/logs/benchmarks/`
 
-Use [real-env-metrics-template.md](/home/reeinharrrd/.brain/docs/reports/real-env-metrics-template.md) to compare runs and track regressions.
+Use `docs/reports/real-env-metrics-template.md` to compare runs and track regressions.
 
 ## Update rules
 

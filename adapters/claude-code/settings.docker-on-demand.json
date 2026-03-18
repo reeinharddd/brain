@@ -7,7 +7,7 @@
       "command": "docker",
       "args": [
         "run", "-i", "--rm",
-        "-v", "/home/reeinharrrd/.brain/memory:/root/.local/share/model-context-protocol/server-memory",
+        "-v", "${HOME}/.brain/memory:/root/.local/share/model-context-protocol/server-memory",
         "node:20-alpine",
         "npx", "-y", "@modelcontextprotocol/server-memory"
       ]
@@ -16,7 +16,7 @@
       "command": "docker",
       "args": [
         "run", "-i", "--rm",
-        "-v", "/home/reeinharrrd:/workspace",
+        "-v", "${HOME}:/workspace",
         "node:20-alpine",
         "npx", "-y", "@modelcontextprotocol/server-filesystem", "/workspace"
       ]

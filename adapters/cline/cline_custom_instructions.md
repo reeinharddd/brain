@@ -1,5 +1,5 @@
 <!-- AUTO-GENERATED — DO NOT EDIT DIRECTLY -->
-<!-- Generated on 2026-03-18 12:31:29 · Source: ~/.brain/rules/canonical.md + modules/ -->
+<!-- Generated on 2026-03-18 14:13:14 · Source: ~/.brain/rules/canonical.md + modules/ -->
 
 # Cline Custom Instructions
 
