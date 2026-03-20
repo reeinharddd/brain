@@ -265,6 +265,17 @@ init_git() {
   fi
 }
 
+# -- ai-local ------------------------------------------------------
+setup_ai_local() {
+  section "Setting up ai-local (Ollama orchestrator)"
+  if [ -d "$BRAIN_DIR/ai-local" ]; then
+    ok "ai-local module present"
+    info "To start local models, cd $BRAIN_DIR/ai-local && docker compose up -d"
+  else
+    warn "ai-local module not found"
+  fi
+}
+
 # -- Summary -------------------------------------------------------
 print_summary() {
   section "Result"
@@ -314,6 +325,7 @@ if [ -f "$BRAIN_DIR/scripts/mcp-sync.sh" ]; then
 fi
 should_run_step "Check tools" && check_tools
 should_run_step "Initialize git" && init_git
+should_run_step "Setup ai-local (Ollama)" && setup_ai_local
 print_summary
 
 # Auto-run doctor

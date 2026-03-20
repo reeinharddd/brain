@@ -26,6 +26,15 @@ providers:
       standard: gemini-2.5-pro
       powerful: gemini-2.5-ultra
 
+  ollama:
+    available: false       # set to true after: ollama serve
+    base_url: http://localhost:11434
+    notes: "Activate if you have Ollama installed. Great for privacy-sensitive work."
+    models:
+      fast:     qwen2.5-coder:7b
+      standard: qwen2.5-coder:32b
+      powerful: deepseek-coder-v3:latest
+
   local:
     available: false       # set to true after: ollama serve
     base_url: http://localhost:11434

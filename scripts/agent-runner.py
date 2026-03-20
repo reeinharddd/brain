@@ -23,7 +23,7 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 # ── Config loading ────────────────────────────────────────────────────────────
@@ -221,7 +221,7 @@ BACKEND_CALLERS = {
 def call_model(backend: str, model: str, system: str, user: str) -> tuple[str, int]:
     caller = BACKEND_CALLERS.get(backend)
     if not caller:
-        raise RuntimeError(f"No LLM backend available. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, or start Ollama.")
+        raise RuntimeError("No LLM backend available. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, or start Ollama.")
     return caller(model, system, user)
 
 
@@ -330,7 +330,10 @@ def run_pipeline(pipeline: str, task: str, inject_memory: bool = False,
         if result.error:
             print(f"[pipeline] {name} failed: {result.error}", file=sys.stderr)
             break
-        context = f"Output from {name}:\n\n{result.output}"
+        if context:
+            context += f"\n\n---\n\nOutput from {name}:\n\n{result.output}"
+        else:
+            context = f"Output from {name}:\n\n{result.output}"
     return results
 
 

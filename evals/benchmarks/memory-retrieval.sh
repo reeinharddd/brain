@@ -1,9 +1,8 @@
 #!/bin/bash
 # evals/benchmarks/memory-retrieval.sh
 # Measures memory retrieval quality: does the system surface relevant context?
-#
 # Methodology:
-# 1. Seeds memory with known entities
+# 1. Seeds memory with known entities (depends on evals/fixtures/seed-memory-benchmark.sh)
 # 2. Queries with semantically related but not identical queries  
 # 3. Measures recall (were seeded entities retrieved?)
 # 4. Reports precision and recall scores
@@ -29,14 +28,12 @@ TMP_MEM="$(mktemp -d)"
 trap 'rm -rf "$TMP_MEM"' EXIT
 
 # ── Seed known entities ──────────────────────────────────────────────────────
-seed_entity() {
-  local name="$1" obs="$2"
-  printf '%s\n' \
-    '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"eval","version":"1.0.0"}}}' \
-    '{"jsonrpc":"2.0","method":"notifications/initialized","params":{}}' \
-    "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"create_entities\",\"arguments\":{\"entities\":[{\"name\":\"$name\",\"entityType\":\"Decision\",\"observations\":[\"$obs\"]}]}}}" \
-  | "$NPX" -y @modelcontextprotocol/server-memory "$TMP_MEM" >/dev/null 2>&1
-}
+SEED_SCRIPT="$BRAIN_DIR/evals/fixtures/seed-memory-benchmark.sh"
+if [ ! -x "$SEED_SCRIPT" ]; then
+  echo "ERROR: Seed script not found or not executable at $SEED_SCRIPT" >&2
+  exit 1
+fi
+bash "$SEED_SCRIPT" "$TMP_MEM" >/dev/null 2>&1
 
 query_memory() {
   local query="$1"
@@ -44,15 +41,8 @@ query_memory() {
     '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"eval","version":"1.0.0"}}}' \
     '{"jsonrpc":"2.0","method":"notifications/initialized","params":{}}' \
     "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"search_nodes\",\"arguments\":{\"query\":\"$query\"}}}" \
-  | "$NPX" -y @modelcontextprotocol/server-memory "$TMP_MEM" 2>/dev/null
+  | "$NPX" -y @modelcontextprotocol/server-memory "$TMP_MEM" 2>/dev/null || true
 }
-
-# Seed test entities
-seed_entity "AuthDecision" "JWT with RS256 for authentication due to stateless scalability"
-seed_entity "PostgresChoice" "PostgreSQL chosen over MongoDB for relational queries and ACID"
-seed_entity "ErrorHandlingRule" "All errors wrapped with context using Result pattern not exceptions"
-seed_entity "DeploymentConfig" "Docker Compose on staging Kubernetes on production environment"
-seed_entity "TypeScriptPreference" "Strict mode mandatory no explicit any types allowed in codebase"
 
 TOTAL=5
 RETRIEVED=0

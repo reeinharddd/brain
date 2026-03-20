@@ -9,7 +9,7 @@ while IFS= read -r file; do
 
   case "$file" in
     *.ts|*.tsx)
-      if guardian_added_lines "$file" | grep -Eq '(^|\W)any(\W|$)'; then
+      if guardian_added_lines "$file" | grep -Eq '(^|[^[:alnum:]_])any([^[:alnum:]_]|$)'; then
         guardian_report "critical" "no-explicit-any" "$file" "Explicit any detected in added lines"
       fi
       ;;

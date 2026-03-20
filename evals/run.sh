@@ -39,10 +39,13 @@ run_eval() {
     [ "$JSON_OUTPUT" -eq 0 ] && [ -n "$output" ] && echo "$output" | sed 's/^/    /'
   else
     TOTAL_FAIL=$((TOTAL_FAIL + 1))
-    ALL_RESULTS+=("{\"name\":\"$label\",\"status\":\"fail\"}")
+    local error_json="\"\""
+    [ -n "$output" ] && error_json=$(printf '%s' "$output" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
+    ALL_RESULTS+=("{\"name\":\"$label\",\"status\":\"fail\",\"error\":$error_json}")
     [ "$JSON_OUTPUT" -eq 0 ] && echo "  FAIL $label"
     [ "$JSON_OUTPUT" -eq 0 ] && [ -n "$output" ] && echo "$output" | sed 's/^/    /'
   fi
+  return 0
 }
 
 [ "$JSON_OUTPUT" -eq 0 ] && echo "" && echo "Brain Eval Suite - $RUN_ID"

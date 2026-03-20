@@ -151,6 +151,7 @@ report = {
     "run_id":           report_path.stem,
     "timestamp":        now.isoformat(),
     "dry_run":          dry_run,
+    "status":           "success",
     "summary": {
         "total_entities":  len(entities),
         "total_relations": len(relations),

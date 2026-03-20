@@ -13,6 +13,11 @@ TMP_REPO="$(mktemp -d)"
 trap 'rm -rf "$TMP_REPO"' EXIT
 
 git -C "$TMP_REPO" init -q
+git -C "$TMP_REPO" config user.email "eval@example.com"
+git -C "$TMP_REPO" config user.name "Eval Bot"
+touch "$TMP_REPO/README.md"
+git -C "$TMP_REPO" add README.md
+git -C "$TMP_REPO" commit -m "initial commit" -q
 
 PASS=0; FAIL=0
 declare -a RESULTS=()
@@ -22,7 +27,7 @@ run_guardian() {
   echo "$content" > "$TMP_REPO/$file"
   git -C "$TMP_REPO" add "$file" 2>/dev/null
   
-  OUTPUT="$(GUARDIAN_REPO_ROOT="$TMP_REPO" bash "$BRAIN_DIR/guardian/run.sh" --staged --output json 2>/dev/null || echo '{}')"
+  OUTPUT="$(GUARDIAN_REPO_ROOT="$TMP_REPO" bash "$BRAIN_DIR/guardian/run.sh" --staged --output json || true)"
   VERDICT=$(echo "$OUTPUT" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('verdict','pass'))" 2>/dev/null || echo "pass")
   
   if [ "$VERDICT" = "$expect_verdict" ]; then

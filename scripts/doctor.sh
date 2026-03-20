@@ -66,6 +66,7 @@ assert_check() {
       print_line "FAIL" "$name" "$detail"
     fi
   fi
+  return 0
 }
 
 # Auto-fix: regenerate adapters if requested
@@ -145,6 +146,7 @@ assert_check "curl_available"   "command -v curl"
 assert_check "python3_available" "command -v python3"
 assert_check "node_available"   "command -v node"   "warning"
 assert_check "docker_available" "command -v docker" "warning"
+assert_check "ollama_running"   "bash '$BRAIN_DIR/ai-local/scripts/check-ollama.sh'" "warning" "run: docker compose up -d in ai-local"
 
 # ── Functional tests ────────────────────────────────────────────────────────────
 assert_check "stack_detection_runs"       "bash '$BRAIN_DIR/scripts/detect-stack.sh' '$BRAIN_DIR' >/dev/null"

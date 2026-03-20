@@ -46,7 +46,8 @@ EOF
 }
 
 severity_rank() {
-  case "$1" in
+  local sev="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
+  case "$sev" in
     critical) echo 4 ;;
     high) echo 3 ;;
     medium) echo 2 ;;

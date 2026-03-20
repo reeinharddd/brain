@@ -8,6 +8,7 @@ set -euo pipefail
 
 # Define secret patterns to detect
 # Format: SEVERITY|PATTERN_NAME|REGEX_PATTERN
+# Note: Using POSIX ERE (grep -E), NOT PCRE. No (?:...), use (..) for groups.
 declare -a SECRET_PATTERNS=(
     # AWS Keys
     "CRITICAL|aws-access-key|AKIA[0-9A-Z]{16}"
@@ -17,26 +18,30 @@ declare -a SECRET_PATTERNS=(
     "CRITICAL|github-token|(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,}"
     "CRITICAL|github-classic-token|ghp_[0-9a-zA-Z]{36}"
 
-    # Generic API Keys with values
-    "CRITICAL|api-key-with-value|(?:api[_-]?key|apikey)\\s*[:=]\\s*[\"'][a-zA-Z0-9_\\-]{16,}[\"']"
-    "CRITICAL|secret-with-value|(?:secret|private[_-]?key)\\s*[:=]\\s*[\"'][a-zA-Z0-9_\\-]{16,}[\"']"
-    "CRITICAL|token-with-value|(?:token|access[_-]?token|auth[_-]?token)\\s*[:=]\\s*[\"'][a-zA-Z0-9_\\-]{16,}[\"']"
-    "CRITICAL|password-with-value|(?:password|passwd|pwd)\\s*[:=]\\s*[\"'][^\"']{8,}[\"']"
+    # OpenAI / Anthropic style keys (sk-*, pk-*, sk-ant-*)
+    "CRITICAL|openai-api-key|sk-[a-zA-Z0-9]{32,}"
+    "CRITICAL|anthropic-api-key|sk-ant-[a-zA-Z0-9_-]{32,}"
+
+    # Generic API Keys with values - POSIX ERE compatible (no \s, no ?:)
+    "CRITICAL|api-key-with-value|(api[_-]?key|apikey)[[:space:]]*[:=][[:space:]]*[\"'][a-zA-Z0-9_-]{16,}[\"']"
+    "CRITICAL|secret-with-value|(secret|private[_-]?key)[[:space:]]*[:=][[:space:]]*[\"'][a-zA-Z0-9_-]{16,}[\"']"
+    "CRITICAL|token-with-value|(token|access[_-]?token|auth[_-]?token)[[:space:]]*[:=][[:space:]]*[\"'][a-zA-Z0-9_-]{16,}[\"']"
+    "CRITICAL|password-with-value|(password|passwd|pwd)[[:space:]]*[:=][[:space:]]*[\"'][^\"']{8,}[\"']"
 
     # Bearer tokens
-    "CRITICAL|bearer-token|Bearer\\s+[a-zA-Z0-9_\\-\\.]{20,}"
+    "CRITICAL|bearer-token|Bearer[[:space:]]+[a-zA-Z0-9._-]{20,}"
 
     # JWT tokens (base64url encoded)
-    "HIGH|jwt-token|eyJ[A-Za-z0-9_\\-]*\\.eyJ[A-Za-z0-9_\\-]*\\.[A-Za-z0-9_\\-]*"
+    "HIGH|jwt-token|eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*"
 
     # Database connection strings with passwords
-    "CRITICAL|db-connection-with-password|(?:mongodb|postgres|mysql)://[^:]*:[^@]*@"
+    "CRITICAL|db-connection-with-password|(mongodb|postgres|mysql)://[^:]*:[^@]*@"
 
     # Private keys
-    "CRITICAL|private-key|-----BEGIN\\s+(?:RSA|EC|DSA|OPENSSH)\\s+PRIVATE\\s+KEY-----"
+    "CRITICAL|private-key|-----BEGIN[[:space:]]+(RSA|EC|DSA|OPENSSH)[[:space:]]+PRIVATE[[:space:]]+KEY-----"
 
     # Certificate files
-    "HIGH|certificate-file|-----BEGIN\\s+CERTIFICATE-----"
+    "HIGH|certificate-file|-----BEGIN[[:space:]]+CERTIFICATE-----"
 
     # Slack tokens
     "CRITICAL|slack-token|xox[baprs]-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24,}"
@@ -46,7 +51,7 @@ declare -a SECRET_PATTERNS=(
     "CRITICAL|stripe-publishable|pk_(live|test)_[0-9a-zA-Z]{24,}"
 
     # Generic high-entropy strings that look like secrets
-    "HIGH|high-entropy-secret|(?:key|token|secret)\\s*[:=]\\s*[\"'][A-Za-z0-9/+=]{32,}[\"']"
+    "HIGH|high-entropy-secret|(key|token|secret)[[:space:]]*[:=][[:space:]]*[\"'][A-Za-z0-9/+=]{32,}[\"']"
 
     # Base64 encoded strings that might be secrets
     "MEDIUM|base64-secret|b[\"']?[A-Za-z0-9+/]{40,}[\"']?={0,2}"
@@ -109,8 +114,5 @@ while IFS= read -r file; do
     done
 done < "${GUARDIAN_FILES_FILE}"
 
-if [ $found_secrets -gt 0 ]; then
-    exit 1
-fi
-
+# Exit 0 even if secrets found - the parent script checks RESULTS_FILE
 exit 0

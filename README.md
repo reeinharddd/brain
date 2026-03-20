@@ -9,7 +9,7 @@ A version-controlled developer brain that:
 - **Defines how I work** - universal engineering principles in `rules/canonical.md`, compiled to every IDE automatically
 - **Configures every AI agent** - one source of truth, auto-adapted to Cursor, Windsurf, Claude Code, Gemini CLI, OpenCode, Aider, Cline, Copilot
 - **Persists memory** - cross-session knowledge graph via MCP memory server, with vector search via Qdrant
-- **Contains executable agents** - 12 specialized agents runnable via `scripts/agent-runner.py` or as IDE prompts
+- **Contains executable agents** - 13 specialized agents runnable via `scripts/agent-runner.py` or as IDE prompts
 - **Enforces security** - guardian checks on every commit and pre-tool-use hook in Claude Code
 - **Defines slash commands** - `/plan`, `/review`, `/research`, `/handover`, `/standup`, `/update-brain`, `/memory-search`, `/consolidate`
 - **Evaluates itself** - benchmark suite measuring memory recall, guardian accuracy, and adapter correctness
