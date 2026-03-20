@@ -1,5 +1,5 @@
-<!-- AUTO-GENERATED — DO NOT EDIT DIRECTLY -->
-<!-- Generated on 2026-03-20 14:37:34 · Source: ~/.brain/rules/canonical.md + modules/ -->
+<!-- AUTO-GENERATED  DO NOT EDIT DIRECTLY -->
+<!-- Generated on 2026-03-20 14:41:30  Source: ~/.brain/rules/canonical.md + modules/ -->
 
 # Cline Custom Instructions
 
@@ -745,4 +745,4 @@ Don't spend more than 15 minutes deciding - pick the best option with current in
 Never fix a bug without understanding why it happened.
 
 ---
-*To apply: Open Cline settings → Custom Instructions → paste the content of this file.*
+*To apply: Open Cline settings -> Custom Instructions -> paste the content of this file.*

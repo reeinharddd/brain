@@ -27,7 +27,7 @@ warn() { echo -e "  ${YELLOW}[warn]${RESET} $1"; }
 fail() { echo -e "  ${RED}[fail]${RESET} $1"; }
 info() { echo -e "  ${BOLD}[-->]${RESET}  $1"; }
 
-# ── Status ───────────────────────────────────────────────────────────────────
+# -- Status -------------------------------------------------------------------
 cmd_status() {
   echo ""
   echo -e "${BOLD}Memory Cloud Sync Status${RESET}"
@@ -101,7 +101,7 @@ print(len(resp.get('results',[])))
   echo ""
 }
 
-# ── Push: local -> cloud ──────────────────────────────────────────────────────
+# -- Push: local -> cloud ------------------------------------------------------
 cmd_push() {
   echo ""
   info "Pushing memory to cloud..."
@@ -175,7 +175,7 @@ PY
   echo ""
 }
 
-# ── Pull: cloud -> local (git only, Mem0 is read via MCP) ───────────────────
+# -- Pull: cloud -> local (git only, Mem0 is read via MCP) -------------------
 cmd_pull() {
   echo ""
   info "Pulling memory from cloud..."
@@ -193,7 +193,7 @@ cmd_pull() {
   echo ""
 }
 
-# ── Setup guide ──────────────────────────────────────────────────────────────
+# -- Setup guide --------------------------------------------------------------
 cmd_setup() {
   echo ""
   echo -e "${BOLD}Cloud Memory Setup Guide${RESET}"
