@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-BRAIN_DIR="$HOME/.brain"
+BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
 SOURCE="$BRAIN_DIR/rules/canonical.md"
 MODULES_DIR="$BRAIN_DIR/rules/modules"
 BUILD_RULES_SCRIPT="$BRAIN_DIR/scripts/build-rules.sh"
@@ -30,6 +30,8 @@ PORTABLE_FILESYSTEM_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @modelcontextproto
 PORTABLE_SEQUENTIAL_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @modelcontextprotocol/server-sequential-thinking")
 PORTABLE_CONTEXT7_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @upstash/context7-mcp@latest")
 PORTABLE_GITHUB_CMD=$(json_string "$PORTABLE_NPX_SHELL -y @modelcontextprotocol/server-github")
+PORTABLE_BRAIN_MCP_PY=$(json_string "python3")
+PORTABLE_BRAIN_MCP_ARG=$(json_string "$HOME/.brain/mcp/brain-mcp-server/server.py")
 PORTABLE_BLOCK_ENV_CMD=$(json_string "exec bash \"\$HOME/.brain/hooks/pre-tool-use/block-env-writes.sh\"")
 PORTABLE_RUN_LINTER_CMD=$(json_string "exec bash \"\$HOME/.brain/hooks/post-tool-use/run-linter.sh\"")
 PORTABLE_HOOK_BASH_CMD=$(json_string "bash")
@@ -158,6 +160,10 @@ OPENCODE_CONTENT=$(cat <<JSON
       "command": $PORTABLE_BASH_CMD,
       "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
     },
+    "brain-rules": {
+      "command": $PORTABLE_BRAIN_MCP_PY,
+      "args": [$PORTABLE_BRAIN_MCP_ARG]
+    },
     "skill-ninja": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
@@ -208,6 +214,10 @@ GLOBAL_MCP_CONTENT=$(cat <<JSON
       "command": $PORTABLE_BASH_CMD,
       "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
     },
+    "brain-rules": {
+      "command": $PORTABLE_BRAIN_MCP_PY,
+      "args": [$PORTABLE_BRAIN_MCP_ARG]
+    },
     "skill-ninja": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
@@ -254,6 +264,10 @@ GLOBAL_STDIO_MCP_CONTENT=$(cat <<JSON
       "command": $PORTABLE_BASH_CMD,
       "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
     },
+    "brain-rules": {
+      "command": $PORTABLE_BRAIN_MCP_PY,
+      "args": [$PORTABLE_BRAIN_MCP_ARG]
+    },
     "skill-ninja": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]
@@ -292,6 +306,10 @@ CLAUDE_PERSISTENT_CONTENT=$(cat <<JSON
     "github": {
       "command": $PORTABLE_BASH_CMD,
       "args": [$PORTABLE_LC_ARG, $PORTABLE_GITHUB_CMD]
+    },
+    "brain-rules": {
+      "command": $PORTABLE_BRAIN_MCP_PY,
+      "args": [$PORTABLE_BRAIN_MCP_ARG]
     },
     "sequential-thinking": {
       "command": $PORTABLE_BASH_CMD,

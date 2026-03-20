@@ -7,7 +7,7 @@
 #  Usage: bash ~/.brain/scripts/install.sh
 # ===========================================================
 
-BRAIN_DIR="$HOME/.brain"
+BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
 OS="unknown"
 PACKAGE_MANAGER="unknown"
 ERRORS=0

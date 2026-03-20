@@ -5,7 +5,7 @@
 # ═══════════════════════════════════════════════════════════
 
 set -euo pipefail
-BRAIN_DIR="$HOME/.brain"
+BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BOLD='\033[1m'; RESET='\033[0m'
 

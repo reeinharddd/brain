@@ -6,6 +6,7 @@
   - rules/modules/communication.md
   - rules/modules/git.md
   - rules/modules/memory-protocol.md
+  - rules/modules/memory-types.md
   - rules/modules/memory.md
   - rules/modules/sdd.md
   - rules/modules/security.md

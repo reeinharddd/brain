@@ -23,8 +23,8 @@ A programming language is a tool. The real craft is in:
 
 To ensure longevity and compatibility across all tools, agents, and shells, all documentation, rules, and code comments MUST use only plain text (ASCII/UTF-8).
 
-- **NO Emojis**: Never use emojis (e.g., 😀, 🚀). Use descriptive words instead.
-- **NO Decorative Symbols**: Avoid checkmarks (✓), crossmarks (❌), or arrows (→).
+- **NO Emojis**: Never use emojis (e.g., :smile:, :rocket:). Use descriptive words instead.
+- **NO Decorative Symbols**: Avoid checkmarks ((check)), crossmarks ((X)), or arrows (->).
 - **Standard ASCII Symbols**: Use `-`, `*`, `->`, `+`, `|`, and standard brackets.
 
 ---

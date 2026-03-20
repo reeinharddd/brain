@@ -86,3 +86,15 @@ mcps:
     purpose: Linear issue tracking integration
     when_to_use: when managing project issues, sprints, or roadmap in Linear
     setup: "export LINEAR_API_KEY=... && npx -y @linear/mcp-server"
+
+  brain-rules:
+    command: "python3"
+    args: ["${HOME}/.brain/mcp/brain-mcp-server/server.py"]
+    required: false
+    profile: [standard, full]
+    purpose: Exposes brain repo internals as queryable tools - rules, agents, task routing, provider selection
+    when_to_use: always - gives agents live access to brain rules and routing logic without reading files
+    setup: |
+      # No install needed - runs with system python3
+      python3 ~/.brain/mcp/brain-mcp-server/server.py
+    notes: Custom brain MCP server. Gives any MCP-compatible IDE direct tool access to canonical rules and agent routing.

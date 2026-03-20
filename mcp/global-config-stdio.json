@@ -20,6 +20,10 @@
       "command": "bash",
       "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-github"]
     },
+    "brain-rules": {
+      "command": "python3",
+      "args": ["/home/reeinharrrd/.brain/mcp/brain-mcp-server/server.py"]
+    },
     "skill-ninja": {
       "command": "docker",
       "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]

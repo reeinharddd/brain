@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-BRAIN_DIR="$HOME/.brain"
+BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
 GLOBAL_CONFIG="$BRAIN_DIR/mcp/global-config.json"
 GLOBAL_STDIO_CONFIG="$BRAIN_DIR/mcp/global-config-stdio.json"
 

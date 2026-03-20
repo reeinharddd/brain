@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-BRAIN_DIR="$HOME/.brain"
+BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
 REPO_URL="https://github.com/reeinharrrd/brain.git"
 OS="unknown"
 DEPLOYMENT_TYPE="minimal"
