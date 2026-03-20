@@ -1,0 +1,126 @@
+name: brain-unified-stack
+
+# Environment variables from .env file
+# Copy .env.example to .env and configure your values
+
+services:
+  # --- UI and Management ---
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    user: "${UID:-1000}:${GID:-1000}"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11435
+      - WEBUI_NAME=Brain Station
+      # Basic auth for OpenWebUI (set in .env)
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-changeme}
+    volumes:
+      - ./open-webui:/app/backend/data
+    ports:
+      - "127.0.0.1:3000:8080"  # Bind to localhost only for security
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - brain-network
+
+  # --- Vector Storage (RAG / Memory) ---
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: brain-qdrant
+    restart: unless-stopped
+    user: "${UID:-1000}:${GID:-1000}"
+    ports:
+      - "127.0.0.1:6333:6333"  # Bind to localhost only
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - brain-network
+
+  # --- Core MCP Servers ---
+  mcp-memory:
+    image: node:20-alpine
+    container_name: brain-mcp-memory
+    restart: unless-stopped
+    user: "${UID:-1000}:${GID:-1000}"
+    command: >
+      npx -y supergateway
+      --stdio "npx -y @modelcontextprotocol/server-memory /data"
+      --port 8001 --host 127.0.0.1
+    ports:
+      - "127.0.0.1:3001:8001"  # Bind to localhost only
+    volumes:
+      - ./mcp_memory_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - brain-network
+
+  mcp-filesystem:
+    image: node:20-alpine
+    container_name: brain-mcp-filesystem
+    restart: unless-stopped
+    user: "${UID:-1000}:${GID:-1000}"
+    command: >
+      npx -y supergateway
+      --stdio "npx -y @modelcontextprotocol/server-filesystem /workspace"
+      --port 8002 --host 127.0.0.1
+    ports:
+      - "127.0.0.1:3002:8002"  # Bind to localhost only
+    volumes:
+      # SECURITY: Only mount specific directories, not entire home
+      - ${WORKSPACE_DIR:-./workspace}:/workspace:ro
+    environment:
+      - MCP_FILESYSTEM_READONLY=true
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - brain-network
+
+  mcp-sequential:
+    image: node:20-alpine
+    container_name: brain-mcp-sequential
+    restart: unless-stopped
+    user: "${UID:-1000}:${GID:-1000}"
+    command: >
+      npx -y supergateway
+      --stdio "npx -y @modelcontextprotocol/server-sequential-thinking"
+      --port 8003 --host 127.0.0.1
+    ports:
+      - "127.0.0.1:3003:8003"  # Bind to localhost only
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - brain-network
+
+networks:
+  brain-network:
+    driver: bridge
+    internal: false

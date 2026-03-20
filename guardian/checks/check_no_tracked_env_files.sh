@@ -9,7 +9,10 @@ while IFS= read -r file; do
 
   case "$file" in
     .env|.env.*|*/.env|*/.env.*)
-      guardian_report "critical" "tracked-env-file" "$file" "Tracked environment file detected in diff"
+      case "$file" in
+        *.example) ;;
+        *) guardian_report "critical" "tracked-env-file" "$file" "Tracked environment file detected in diff" ;;
+      esac
       ;;
   esac
 done < "${GUARDIAN_FILES_FILE}"

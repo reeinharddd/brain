@@ -38,9 +38,14 @@ desktop.ini
 # Temporary files
 *.tmp
 *.log
+
+# Ignore real environment files for ai-local
+ai-local/.env
 /tmp/
 
 # Local generated context and run artifacts
 /.brain/
 /logs/*
 !/logs/.gitkeep
+
+

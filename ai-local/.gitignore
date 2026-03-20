@@ -1,0 +1,24 @@
+# Brain Station - AI Local Stack
+# Environment configuration (contains secrets)
+.env
+.env.local
+.env.*.local
+
+# Data directories
+open-webui/
+qdrant_data/
+mcp_memory_data/
+workspace/
+
+# Logs
+*.log
+/tmp/socat_brain*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+*~
