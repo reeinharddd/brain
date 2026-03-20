@@ -1,6 +1,6 @@
-# Canonical Rules - reeinharrrd's Brain Repo
+# Canonical Rules - Brain Repo
 
-> Version: 1.1.0 | Last updated: 2026-03-17
+> Version: 2.0.0 | Last updated: 2026-03-20
 > This is the single source of truth. All agent-specific rule files are generated from here.
 > DO NOT edit adapter files directly. Edit this file, then run: `~/.brain/adapters/generate.sh`
 

@@ -98,3 +98,31 @@ mcps:
       # No install needed - runs with system python3
       python3 ~/.brain/mcp/brain-mcp-server/server.py
     notes: Custom brain MCP server. Gives any MCP-compatible IDE direct tool access to canonical rules and agent routing.
+
+  mem0:
+    package: "mem0ai/mem0-mcp"
+    required: false
+    profile: [standard, full]
+    env_required: [MEM0_API_KEY]
+    purpose: Managed cross-device memory with semantic search - replaces local MCP memory server
+    when_to_use: when MEM0_API_KEY is set - gives cloud-synced memory that works on any device
+    setup: |
+      export MEM0_API_KEY=m0-...
+      npx -y mem0ai/mem0-mcp
+    notes: |
+      Best option for cross-device memory. Free tier at https://app.mem0.ai
+      When configured, use mem0 MCP tools instead of local @modelcontextprotocol/server-memory.
+      Tools: mem0_add_memory, mem0_search_memory, mem0_get_all_memories
+
+  upstash-vector:
+    package: "@upstash/vector-mcp"
+    required: false
+    profile: [full]
+    env_required: [UPSTASH_VECTOR_URL, UPSTASH_VECTOR_TOKEN]
+    purpose: Serverless vector search for semantic memory retrieval
+    when_to_use: when UPSTASH_VECTOR_URL is set - alternative to local Qdrant
+    setup: |
+      export UPSTASH_VECTOR_URL=https://xxx.upstash.io
+      export UPSTASH_VECTOR_TOKEN=your-token
+      npx -y @upstash/vector-mcp
+    notes: Free 10k vectors at https://console.upstash.com -> Vector

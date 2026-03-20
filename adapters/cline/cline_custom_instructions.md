@@ -1,11 +1,11 @@
 <!-- AUTO-GENERATED — DO NOT EDIT DIRECTLY -->
-<!-- Generated on 2026-03-20 14:26:03 · Source: ~/.brain/rules/canonical.md + modules/ -->
+<!-- Generated on 2026-03-20 14:37:34 · Source: ~/.brain/rules/canonical.md + modules/ -->
 
 # Cline Custom Instructions
 
-# Canonical Rules - reeinharrrd's Brain Repo
+# Canonical Rules - Brain Repo
 
-> Version: 1.1.0 | Last updated: 2026-03-17
+> Version: 2.0.0 | Last updated: 2026-03-20
 > This is the single source of truth. All agent-specific rule files are generated from here.
 > DO NOT edit adapter files directly. Edit this file, then run: `~/.brain/adapters/generate.sh`
 

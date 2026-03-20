@@ -51,11 +51,11 @@ done
 
 # 4. Identity & Consistency Test
 info "Testing Git Identity"
-GIT_NAME=$(git -C "$BRAIN_DIR" config user.name)
-if [ "$GIT_NAME" == "reeinharrrd" ]; then
-    ok "Git identity correctly set to reeinharrrd"
+GIT_NAME=$(git -C "$BRAIN_DIR" config user.name 2>/dev/null || echo "")
+if [ -n "$GIT_NAME" ]; then
+    ok "Git identity set: $GIT_NAME"
 else
-    fail "Git identity mismatch: $GIT_NAME"
+    warn "Git user.name not set. Run: git -C ~/.brain config user.name 'your-name'"
 fi
 
 # 5. MCP Health (Docker or NPX)

@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
 """
-agent-runner.py - Lightweight agent execution runtime for brain repo.
+agent-runner.py - LLM-agnostic executable agent runtime for brain repo.
 
-Transforms the static markdown agent definitions into actual executable agents
-that can call models, inject memory, and optionally pipe output to other agents.
-
-Architecture:
-  load_agent(name) -> AgentDef
-  run_agent(name, task, context) -> AgentResult
-  pipe(source_agent, target_agent, task) -> AgentResult
+Supports: Anthropic, OpenAI, Gemini, Ollama (auto-detected from env)
+Reads: ~/.brain/brain.env for configuration
+Reads: ~/.brain/providers/providers.yml for model routing
 
 Usage:
-  python3 agent-runner.py --agent researcher --task "What is LangGraph?"
-  python3 agent-runner.py --agent planner --task "Build auth system" --memory
-  python3 agent-runner.py --pipeline "orchestrator->planner->implementer" --task "..."
   python3 agent-runner.py --list
+  python3 agent-runner.py --agent researcher --task "Compare Qdrant vs Chroma"
+  python3 agent-runner.py --agent planner --task "..." --memory
+  python3 agent-runner.py --pipeline "orchestrator->planner->implementer" --task "..."
+  python3 agent-runner.py --agent researcher --task "..." --backend openai
 """
 
 import argparse
@@ -29,19 +26,45 @@ import urllib.request
 from dataclasses import dataclass, field
 
 
-BRAIN_DIR = pathlib.Path(os.environ.get("BRAIN_DIR", str(pathlib.Path.home() / ".brain")))
+# ── Config loading ────────────────────────────────────────────────────────────
+
+def get_brain_dir() -> pathlib.Path:
+    env = os.environ.get("BRAIN_DIR")
+    if env:
+        return pathlib.Path(env)
+    return pathlib.Path.home() / ".brain"
+
+
+def load_brain_env(brain_dir: pathlib.Path) -> None:
+    """Source brain.env into os.environ if it exists."""
+    env_path = brain_dir / "brain.env"
+    if not env_path.exists():
+        return
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" in line:
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key and value and key not in os.environ:
+                os.environ[key] = value
+
+
+BRAIN_DIR = get_brain_dir()
+load_brain_env(BRAIN_DIR)
 AGENTS_DIR = BRAIN_DIR / "agents"
-PROVIDERS_PATH = BRAIN_DIR / "providers" / "providers.yml"
 
 
-# ── Data structures ─────────────────────────────────────────────────────────
+# ── Data types ────────────────────────────────────────────────────────────────
 
 @dataclass
 class AgentDef:
     name: str
     description: str
     system_prompt: str
-    model_tier: str = "standard"  # fast | standard | powerful
+    model_tier: str = "standard"
 
 
 @dataclass
@@ -50,46 +73,12 @@ class AgentResult:
     task: str
     output: str
     model_used: str
+    backend: str = ""
     tokens_used: int = 0
     error: str = ""
-    metadata: dict = field(default_factory=dict)
 
 
-# ── Provider resolution ──────────────────────────────────────────────────────
-
-def load_providers() -> dict:
-    """Parse providers.yml for model routing without a YAML library."""
-    if not PROVIDERS_PATH.exists():
-        return {}
-    raw = PROVIDERS_PATH.read_text(encoding="utf-8")
-    # Simple extraction: find fast/standard/powerful lines under 'claude:'
-    providers: dict = {}
-    current_provider = None
-    for line in raw.splitlines():
-        if re.match(r"^\w+:", line) and not line.startswith(" "):
-            current_provider = line.strip().rstrip(":")
-        if current_provider == "claude" and "fast:" in line:
-            providers["fast"] = line.split(":")[1].strip()
-        if current_provider == "claude" and "standard:" in line:
-            providers["standard"] = line.split(":")[1].strip()
-        if current_provider == "claude" and "powerful:" in line:
-            providers["powerful"] = line.split(":")[1].strip()
-    return providers
-
-
-PROVIDER_MAP = {
-    "planning":        "powerful",
-    "architecture":    "powerful",
-    "design":          "powerful",
-    "review":          "standard",
-    "implementation":  "standard",
-    "debugging":       "standard",
-    "documentation":   "fast",
-    "summarization":   "fast",
-    "research":        "standard",
-    "security":        "standard",
-    "refactor":        "standard",
-}
+# ── Provider resolution ───────────────────────────────────────────────────────
 
 AGENT_TIERS = {
     "orchestrator": "powerful",
@@ -106,62 +95,168 @@ AGENT_TIERS = {
     "configurator": "fast",
 }
 
+DEFAULTS = {
+    "anthropic": {"fast": "claude-haiku-4-5-20251001", "standard": "claude-sonnet-4-6",   "powerful": "claude-opus-4-6"},
+    "openai":    {"fast": "gpt-4o-mini",                "standard": "gpt-4o",               "powerful": "gpt-4o"},
+    "gemini":    {"fast": "gemini-2.5-flash",           "standard": "gemini-2.5-pro",       "powerful": "gemini-2.5-pro"},
+    "ollama":    {"fast": "qwen2.5-coder:7b",           "standard": "qwen2.5-coder:32b",    "powerful": "deepseek-coder-v3:latest"},
+}
 
-def resolve_model(agent_name: str, providers: dict) -> str:
+
+def detect_backend(preferred: str = "auto") -> str:
+    """Auto-detect available LLM backend from env vars."""
+    if preferred != "auto":
+        return preferred
+    explicit = os.environ.get("BRAIN_LLM_BACKEND", "auto")
+    if explicit != "auto":
+        return explicit
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return "anthropic"
+    if os.environ.get("OPENAI_API_KEY"):
+        return "openai"
+    if os.environ.get("GEMINI_API_KEY"):
+        return "gemini"
+    # Check Ollama
+    try:
+        urllib.request.urlopen(os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434") + "/api/tags", timeout=2)
+        return "ollama"
+    except Exception:
+        pass
+    return "none"
+
+
+def resolve_model(agent_name: str, backend: str) -> str:
+    """Get the model string for an agent on a given backend."""
     tier = AGENT_TIERS.get(agent_name, "standard")
-    model = providers.get(tier)
-    if model:
-        return model
-    # Sensible defaults if providers.yml not parseable
-    defaults = {
-        "fast": "claude-haiku-4-5-20251001",
-        "standard": "claude-sonnet-4-6",
-        "powerful": "claude-opus-4-6",
-    }
-    return defaults.get(tier, defaults["standard"])
+    providers_path = BRAIN_DIR / "providers" / "providers.yml"
+    if providers_path.exists():
+        content = providers_path.read_text(encoding="utf-8")
+        # Find model for this backend+tier
+        in_backend = False
+        for line in content.splitlines():
+            if re.match(rf"^\s*{re.escape(backend)}\s*:", line):
+                in_backend = True
+            if in_backend and f"{tier}:" in line:
+                candidate = line.split(":")[-1].strip()
+                if candidate and not candidate.startswith("#"):
+                    return candidate
+            if in_backend and re.match(r"^\w+:", line) and backend not in line:
+                in_backend = False
+    return DEFAULTS.get(backend, DEFAULTS["anthropic"]).get(tier, "claude-sonnet-4-6")
+
+
+# ── LLM backends ─────────────────────────────────────────────────────────────
+
+def _http_post(url: str, payload: dict, headers: dict, timeout: int = 120) -> dict:
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json", **headers}, method="POST")
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def call_anthropic(model: str, system: str, user: str) -> tuple[str, int]:
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        raise RuntimeError("ANTHROPIC_API_KEY not set")
+    data = _http_post(
+        "https://api.anthropic.com/v1/messages",
+        {"model": model, "max_tokens": 4096, "system": system, "messages": [{"role": "user", "content": user}]},
+        {"x-api-key": api_key, "anthropic-version": "2023-06-01"},
+    )
+    text = "".join(b["text"] for b in data.get("content", []) if b.get("type") == "text")
+    tokens = data.get("usage", {}).get("output_tokens", 0)
+    return text, tokens
+
+
+def call_openai(model: str, system: str, user: str) -> tuple[str, int]:
+    api_key = os.environ.get("OPENAI_API_KEY", "")
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY not set")
+    base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
+    data = _http_post(
+        f"{base_url}/chat/completions",
+        {"model": model, "max_tokens": 4096, "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]},
+        {"Authorization": f"Bearer {api_key}"},
+    )
+    text = data["choices"][0]["message"]["content"]
+    tokens = data.get("usage", {}).get("completion_tokens", 0)
+    return text, tokens
+
+
+def call_gemini(model: str, system: str, user: str) -> tuple[str, int]:
+    api_key = os.environ.get("GEMINI_API_KEY", "")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY not set")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    data = _http_post(url, {
+        "system_instruction": {"parts": [{"text": system}]},
+        "contents": [{"role": "user", "parts": [{"text": user}]}],
+        "generationConfig": {"maxOutputTokens": 4096},
+    }, {})
+    text = data["candidates"][0]["content"]["parts"][0]["text"]
+    tokens = data.get("usageMetadata", {}).get("candidatesTokenCount", 0)
+    return text, tokens
+
+
+def call_ollama(model: str, system: str, user: str) -> tuple[str, int]:
+    base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
+    data = _http_post(
+        f"{base_url}/api/chat",
+        {"model": model, "stream": False, "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]},
+        {},
+    )
+    text = data["message"]["content"]
+    tokens = data.get("eval_count", 0)
+    return text, tokens
+
+
+BACKEND_CALLERS = {
+    "anthropic": call_anthropic,
+    "openai":    call_openai,
+    "gemini":    call_gemini,
+    "ollama":    call_ollama,
+}
+
+
+def call_model(backend: str, model: str, system: str, user: str) -> tuple[str, int]:
+    caller = BACKEND_CALLERS.get(backend)
+    if not caller:
+        raise RuntimeError(f"No LLM backend available. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, or start Ollama.")
+    return caller(model, system, user)
 
 
 # ── Agent loading ─────────────────────────────────────────────────────────────
 
 def load_agent(name: str) -> AgentDef:
-    agent_path = AGENTS_DIR / f"{name}.md"
-    if not agent_path.exists():
-        available = [p.stem for p in AGENTS_DIR.glob("*.md")]
-        raise FileNotFoundError(
-            f"Agent '{name}' not found. Available: {', '.join(sorted(available))}"
-        )
-
-    raw = agent_path.read_text(encoding="utf-8")
-
-    # Parse YAML frontmatter
+    path = AGENTS_DIR / f"{name}.md"
+    if not path.exists():
+        available = sorted(p.stem for p in AGENTS_DIR.glob("*.md"))
+        raise FileNotFoundError(f"Agent '{name}' not found. Available: {', '.join(available)}")
+    raw = path.read_text(encoding="utf-8")
     description = ""
     if raw.startswith("---"):
-        end = raw.index("---", 3)
-        frontmatter = raw[3:end]
-        for line in frontmatter.splitlines():
-            if line.startswith("description:"):
-                description = line.split(":", 1)[1].strip()
-        system_prompt = raw[end + 3:].strip()
+        try:
+            end = raw.index("---", 3)
+            for line in raw[3:end].splitlines():
+                if line.startswith("description:"):
+                    description = line.split(":", 1)[1].strip()
+            system_prompt = raw[end + 3:].strip()
+        except ValueError:
+            system_prompt = raw.strip()
     else:
         system_prompt = raw.strip()
-
-    providers = load_providers()
-    model_tier = AGENT_TIERS.get(name, "standard")
-
-    return AgentDef(
-        name=name,
-        description=description,
-        system_prompt=system_prompt,
-        model_tier=model_tier,
-    )
+    return AgentDef(name=name, description=description, system_prompt=system_prompt,
+                    model_tier=AGENT_TIERS.get(name, "standard"))
 
 
 # ── Memory injection ──────────────────────────────────────────────────────────
 
 def fetch_memory_context(query: str) -> str:
-    """Query MCP memory server for relevant context via stdio."""
     try:
-        npx = _resolve_npx()
+        npx = next((c for c in ["npx-nvm", "npx"] if
+                    subprocess.run(["which", c], capture_output=True).returncode == 0), None)
+        if not npx:
+            return ""
         mem_dir = str(BRAIN_DIR / "memory")
         proc = subprocess.run(
             [npx, "-y", "@modelcontextprotocol/server-memory", mem_dir],
@@ -171,219 +266,137 @@ def fetch_memory_context(query: str) -> str:
                 json.dumps({"jsonrpc": "2.0", "id": 2, "method": "tools/call",
                             "params": {"name": "search_nodes", "arguments": {"query": query}}}),
             ]) + "\n",
-            capture_output=True,
-            text=True,
-            timeout=15,
+            capture_output=True, text=True, timeout=15,
         )
-        # Parse memory results
         results = []
         for line in proc.stdout.splitlines():
             try:
                 msg = json.loads(line)
-                content = msg.get("result", {}).get("content", [])
-                for block in content:
+                for block in msg.get("result", {}).get("content", []):
                     if block.get("type") == "text":
                         data = json.loads(block["text"])
-                        for ent in data.get("entities", []):
-                            name = ent.get("name", "")
-                            etype = ent.get("entityType", "")
-                            obs = ent.get("observations", [])
-                            results.append(f"[{etype}] {name}: " + " | ".join(obs[:2]))
-            except (json.JSONDecodeError, KeyError, TypeError):
+                        for ent in data.get("entities", [])[:5]:
+                            obs = " | ".join(ent.get("observations", [])[:2])
+                            results.append(f"[{ent.get('entityType','?')}] {ent.get('name','')}: {obs}")
+            except Exception:
                 continue
-
-        if results:
-            return "## Relevant Memory Context\n" + "\n".join(f"- {r}" for r in results[:10])
+        return ("## Memory Context\n" + "\n".join(f"- {r}" for r in results)) if results else ""
+    except Exception:
         return ""
-    except Exception as e:
-        return f"[memory unavailable: {e}]"
 
 
-def _resolve_npx() -> str:
-    for cmd in ["npx-nvm", "npx"]:
-        result = subprocess.run(["which", cmd], capture_output=True, text=True)
-        if result.returncode == 0:
-            return cmd
-    raise RuntimeError("npx not found")
+# ── Agent execution ───────────────────────────────────────────────────────────
 
-
-# ── Model call ────────────────────────────────────────────────────────────────
-
-def call_model(model: str, system: str, user: str) -> tuple[str, int]:
-    """Call Anthropic API directly."""
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    if not api_key:
-        raise RuntimeError(
-            "ANTHROPIC_API_KEY not set. Export it in your shell profile."
-        )
-
-    payload = json.dumps({
-        "model": model,
-        "max_tokens": 4096,
-        "system": system,
-        "messages": [{"role": "user", "content": user}],
-    }).encode("utf-8")
-
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        data=payload,
-        headers={
-            "x-api-key": api_key,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        data = json.loads(resp.read().decode("utf-8"))
-
-    text = "".join(block["text"] for block in data.get("content", []) if block.get("type") == "text")
-    tokens = data.get("usage", {}).get("output_tokens", 0)
-    return text, tokens
-
-
-# ── Agent execution ────────────────────────────────────────────────────────────
-
-def run_agent(
-    name: str,
-    task: str,
-    context: str = "",
-    inject_memory: bool = False,
-    inject_rules: bool = True,
-) -> AgentResult:
+def run_agent(name: str, task: str, context: str = "", inject_memory: bool = False,
+              inject_rules: bool = True, backend_override: str = "auto") -> AgentResult:
     agent = load_agent(name)
-    providers = load_providers()
-    model = resolve_model(name, providers)
+    backend = detect_backend(backend_override)
+    if backend == "none":
+        return AgentResult(agent=name, task=task, output="", model_used="none", backend="none",
+                           error="No LLM backend available. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, or start Ollama.")
+    model = resolve_model(name, backend)
 
-    # Build system prompt
     system_parts = [agent.system_prompt]
-
-    # Inject global rules (canonical.md excerpt - first 2000 chars to stay within budget)
     if inject_rules:
-        canonical_path = BRAIN_DIR / "rules" / "canonical.md"
-        if canonical_path.exists():
-            rules_excerpt = canonical_path.read_text(encoding="utf-8")[:2000]
-            system_parts.append(f"\n\n## Global Rules (from canonical.md)\n{rules_excerpt}")
-
+        canonical = BRAIN_DIR / "rules" / "canonical.md"
+        if canonical.exists():
+            system_parts.append("\n## Global Rules\n" + canonical.read_text(encoding="utf-8")[:2000])
     system = "\n\n".join(system_parts)
 
-    # Build user message
     user_parts = [f"## Task\n{task}"]
     if context:
         user_parts.insert(0, f"## Context\n{context}")
     if inject_memory:
-        mem_ctx = fetch_memory_context(task[:200])
-        if mem_ctx:
-            user_parts.insert(0, mem_ctx)
-
+        mem = fetch_memory_context(task[:200])
+        if mem:
+            user_parts.insert(0, mem)
     user = "\n\n".join(user_parts)
 
     try:
-        output, tokens = call_model(model, system, user)
-        return AgentResult(
-            agent=name,
-            task=task,
-            output=output,
-            model_used=model,
-            tokens_used=tokens,
-        )
+        output, tokens = call_model(backend, model, system, user)
+        return AgentResult(agent=name, task=task, output=output, model_used=model, backend=backend, tokens_used=tokens)
     except Exception as e:
-        return AgentResult(
-            agent=name,
-            task=task,
-            output="",
-            model_used=model,
-            error=str(e),
-        )
+        return AgentResult(agent=name, task=task, output="", model_used=model, backend=backend, error=str(e))
 
 
-# ── Pipeline execution ────────────────────────────────────────────────────────
-
-def run_pipeline(pipeline: str, task: str, inject_memory: bool = False) -> list[AgentResult]:
-    """Run a pipeline of agents where output of each feeds into the next."""
-    agent_names = [a.strip() for a in pipeline.split("->")]
+def run_pipeline(pipeline: str, task: str, inject_memory: bool = False,
+                 backend_override: str = "auto") -> list[AgentResult]:
     results = []
     context = ""
-
-    for agent_name in agent_names:
-        print(f"[pipeline] Running agent: {agent_name}", file=sys.stderr)
-        result = run_agent(agent_name, task, context=context, inject_memory=inject_memory)
+    for name in [a.strip() for a in pipeline.split("->")]:
+        print(f"[pipeline] {name}...", file=sys.stderr)
+        result = run_agent(name, task, context=context, inject_memory=inject_memory, backend_override=backend_override)
         results.append(result)
         if result.error:
-            print(f"[pipeline] Agent {agent_name} failed: {result.error}", file=sys.stderr)
+            print(f"[pipeline] {name} failed: {result.error}", file=sys.stderr)
             break
-        # Pass output as context to next agent
-        context = f"Output from {agent_name}:\n\n{result.output}"
-
+        context = f"Output from {name}:\n\n{result.output}"
     return results
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main():
-    parser = argparse.ArgumentParser(description="Brain repo agent runner")
+    parser = argparse.ArgumentParser(description="Brain repo agent runner (LLM-agnostic)")
     parser.add_argument("--agent",    help="Agent name to run")
     parser.add_argument("--pipeline", help="Pipeline: 'agent1->agent2->agent3'")
     parser.add_argument("--task",     help="Task description")
-    parser.add_argument("--context",  help="Additional context string")
-    parser.add_argument("--memory",   action="store_true", help="Inject relevant memory context")
-    parser.add_argument("--no-rules", action="store_true", help="Skip injecting canonical.md rules")
-    parser.add_argument("--json",     action="store_true", help="Output JSON")
+    parser.add_argument("--context",  help="Additional context")
+    parser.add_argument("--memory",   action="store_true", help="Inject memory context")
+    parser.add_argument("--no-rules", action="store_true", help="Skip canonical.md injection")
+    parser.add_argument("--backend",  default="auto", choices=["auto","anthropic","openai","gemini","ollama"])
+    parser.add_argument("--json",     action="store_true", help="JSON output")
     parser.add_argument("--list",     action="store_true", help="List available agents")
+    parser.add_argument("--backends", action="store_true", help="Show available backends")
     args = parser.parse_args()
 
+    if args.backends:
+        active = detect_backend()
+        info = {
+            "active": active,
+            "anthropic": bool(os.environ.get("ANTHROPIC_API_KEY")),
+            "openai":    bool(os.environ.get("OPENAI_API_KEY")),
+            "gemini":    bool(os.environ.get("GEMINI_API_KEY")),
+            "ollama":    os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"),
+        }
+        print(json.dumps(info, indent=2))
+        return
+
     if args.list:
-        available = sorted(p.stem for p in AGENTS_DIR.glob("*.md"))
-        for name in available:
+        for p in sorted(AGENTS_DIR.glob("*.md")):
             try:
-                agent = load_agent(name)
-                tier = AGENT_TIERS.get(name, "standard")
-                print(f"  {name:<20} [{tier}]  {agent.description[:60]}")
+                a = load_agent(p.stem)
+                tier = AGENT_TIERS.get(p.stem, "standard")
+                print(f"  {p.stem:<24} [{tier}]  {a.description[:60]}")
             except Exception:
-                print(f"  {name}")
+                print(f"  {p.stem}")
         return
 
     if not args.task:
         parser.error("--task is required")
 
     if args.pipeline:
-        results = run_pipeline(args.pipeline, args.task, inject_memory=args.memory)
+        results = run_pipeline(args.pipeline, args.task, inject_memory=args.memory, backend_override=args.backend)
         if args.json:
-            print(json.dumps([
-                {"agent": r.agent, "output": r.output, "model": r.model_used,
-                 "tokens": r.tokens_used, "error": r.error}
-                for r in results
-            ], indent=2))
+            print(json.dumps([{"agent": r.agent, "output": r.output, "model": r.model_used,
+                                "backend": r.backend, "tokens": r.tokens_used, "error": r.error}
+                               for r in results], indent=2))
         else:
             for r in results:
-                print(f"\n{'='*60}")
-                print(f"Agent: {r.agent} | Model: {r.model_used} | Tokens: {r.tokens_used}")
-                print(f"{'='*60}")
-                if r.error:
-                    print(f"ERROR: {r.error}")
-                else:
-                    print(r.output)
+                print(f"\n{'='*60}\nAgent: {r.agent} | Backend: {r.backend} | Model: {r.model_used} | Tokens: {r.tokens_used}\n{'='*60}")
+                print(r.error if r.error else r.output)
         return
 
     if args.agent:
-        result = run_agent(
-            args.agent,
-            args.task,
-            context=args.context or "",
-            inject_memory=args.memory,
-            inject_rules=not args.no_rules,
-        )
+        result = run_agent(args.agent, args.task, context=args.context or "",
+                           inject_memory=args.memory, inject_rules=not args.no_rules,
+                           backend_override=args.backend)
         if args.json:
-            print(json.dumps({
-                "agent":   result.agent,
-                "output":  result.output,
-                "model":   result.model_used,
-                "tokens":  result.tokens_used,
-                "error":   result.error,
-            }, indent=2))
+            print(json.dumps({"agent": result.agent, "output": result.output, "model": result.model_used,
+                               "backend": result.backend, "tokens": result.tokens_used, "error": result.error}, indent=2))
         else:
             if result.error:
-                print(f"ERROR: {result.error}", file=sys.stderr)
+                print(f"ERROR [{result.backend}]: {result.error}", file=sys.stderr)
                 sys.exit(1)
             print(result.output)
         return
