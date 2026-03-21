@@ -1,0 +1,57 @@
+{
+  "memory_cycle": {
+    "status": "PASS",
+    "entity_id": "MCPRealTest_ac352b6e",
+    "write_ok": true,
+    "read_found": true,
+    "response_count": 3
+  },
+  "brain_rules_tools": {
+    "status": "PASS",
+    "passed": 6,
+    "total": 6,
+    "tools": [
+      {
+        "tool": "brain_get_rules",
+        "status": "PASS",
+        "output_len": 2000,
+        "valid": true
+      },
+      {
+        "tool": "brain_route_task",
+        "status": "PASS",
+        "output_len": 122,
+        "valid": true
+      },
+      {
+        "tool": "brain_search_rules",
+        "status": "PASS",
+        "output_len": 594,
+        "valid": true
+      },
+      {
+        "tool": "brain_get_command",
+        "status": "PASS",
+        "output_len": 2056,
+        "valid": true
+      },
+      {
+        "tool": "brain_list_agents",
+        "status": "PASS",
+        "output_len": 1623,
+        "valid": true
+      },
+      {
+        "tool": "brain_get_provider",
+        "status": "PASS",
+        "output_len": 73,
+        "valid": true
+      }
+    ]
+  },
+  "filesystem_real": {
+    "status": "PASS",
+    "file_read": "/home/reeinharrrd/.brain/rules/canonical.md",
+    "content_found": true
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "tier_routing": {
+    "status": "PASS",
+    "backend": "ollama",
+    "routing": [
+      {
+        "agent": "documenter",
+        "expected_tier": "fast",
+        "actual_tier": "fast",
+        "model": "qwen2.5-coder:7b",
+        "backend": "ollama",
+        "tier_match": true
+      },
+      {
+        "agent": "researcher",
+        "expected_tier": "standard",
+        "actual_tier": "standard",
+        "model": "llama3:8b",
+        "backend": "ollama",
+        "tier_match": true
+      },
+      {
+        "agent": "planner",
+        "expected_tier": "powerful",
+        "actual_tier": "powerful",
+        "model": "deepseek-r1:7b",
+        "backend": "ollama",
+        "tier_match": true
+      },
+      {
+        "agent": "orchestrator",
+        "expected_tier": "powerful",
+        "actual_tier": "powerful",
+        "model": "deepseek-r1:7b",
+        "backend": "ollama",
+        "tier_match": true
+      }
+    ]
+  },
+  "capability_injection": {
+    "status": "PASS",
+    "protocol_fields_adopted": 3,
+    "has_think": true,
+    "has_answer": true,
+    "has_confidence": true,
+    "model_used": "qwen2.5-coder:7b",
+    "output_preview": "**THINK:** SHA-256 is a cryptographic hash function that produces a 256-bit (32-byte) hash value. It is widely used due to its robustness and resistance to collision attacks, making it suitable for many security purposes. However, when considering password hashing, there are specific requirements that SHA-256 alone does not meet.\n\n**ANSWER:** No, SHA-256 is not suitable for password hashing solely",
+    "note": "Capability injection allows small models to mimic structured output"
+  },
+  "chain_of_thought": {
+    "status": "PASS",
+    "shows_reasoning_steps": true,
+    "includes_number": true,
+    "model_used": "qwen2.5-coder:7b",
+    "output_preview": "To determine how much faster the improved algorithm is compared to the original, we can use a rough approximation based on the properties of logarithms.\n\n### Original Algorithm (O(n^2))\n\nFor \\( n = 1000 \\):\n\\[ T_{\\text{original}} = n^2 = 1000^2 = 1,000,000 \\]\n\n### Improved Algorithm (O(n log n))\n\nFor \\( n = 1000 \\):\n\\[ T_{\\text{improved}} = n \\log n \\]\nUsing the change of base formula for logarith"
+  },
+  "fallback_chain": {
+    "status": "PASS",
+    "fallback_chain": [
+      "claude",
+      "gemini",
+      "openai",
+      "local"
+    ],
+    "chain_length": 4,
+    "note": "System will try providers in order if primary fails"
+  }
+}

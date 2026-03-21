@@ -1,0 +1,63 @@
+{
+  "parallel_execution": {
+    "status": "PASS",
+    "sequential_time_s": 43.54,
+    "parallel_time_s": 7.96,
+    "speedup_factor": 5.47,
+    "agents_ran": 3,
+    "agents_succeeded": 3,
+    "results": [
+      {
+        "agent": "researcher",
+        "index": 0,
+        "elapsed_s": 1.64,
+        "success": true,
+        "output_len": 257,
+        "model": "llama3:8b",
+        "backend": "ollama",
+        "error": null
+      },
+      {
+        "agent": "reviewer",
+        "index": 2,
+        "elapsed_s": 4.1,
+        "success": true,
+        "output_len": 321,
+        "model": "llama3:8b",
+        "backend": "ollama",
+        "error": null
+      },
+      {
+        "agent": "documenter",
+        "index": 1,
+        "elapsed_s": 7.96,
+        "success": true,
+        "output_len": 157,
+        "model": "qwen2.5-coder:7b",
+        "backend": "ollama",
+        "error": null
+      }
+    ]
+  },
+  "context_isolation": {
+    "status": "PARTIAL",
+    "isolation_verified": false,
+    "results": [
+      {
+        "expected": "TASK_ALPHA",
+        "found_in_output": false,
+        "success": true
+      },
+      {
+        "expected": "TASK_BETA",
+        "found_in_output": false,
+        "success": true
+      },
+      {
+        "expected": "TASK_GAMMA",
+        "found_in_output": false,
+        "success": true
+      }
+    ]
+  }
+}

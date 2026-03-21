@@ -7,7 +7,7 @@ import json
 import os
 import pathlib
 import subprocess
-import sys
+import subprocess
 
 brain_dir = pathlib.Path(os.environ.get("BRAIN_DIR", str(pathlib.Path.home() / ".brain")))
 
@@ -19,20 +19,19 @@ result = subprocess.run(
 full_rules = result.stdout
 
 opencode = {
-    "//": "AUTO-GENERATED - DO NOT EDIT DIRECTLY. Source: ~/.brain/rules/",
     "model": "anthropic/claude-sonnet-4-6",
-    "systemPrompt": full_rules,
-    "mcpServers": {
-        "memory":              {"command": "bash", "args": ["-lc", "npx -y @modelcontextprotocol/server-memory \"$HOME/.brain/memory\""]},
-        "filesystem":          {"command": "bash", "args": ["-lc", "npx -y @modelcontextprotocol/server-filesystem \"$HOME\""]},
-        "sequential-thinking": {"command": "bash", "args": ["-lc", "npx -y @modelcontextprotocol/server-sequential-thinking"]},
-        "context7":            {"command": "bash", "args": ["-lc", "npx -y @upstash/context7-mcp@latest"]},
-        "github":              {"command": "bash", "args": ["-lc", "npx -y @modelcontextprotocol/server-github"]},
-        "brain-rules":         {"command": "python3", "args": [str(brain_dir / "mcp" / "brain-mcp-server" / "server.py")]},
-        "skill-ninja":         {"command": "docker", "args": ["run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]},
-        "duckduckgo":          {"command": "docker", "args": ["run", "-i", "--rm", "mcp/duckduckgo:latest"]},
-        "crawl4ai":            {"command": "docker", "args": ["run", "-i", "--rm", "unclecode/crawl4ai:latest"]},
-        "context-awesome":     {"command": "docker", "args": ["run", "-i", "--rm", "bh-rat/context-awesome:latest"]},
+    "instructions": [full_rules],
+    "mcp": {
+        "memory":              {"type": "local", "command": ["bash", "-lc", "npx -y @modelcontextprotocol/server-memory \"$HOME/.brain/memory\""]},
+        "filesystem":          {"type": "local", "command": ["bash", "-lc", "npx -y @modelcontextprotocol/server-filesystem \"$HOME\""]},
+        "sequential-thinking": {"type": "local", "command": ["bash", "-lc", "npx -y @modelcontextprotocol/server-sequential-thinking"]},
+        "context7":            {"type": "local", "command": ["bash", "-lc", "npx -y @upstash/context7-mcp@latest"]},
+        "github":              {"type": "local", "command": ["bash", "-lc", "npx -y @modelcontextprotocol/server-github"]},
+        "brain-rules":         {"type": "local", "command": ["python3", str(brain_dir / "mcp" / "brain-mcp-server" / "server.py")]},
+        "skill-ninja":         {"type": "local", "command": ["docker", "run", "-i", "--rm", "aktsmm/skill-ninja-mcp-server:latest"]},
+        "duckduckgo":          {"type": "local", "command": ["docker", "run", "-i", "--rm", "mcp/duckduckgo:latest"]},
+        "crawl4ai":            {"type": "local", "command": ["docker", "run", "-i", "--rm", "unclecode/crawl4ai:latest"]},
+        "context-awesome":     {"type": "local", "command": ["docker", "run", "-i", "--rm", "bh-rat/context-awesome:latest"]},
     }
 }
 

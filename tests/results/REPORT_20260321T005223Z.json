@@ -1,0 +1,241 @@
+{
+  "run_id": "20260321T005223Z",
+  "total": 5,
+  "passed": 1,
+  "failed": 4,
+  "skipped": 0,
+  "results": {
+    "context_management": {
+      "context_budget_chain": {
+        "status": "FAIL",
+        "stage": "planner",
+        "error": "HTTP Error 404: Not Found"
+      },
+      "small_model_compat": {
+        "status": "FAIL",
+        "model_used": "7b",
+        "backend": "ollama",
+        "output_tokens": 0,
+        "error": "HTTP Error 404: Not Found",
+        "note": "Fast-tier model ran without full rule injection"
+      },
+      "rules_injection_overhead": {
+        "status": "PASS",
+        "canonical_tokens": 1351,
+        "output_without_rules": "ERROR",
+        "output_with_rules": "ERROR",
+        "rules_affect_output": false,
+        "recommendation": "Inject rules only for planning/design agents (powerful tier). Skip for fast-tier repetitive tasks."
+      },
+      "handoff_artifact_format": {
+        "status": "FAIL",
+        "error": "HTTP Error 404: Not Found"
+      }
+    },
+    "dynamic_skills": {
+      "skill_registry": {
+        "status": "PASS",
+        "has_skills_key": true,
+        "skill_count": 11,
+        "registry_size": 3138
+      },
+      "stack_detection": {
+        "status": "PASS",
+        "detected_tags": "nextjs\nnodejs\nreact\ntypescript",
+        "nextjs_detected": true,
+        "skill_context_generated": true,
+        "skill_context_preview": "# Project Skill Context\n\n- Project root: /tmp/tmp_qo96w2f\n- Detected tags: nextjs nodejs react typescript\n\nLoad only the contexts below in addition to the global brain rules.\n\n## Node and TypeScript\n\n- Skill ID: node-typescript\n- Match tags: nodejs,typescript\n- Summary: Node runtime, package scripts"
+      },
+      "context_injection": {
+        "status": "FAIL",
+        "entries_used": 10,
+        "context_injected": true,
+        "agent_understood_context": false,
+        "output_preview": "HTTP Error 404: Not Found"
+      },
+      "agent_self_discovery": {
+        "status": "FAIL",
+        "error": "HTTP Error 404: Not Found"
+      }
+    },
+    "mcp_real_usage": {
+      "memory_cycle": {
+        "status": "PASS",
+        "entity_id": "MCPRealTest_c9a64ad6",
+        "write_ok": true,
+        "read_found": true,
+        "response_count": 3
+      },
+      "brain_rules_tools": {
+        "status": "PASS",
+        "passed": 6,
+        "total": 6,
+        "tools": [
+          {
+            "tool": "brain_get_rules",
+            "status": "PASS",
+            "output_len": 2000,
+            "valid": true
+          },
+          {
+            "tool": "brain_route_task",
+            "status": "PASS",
+            "output_len": 122,
+            "valid": true
+          },
+          {
+            "tool": "brain_search_rules",
+            "status": "PASS",
+            "output_len": 594,
+            "valid": true
+          },
+          {
+            "tool": "brain_get_command",
+            "status": "PASS",
+            "output_len": 2056,
+            "valid": true
+          },
+          {
+            "tool": "brain_list_agents",
+            "status": "PASS",
+            "output_len": 1623,
+            "valid": true
+          },
+          {
+            "tool": "brain_get_provider",
+            "status": "PASS",
+            "output_len": 73,
+            "valid": true
+          }
+        ]
+      },
+      "filesystem_real": {
+        "status": "PASS",
+        "file_read": "/home/reeinharrrd/.brain/rules/canonical.md",
+        "content_found": true
+      }
+    },
+    "model_compatibility": {
+      "tier_routing": {
+        "status": "PASS",
+        "backend": "ollama",
+        "routing": [
+          {
+            "agent": "documenter",
+            "expected_tier": "fast",
+            "actual_tier": "fast",
+            "model": "7b",
+            "backend": "ollama",
+            "tier_match": true
+          },
+          {
+            "agent": "researcher",
+            "expected_tier": "standard",
+            "actual_tier": "standard",
+            "model": "32b",
+            "backend": "ollama",
+            "tier_match": true
+          },
+          {
+            "agent": "planner",
+            "expected_tier": "powerful",
+            "actual_tier": "powerful",
+            "model": "latest",
+            "backend": "ollama",
+            "tier_match": true
+          },
+          {
+            "agent": "orchestrator",
+            "expected_tier": "powerful",
+            "actual_tier": "powerful",
+            "model": "latest",
+            "backend": "ollama",
+            "tier_match": true
+          }
+        ]
+      },
+      "capability_injection": {
+        "status": "FAIL",
+        "error": "HTTP Error 404: Not Found"
+      },
+      "chain_of_thought": {
+        "status": "FAIL",
+        "error": "HTTP Error 404: Not Found"
+      },
+      "fallback_chain": {
+        "status": "PASS",
+        "fallback_chain": [
+          "claude",
+          "gemini",
+          "openai",
+          "local"
+        ],
+        "chain_length": 4,
+        "note": "System will try providers in order if primary fails"
+      }
+    },
+    "parallel_agents": {
+      "parallel_execution": {
+        "status": "FAIL",
+        "sequential_time_s": 0.01,
+        "parallel_time_s": 0.0,
+        "speedup_factor": 1.0,
+        "agents_ran": 3,
+        "agents_succeeded": 0,
+        "results": [
+          {
+            "agent": "researcher",
+            "index": 0,
+            "elapsed_s": 0.0,
+            "success": false,
+            "output_len": 0,
+            "model": "32b",
+            "backend": "ollama",
+            "error": "HTTP Error 404: Not Found"
+          },
+          {
+            "agent": "documenter",
+            "index": 1,
+            "elapsed_s": 0.0,
+            "success": false,
+            "output_len": 0,
+            "model": "7b",
+            "backend": "ollama",
+            "error": "HTTP Error 404: Not Found"
+          },
+          {
+            "agent": "reviewer",
+            "index": 2,
+            "elapsed_s": 0.0,
+            "success": false,
+            "output_len": 0,
+            "model": "32b",
+            "backend": "ollama",
+            "error": "HTTP Error 404: Not Found"
+          }
+        ]
+      },
+      "context_isolation": {
+        "status": "PASS",
+        "isolation_verified": true,
+        "results": [
+          {
+            "expected": "TASK_ALPHA",
+            "found_in_output": false,
+            "success": false
+          },
+          {
+            "expected": "TASK_BETA",
+            "found_in_output": false,
+            "success": false
+          },
+          {
+            "expected": "TASK_GAMMA",
+            "found_in_output": false,
+            "success": false
+          }
+        ]
+      }
+    }
+  }
+}

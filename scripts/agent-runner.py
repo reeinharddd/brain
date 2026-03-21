@@ -137,7 +137,8 @@ def resolve_model(agent_name: str, backend: str) -> str:
             if re.match(rf"^\s*{re.escape(backend)}\s*:", line):
                 in_backend = True
             if in_backend and f"{tier}:" in line:
-                candidate = line.split(":")[-1].strip()
+                # Split on the tier key only to preserve model names with colons (e.g. "qwen2.5-coder:7b")
+                candidate = line.split(f"{tier}:", 1)[-1].strip()
                 if candidate and not candidate.startswith("#"):
                     return candidate
             if in_backend and re.match(r"^\w+:", line) and backend not in line:

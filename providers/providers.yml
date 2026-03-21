@@ -27,22 +27,22 @@ providers:
       powerful: gemini-2.5-ultra
 
   ollama:
-    available: false       # set to true after: ollama serve
+    available: true        # Ollama running at localhost:11434
     base_url: http://localhost:11434
-    notes: "Activate if you have Ollama installed. Great for privacy-sensitive work."
+    notes: "Local Ollama instance. Great for privacy-sensitive work."
     models:
       fast:     qwen2.5-coder:7b
-      standard: qwen2.5-coder:32b
-      powerful: deepseek-coder-v3:latest
+      standard: llama3:8b
+      powerful: deepseek-r1:7b
 
   local:
-    available: false       # set to true after: ollama serve
+    available: true        # Alias for ollama local instance
     base_url: http://localhost:11434
     notes: "Activate if you have Ollama installed. Great for privacy-sensitive work."
     models:
       fast:     qwen2.5-coder:7b
-      standard: qwen2.5-coder:32b
-      powerful: deepseek-coder-v3:latest
+      standard: llama3:8b
+      powerful: deepseek-r1:7b
 
 # ── Task routing ─────────────────────────────────────────────
 # Maps task types to model tiers. Orchestrator reads this.

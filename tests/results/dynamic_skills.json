@@ -1,0 +1,29 @@
+{
+  "skill_registry": {
+    "status": "PASS",
+    "has_skills_key": true,
+    "skill_count": 11,
+    "registry_size": 3138
+  },
+  "stack_detection": {
+    "status": "PASS",
+    "detected_tags": "nextjs\nnodejs\nreact\ntypescript",
+    "nextjs_detected": true,
+    "skill_context_generated": true,
+    "skill_context_preview": "# Project Skill Context\n\n- Project root: /tmp/tmp5gfsb2h7\n- Detected tags: nextjs nodejs react typescript\n\nLoad only the contexts below in addition to the global brain rules.\n\n## Node and TypeScript\n\n- Skill ID: node-typescript\n- Match tags: nodejs,typescript\n- Summary: Node runtime, package scripts"
+  },
+  "context_injection": {
+    "status": "PASS",
+    "entries_used": 10,
+    "context_injected": true,
+    "agent_understood_context": true,
+    "output_preview": "As the team architect, I've analyzed the codebase index and identified the following key files:\n\n* `README.md`: A portable AI development environment that describes the project's goal.\n* `system-prompt.md`, `CLAUDE.md`, `cline_custom_instructions.md`, `GEMINI.md`, `copilot-instructions.md`: Various "
+  },
+  "agent_self_discovery": {
+    "status": "PASS",
+    "mentioned_memory_mcp": true,
+    "mentioned_search_tool": true,
+    "structured_response": true,
+    "output_preview": "TOOL: `@duckduckgo` | REASON: To perform an effective search for recent information about LangGraph using DuckDuckGo, ensuring accurate and up-to-date results.\n\nTOOL: `@engram` | REASON: To store the finding in memory via Engram, ensuring it's saved across sessions until needed."
+  }
+}

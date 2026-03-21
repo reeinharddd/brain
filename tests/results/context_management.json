@@ -1,0 +1,38 @@
+{
+  "context_budget_chain": {
+    "status": "PASS",
+    "stages_completed": 3,
+    "token_budget": 8000,
+    "tokens_used": 1086,
+    "within_budget": true,
+    "context_compressed": false,
+    "plan_tokens": 322,
+    "impl_tokens": 329,
+    "review_ok": true
+  },
+  "small_model_compat": {
+    "status": "PASS",
+    "model_used": "qwen2.5-coder:7b",
+    "backend": "ollama",
+    "output_tokens": 77,
+    "error": "",
+    "note": "Fast-tier model ran without full rule injection"
+  },
+  "rules_injection_overhead": {
+    "status": "PASS",
+    "canonical_tokens": 1351,
+    "output_without_rules": "REST API allows client-server communication using standard HTTP methods.",
+    "output_with_rules": "A REST API allows software applications to communicate over the web using standard HTTP methods.",
+    "rules_affect_output": true,
+    "recommendation": "Inject rules only for planning/design agents (powerful tier). Skip for fast-tier repetitive tasks."
+  },
+  "handoff_artifact_format": {
+    "status": "FAIL",
+    "contract_fields_present": 0,
+    "has_summary": false,
+    "has_artifact": false,
+    "has_risks": false,
+    "has_handoff": false,
+    "output_preview": "## Task\n\n**SUMMARY**: Performed a security-focused code review to assess the risks associated with using MD5 for password hashing.\n\n**ARTIFACT**\n\n### \ud83d\udd34 BLOCKER: Insecure Password Hashing\n\n**Location**: Line 42, `password_hashing.py`\n**Issue**: Using MD5 as a password hashing algorithm is vulnerable to collisions and preimage attacks.\n**Risk**: An attacker could potentially obtain the original plai"
+  }
+}
