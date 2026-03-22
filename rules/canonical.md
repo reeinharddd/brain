@@ -73,6 +73,41 @@ When in doubt, check the OWASP Top 10.
 A working v1 today beats a perfect v2 never.
 Every change should leave the codebase in a better state than it was found.
 
+### 9. Context isolation by default
+
+When delegating to any sub-agent or external tool, pass only what is needed
+for that specific task. Never forward the full session history, environment
+variables, or secrets. The contract is: goal + constraints + relevant files +
+expected output.
+
+### 10. Explicit degradation over silent failure
+
+When a dependency (MCP, model provider, external API) is unavailable:
+1. Log the failure with exact error
+2. Notify the user once, clearly
+3. Continue with reduced capability
+Never fail silently. Never retry endlessly without notifying.
+
+### 11. The brain repo learns from itself
+
+Every repeated pattern that is not yet a rule is a rule candidate.
+Save it to memory as entityType: RuleCandidate.
+Run /consolidate monthly to promote candidates to canonical rules.
+The system should improve its own instructions over time.
+
+### 12. Version everything explicitly
+
+MCPs, model names, and tool versions must be pinned. Floating references
+(@latest, unversioned) are only acceptable in local dev. Generated configs
+always use explicit versions.
+
+### 13. Autostart is a first-class concern
+
+The brain environment must be ready without manual steps after login.
+If the environment requires a command to activate, that command must be
+registered as an autostart service. The user should never have to think
+about starting the brain.
+
 ---
 
 ## How I Work with AI Agents
