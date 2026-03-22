@@ -92,7 +92,7 @@ for shell_file in "${SHELL_FILES[@]}"; do
   if grep -q "$MARKER" "$shell_file" 2>/dev/null; then
     ok "$(basename $shell_file): already configured"
   else
-    run_cmd bash -c "printf '%s' '$SHELL_SNIPPET' >> '$shell_file'"
+    run_cmd "printf '%s' '$SHELL_SNIPPET' >> '$shell_file'"
     ok "$(basename $shell_file): brain.env auto-source added"
   fi
 done
@@ -223,7 +223,7 @@ info "Syncing MCP config to all IDEs"
 if [ -f "$BRAIN_DIR/scripts/mcp-sync.sh" ]; then
   if [ "$DRY_RUN" -eq 0 ]; then
     BRAIN_DIR="$BRAIN_DIR" bash "$BRAIN_DIR/scripts/mcp-sync.sh" 2>&1 | \
-      grep -E "ok|warn|ERROR" | head -10
+      grep -E "✓|──|warn|ERROR" | head -20
     ok "MCP servers synced to all IDEs"
   else
     skip "bash $BRAIN_DIR/scripts/mcp-sync.sh"

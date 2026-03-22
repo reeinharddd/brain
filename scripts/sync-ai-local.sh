@@ -121,11 +121,11 @@ sync_configuration() {
     # Update .env with current user info
     if [ -w "$AI_LOCAL_DIR/.env" ]; then
         # Add UID/GID if not present
-        if ! grep -q "^UID=" "$AI_LOCAL_DIR/.env"; then
+        if ! grep -q "^HOST_UID=" "$AI_LOCAL_DIR/.env"; then
             echo "" >> "$AI_LOCAL_DIR/.env"
-            echo "UID=$(id -u)" >> "$AI_LOCAL_DIR/.env"
-            echo "GID=$(id -g)" >> "$AI_LOCAL_DIR/.env"
-            log_info "Added UID/GID to .env"
+            echo "HOST_UID=$(id -u)" >> "$AI_LOCAL_DIR/.env"
+            echo "HOST_GID=$(id -g)" >> "$AI_LOCAL_DIR/.env"
+            log_info "Added HOST_UID/HOST_GID to .env"
         fi
 
         # Add WORKSPACE_DIR if not present
