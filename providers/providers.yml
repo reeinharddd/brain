@@ -1,6 +1,6 @@
 providers:
 
-  # ── Primary provider ──────────────────────────────────────
+  # -- Primary provider --------------------------------------
   claude:
     available: true
     notes: "Default provider. Set ANTHROPIC_API_KEY in your shell profile."
@@ -9,7 +9,7 @@ providers:
       standard: claude-sonnet-4-6
       powerful: claude-opus-4-6
 
-  # ── Alternative providers (activate when needed) ──────────
+  # -- Alternative providers (activate when needed) ----------
   openai:
     available: false       # set to true after: export OPENAI_API_KEY=...
     notes: "Activate if you have an OpenAI API key"
@@ -44,7 +44,7 @@ providers:
       standard: llama3:8b
       powerful: deepseek-r1:7b
 
-# ── Task routing ─────────────────────────────────────────────
+# -- Task routing ---------------------------------------------
 # Maps task types to model tiers. Orchestrator reads this.
 task_routing:
   exploration:     fast      # read-only, search, grep, browsing
@@ -56,7 +56,7 @@ task_routing:
   planning:        powerful  # architecture, spec, major decisions
   system-design:   powerful  # multi-component architecture
 
-# ── Fallback chain ───────────────────────────────────────────
+# -- Fallback chain -------------------------------------------
 # Order of providers to try when the primary is unavailable
 fallback_chain:
   - claude
@@ -64,7 +64,7 @@ fallback_chain:
   - openai
   - local
 
-# ── Cost guidance ────────────────────────────────────────────
+# -- Cost guidance --------------------------------------------
 cost_guidance:
   principle: "Use the cheapest model that can do the job well."
   rules:

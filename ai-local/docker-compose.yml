@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # ── Web Interface: Open WebUI ───────────────────────────────────
+  # -- Web Interface: Open WebUI -----------------------------------
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
@@ -18,7 +18,7 @@ services:
     networks:
       - brain-network
 
-  # ── Vector Database: Qdrant ────────────────────────────────────
+  # -- Vector Database: Qdrant ------------------------------------
   qdrant:
     image: qdrant/qdrant:latest
     container_name: brain-qdrant
@@ -30,7 +30,7 @@ services:
     networks:
       - brain-network
 
-  # ── MCP Memory Service ──────────────────────────────────────────
+  # -- MCP Memory Service ------------------------------------------
   mcp-memory:
     image: node:20-alpine
     container_name: brain-mcp-memory
@@ -46,7 +46,7 @@ services:
     networks:
       - brain-network
 
-  # ── MCP Filesystem Service ──────────────────────────────────────
+  # -- MCP Filesystem Service --------------------------------------
   mcp-filesystem:
     image: node:20-alpine
     container_name: brain-mcp-filesystem
@@ -63,7 +63,7 @@ services:
     networks:
       - brain-network
 
-  # ── MCP Sequential Thinking ───────────────────────────────────
+  # -- MCP Sequential Thinking -----------------------------------
   mcp-sequential:
     image: node:20-alpine
     container_name: brain-mcp-sequential

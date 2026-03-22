@@ -71,7 +71,7 @@ if [ -f "$GITIGNORE" ] && ! grep -q "brain.env$" "$GITIGNORE"; then
   ok ".gitignore: brain.env added"
 fi
 
-# ── 2. Shell auto-sourcing (zsh + bash) ───────────────────────────────────────
+# -- 2. Shell auto-sourcing (zsh + bash) ---------------------------------------
 info "Shell integration (auto-source brain.env)"
 
 SHELL_SNIPPET='
@@ -97,7 +97,7 @@ for shell_file in "${SHELL_FILES[@]}"; do
   fi
 done
 
-# ── 3. Regenerate adapters ────────────────────────────────────────────────────
+# -- 3. Regenerate adapters ----------------------------------------------------
 info "Regenerating adapters (canonical.md -> all IDEs)"
 
 if [ "$DRY_RUN" -eq 0 ]; then
@@ -108,7 +108,7 @@ else
   skip "BRAIN_DIR=$BRAIN_DIR bash $BRAIN_DIR/adapters/generate.sh"
 fi
 
-# ── 4. Link adapters to IDE locations ─────────────────────────────────────────
+# -- 4. Link adapters to IDE locations -----------------------------------------
 info "Linking adapters to IDE config locations"
 
 # Claude Code
@@ -178,7 +178,7 @@ link "$BRAIN_DIR/adapters/aider/.aider.conf.yml"             "$HOME/.aider.conf.
 VSCODE_COPILOT="$HOME/.vscode/copilot-instructions.md"
 link "$BRAIN_DIR/adapters/copilot/copilot-instructions.md"   "$VSCODE_COPILOT"                     "Copilot: instructions.md"
 
-# ── 5. Inject brain-rules MCP server into Claude Code settings ────────────────
+# -- 5. Inject brain-rules MCP server into Claude Code settings ----------------
 info "Registering brain-rules MCP server in Claude Code"
 
 CLAUDE_SETTINGS="$HOME/.claude/settings.json"
@@ -217,20 +217,20 @@ else
   warn "Claude Code settings.json not found at $CLAUDE_SETTINGS"
 fi
 
-# ── 6. MCP sync to all IDEs ───────────────────────────────────────────────────
+# -- 6. MCP sync to all IDEs ---------------------------------------------------
 info "Syncing MCP config to all IDEs"
 
 if [ -f "$BRAIN_DIR/scripts/mcp-sync.sh" ]; then
   if [ "$DRY_RUN" -eq 0 ]; then
     BRAIN_DIR="$BRAIN_DIR" bash "$BRAIN_DIR/scripts/mcp-sync.sh" 2>&1 | \
-      grep -E "✓|──|warn|ERROR" | head -20
+      grep -E "ok|--|warn|ERROR" | head -20
     ok "MCP servers synced to all IDEs"
   else
     skip "bash $BRAIN_DIR/scripts/mcp-sync.sh"
   fi
 fi
 
-# ── 7. Guardian git hook (global - all repos) ─────────────────────────────────
+# -- 7. Guardian git hook (global - all repos) ---------------------------------
 info "Guardian: global git pre-commit hook"
 
 if [ "$DRY_RUN" -eq 0 ]; then
@@ -241,7 +241,7 @@ else
   skip "bash $BRAIN_DIR/scripts/install-hooks.sh --global"
 fi
 
-# ── 8. Cron jobs (automated maintenance) ─────────────────────────────────────
+# -- 8. Cron jobs (automated maintenance) -------------------------------------
 info "Automated maintenance (cron)"
 
 if command -v crontab >/dev/null 2>&1; then
@@ -259,7 +259,7 @@ else
   warn "crontab not available on this system"
 fi
 
-# ── 9. Verify everything ──────────────────────────────────────────────────────
+# -- 9. Verify everything ------------------------------------------------------
 info "Running doctor to verify setup"
 
 if [ "$DRY_RUN" -eq 0 ]; then
@@ -268,7 +268,7 @@ else
   skip "bash $BRAIN_DIR/scripts/doctor.sh"
 fi
 
-# ── 10. Summary ───────────────────────────────────────────────────────────────
+# -- 10. Summary ---------------------------------------------------------------
 echo ""
 echo -e "${B}Setup complete.${RS}"
 echo ""
