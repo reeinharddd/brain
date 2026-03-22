@@ -27,8 +27,8 @@ providers:
       powerful: gemini-2.5-ultra
 
   ollama:
-    available: true        # Ollama running at localhost:11434
-    base_url: http://localhost:11434
+    available: true        # Ollama running at localhost:11435
+    base_url: http://localhost:11435
     notes: "Local Ollama instance. Great for privacy-sensitive work."
     models:
       fast:     qwen2.5-coder:7b
@@ -37,7 +37,7 @@ providers:
 
   local:
     available: true        # Alias for ollama local instance
-    base_url: http://localhost:11434
+    base_url: http://localhost:11435
     notes: "Activate if you have Ollama installed. Great for privacy-sensitive work."
     models:
       fast:     qwen2.5-coder:7b

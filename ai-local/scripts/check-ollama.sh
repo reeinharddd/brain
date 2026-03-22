@@ -1,7 +1,7 @@
 #!/bin/bash
 # ai-local/scripts/check-ollama.sh
 
-if curl -s http://localhost:11434 >/dev/null; then
+if curl -s http://localhost:11435/api/tags >/dev/null; then
   echo "Ollama is running and responding."
   exit 0
 else

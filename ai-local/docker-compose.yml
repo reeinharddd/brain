@@ -1,13 +1,92 @@
 version: '3.8'
+
 services:
-  ollama:
-    image: ollama/ollama:latest
-    container_name: brain-ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
+  # ── Web Interface: Open WebUI ───────────────────────────────────
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
     restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11435
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+    volumes:
+      - open_webui_data:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - brain-network
+
+  # ── Vector Database: Qdrant ────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: brain-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - brain-network
+
+  # ── MCP Memory Service ──────────────────────────────────────────
+  mcp-memory:
+    image: node:20-alpine
+    container_name: brain-mcp-memory
+    restart: unless-stopped
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-memory" 
+      --port 8001 --host 0.0.0.0
+    ports:
+      - "3001:8001"
+    volumes:
+      - mcp_memory_data:/data
+    networks:
+      - brain-network
+
+  # ── MCP Filesystem Service ──────────────────────────────────────
+  mcp-filesystem:
+    image: node:20-alpine
+    container_name: brain-mcp-filesystem
+    restart: unless-stopped
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-filesystem /workspace" 
+      --port 8002 --host 0.0.0.0
+    ports:
+      - "3002:8002"
+    volumes:
+      - ${WORKSPACE_DIR:-./workspace}:/workspace
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    networks:
+      - brain-network
+
+  # ── MCP Sequential Thinking ───────────────────────────────────
+  mcp-sequential:
+    image: node:20-alpine
+    container_name: brain-mcp-sequential
+    restart: unless-stopped
+    command: >
+      npx -y supergateway 
+      --stdio "npx -y @modelcontextprotocol/server-sequential-thinking" 
+      --port 8003 --host 0.0.0.0
+    ports:
+      - "3003:8003"
+    networks:
+      - brain-network
+
+networks:
+  brain-network:
+    name: brain-network
 
 volumes:
   ollama_data:
+    name: brain-ollama-data
+  open_webui_data:
+    name: brain-webui-data
+  qdrant_data:
+    name: brain-qdrant-data
+  mcp_memory_data:
+    name: brain-mcp-memory-data

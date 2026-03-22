@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-BASE_DIR="/home/reeinharrrd/ai-local"
+BASE_DIR="/home/reeinharrrd/.brain/ai-local"
 SOCAT_PID_FILE="/tmp/socat_brain.pid"
 SOCAT_LOG="/tmp/socat_brain.log"
 
@@ -26,8 +26,13 @@ if [ ! -f "$BASE_DIR/.env" ]; then
     exit 1
 fi
 
-# Load environment variables
-export $(grep -v '^#' "$BASE_DIR/.env" | xargs) 2>/dev/null || true
+# Ensure .env exists (already checked above, but now we source it)
+# Load environment variables more robustly
+if [ -f "$BASE_DIR/.env" ]; then
+    set -a
+    source "$BASE_DIR/.env"
+    set +a
+fi
 
 # Ensure workspace directory exists
 if [ -n "${WORKSPACE_DIR:-}" ]; then
