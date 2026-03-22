@@ -1,6 +1,6 @@
-\n## Module: Git
+## Module: Git
 
-\n### Commit messages
+### Commit messages
 
 Use Conventional Commits format:
 ```text
@@ -36,7 +36,7 @@ Caused 500 errors when unauthenticated requests reached the payment
 handler. Added early return with 401 response.
 ```text
 
-\n## Branch strategy
+## Branch strategy
 
 - `main` / `master`: always deployable, protected
 - `develop`: integration branch (if using GitFlow)
@@ -44,7 +44,7 @@ handler. Added early return with 401 response.
 - Fix branches: `fix/<issue-number>-<description>`
 - Hotfixes: `hotfix/<description>`
 
-\n## Workflow rules
+## Workflow rules
 
 1. **Never force-push to main/master** - use revert commits instead
 2. **Never commit secrets** - use pre-commit hooks or `.gitignore`
@@ -53,7 +53,7 @@ handler. Added early return with 401 response.
 5. **Pull before pushing** - always fetch/pull to avoid diverged history
 6. **Sign commits** when working on security-sensitive projects
 
-\n## PR / MR conventions
+## PR / MR conventions
 
 - Title: same format as commit message
 - Description: What changed, why, how to test
@@ -62,7 +62,7 @@ handler. Added early return with 401 response.
 - Don't merge your own PRs without review (unless solo project)
 - Keep PRs small: aim for < 400 lines changed per PR
 
-\n## Brain repo specific
+## Brain repo specific
 
 When updating `~/.brain/`:
 

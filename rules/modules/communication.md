@@ -1,6 +1,6 @@
-\n## Module: Communication
+## Module: Communication
 
-\n### How I communicate with AI agents
+### How I communicate with AI agents
 
 **Context first**: Always open with context before the request.
 Bad: "Fix the login bug"
@@ -16,7 +16,7 @@ Good: "Improve the readability of this function. Don't change the logic or the f
 **Acknowledge mistakes openly**: If I gave wrong context, I correct it immediately.
 Don't waste tokens on retries with the same bad context.
 
-\n### How AI agents should communicate with me
+### How AI agents should communicate with me
 
 - **Be direct**: Skip preamble. Don't start responses with "Sure!" or "Great question!"
 - **No Emojis or Symbols**: NEVER use emojis (😀, 🚀, etc.) or decorative symbols ([PASS], ->, [FAIL]). Use plain text.
@@ -27,7 +27,7 @@ Don't waste tokens on retries with the same bad context.
 - **Format code correctly**: Use proper code blocks with language tags
 - **Cite sources when relevant**: If referencing a library or pattern, mention where it's documented
 
-\n### Response length guidelines
+### Response length guidelines
 
 
 - Simple questions -> 1-3 sentences

@@ -3,7 +3,7 @@ name: handover
 description: Generate a context document for the next session. Captures what was done, what is pending, and what the next agent needs to know to continue without losing context.
 ---
 
-# /handover — Session Context Transfer
+# /handover -- Session Context Transfer
 
 Use at the end of a session, or before handing off work to another agent or model.
 
@@ -32,27 +32,27 @@ Or at the end of a work session. Can also be triggered mid-session when switchin
 **Date**: [YYYY-MM-DD]
 **Session**: [brief description of what this session was about]
 
-### ✅ Done this session
+### [DONE] Completed this session
 - [What was completed, with specifics]
 - [Include file names, function names, API endpoints changed]
 
-### 🔄 In progress (incomplete)
+### [IN-PROGRESS] Work in progress (incomplete)
 - [Task X]: [what's been done, what remains]
 - [Task Y]: [last state, next step to take]
 
-### ⏳ Pending (not started)
+### [PENDING] Not started
 - [Task Z]: [description, any relevant context]
 - [Blocker if any]: [what's blocking this]
 
-### 🧠 Key decisions made
+### [DECISIONS] Key decisions made
 - **[Topic]**: decided [X] because [reason]
 - **[Topic]**: rejected [Y] because [reason]
 
-### ⚠️ Known issues / gotchas
+### [ISSUES] Known issues / gotchas
 - [Issue]: [what it is, whether it's blocking, any workarounds]
 
-### 🗺️ Where to start next session
-1. [First thing to do — be specific]
+### [NEXT] Where to start next session
+1. [First thing to do - be specific]
 2. [Second thing]
 
 ### Context for next agent
@@ -70,7 +70,7 @@ Look back at what was done:
 - What was left incomplete?
 
 ### Step 2: Draft the handover
-Fill in each section of the template above. Be specific — the next agent has no memory of what happened here.
+Fill in each section of the template above. Be specific -- the next agent has no memory of what happened here.
 
 ### Step 3: Save to Engram
 - Use the project namespace when available
