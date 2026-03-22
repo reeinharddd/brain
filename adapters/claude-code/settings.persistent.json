@@ -1,4 +1,33 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(bash ~/.brain/scripts/doctor.sh --verbose 2>&1)",
+      "Bash(python3:*)",
+      "Bash(bash ~/.brain/scripts/test-memory.sh 2>&1)",
+      "Bash(bash ~/.brain/scripts/test-stdio-mcp.sh filesystem 2>&1)",
+      "Bash(bash ~/.brain/scripts/test-stdio-mcp.sh sequential 2>&1)",
+      "Bash(bash ~/.brain/scripts/test-stdio-mcp.sh context7 2>&1)",
+      "Bash(printf '%s\\\\n%s\\\\n%s\\\\n' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"id\"\"\"\":1,\"\"\"\"method\"\"\"\":\"\"\"\"initialize\"\"\"\",\"\"\"\"params\"\"\"\":{\"\"\"\"protocolVersion\"\"\"\":\"\"\"\"2024-11-05\"\"\"\",\"\"\"\"capabilities\"\"\"\":{},\"\"\"\"clientInfo\"\"\"\":{\"\"\"\"name\"\"\"\":\"\"\"\"test\"\"\"\",\"\"\"\"version\"\"\"\":\"\"\"\"1.0.0\"\"\"\"}}}' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"method\"\"\"\":\"\"\"\"notifications/initialized\"\"\"\",\"\"\"\"params\"\"\"\":{}}' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"id\"\"\"\":2,\"\"\"\"method\"\"\"\":\"\"\"\"tools/list\"\"\"\",\"\"\"\"params\"\"\"\":{}}')",
+      "Bash(curl -sf http://localhost:6333/collections)",
+      "Bash(printf '%s\\\\n%s\\\\n%s\\\\n' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"id\"\"\"\":1,\"\"\"\"method\"\"\"\":\"\"\"\"initialize\"\"\"\",\"\"\"\"params\"\"\"\":{\"\"\"\"protocolVersion\"\"\"\":\"\"\"\"2024-11-05\"\"\"\",\"\"\"\"capabilities\"\"\"\":{},\"\"\"\"clientInfo\"\"\"\":{\"\"\"\"name\"\"\"\":\"\"\"\"test\"\"\"\",\"\"\"\"version\"\"\"\":\"\"\"\"1.0.0\"\"\"\"}}}' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"method\"\"\"\":\"\"\"\"notifications/initialized\"\"\"\",\"\"\"\"params\"\"\"\":{}}' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"id\"\"\"\":2,\"\"\"\"method\"\"\"\":\"\"\"\"tools/call\"\"\"\",\"\"\"\"params\"\"\"\":{\"\"\"\"name\"\"\"\":\"\"\"\"brain_route_task\"\"\"\",\"\"\"\"arguments\"\"\"\":{\"\"\"\"task_description\"\"\"\":\"\"\"\"I need to debug a crash in production\"\"\"\"}}}')",
+      "Bash(printf '%s\\\\n%s\\\\n%s\\\\n' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"id\"\"\"\":1,\"\"\"\"method\"\"\"\":\"\"\"\"initialize\"\"\"\",\"\"\"\"params\"\"\"\":{\"\"\"\"protocolVersion\"\"\"\":\"\"\"\"2024-11-05\"\"\"\",\"\"\"\"capabilities\"\"\"\":{},\"\"\"\"clientInfo\"\"\"\":{\"\"\"\"name\"\"\"\":\"\"\"\"test\"\"\"\",\"\"\"\"version\"\"\"\":\"\"\"\"1.0.0\"\"\"\"}}}' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"method\"\"\"\":\"\"\"\"notifications/initialized\"\"\"\",\"\"\"\"params\"\"\"\":{}}' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"id\"\"\"\":2,\"\"\"\"method\"\"\"\":\"\"\"\"tools/call\"\"\"\",\"\"\"\"params\"\"\"\":{\"\"\"\"name\"\"\"\":\"\"\"\"brain_search_rules\"\"\"\",\"\"\"\"arguments\"\"\"\":{\"\"\"\"query\"\"\"\":\"\"\"\"error handling\"\"\"\"}}}')",
+      "Bash(bash ~/.brain/scripts/consolidate-memory.sh --dry-run --json 2>&1)",
+      "Bash(bash ~/.brain/scripts/memory-cloud-sync.sh status 2>&1)",
+      "Bash(printf '%s\\\\n%s\\\\n%s\\\\n' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"id\"\"\"\":1,\"\"\"\"method\"\"\"\":\"\"\"\"initialize\"\"\"\",\"\"\"\"params\"\"\"\":{\"\"\"\"protocolVersion\"\"\"\":\"\"\"\"2024-11-05\"\"\"\",\"\"\"\"capabilities\"\"\"\":{},\"\"\"\"clientInfo\"\"\"\":{\"\"\"\"name\"\"\"\":\"\"\"\"test\"\"\"\",\"\"\"\"version\"\"\"\":\"\"\"\"1.0.0\"\"\"\"}}}' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"method\"\"\"\":\"\"\"\"notifications/initialized\"\"\"\",\"\"\"\"params\"\"\"\":{}}' '{\"\"\"\"jsonrpc\"\"\"\":\"\"\"\"2.0\"\"\"\",\"\"\"\"id\"\"\"\":2,\"\"\"\"method\"\"\"\":\"\"\"\"tools/call\"\"\"\",\"\"\"\"params\"\"\"\":{\"\"\"\"name\"\"\"\":\"\"\"\"brain_get_agent\"\"\"\",\"\"\"\"arguments\"\"\"\":{\"\"\"\"name\"\"\"\":\"\"\"\"orchestrator\"\"\"\"}}}')",
+      "Bash(bash ~/.brain/scripts/detect-stack.sh ~/.brain 2>&1)",
+      "Bash(bash ~/.brain/scripts/render-skill-context.sh --write ~/.brain 2>&1)",
+      "Bash(bash ~/.brain/skills/codebase-contextualizer/contextualize.sh ~/.brain 2>&1)",
+      "Bash(bash ~/.brain/evals/benchmarks/adapter-schema.sh 2>&1)",
+      "Bash(BRAIN_DIR=~/.brain bash ~/.brain/adapters/generate.sh)",
+      "Bash(bash ~/.brain/evals/run.sh --json 2>&1)",
+      "Bash(bash ~/.brain/evals/benchmarks/memory-retrieval.sh 2>&1)",
+      "Bash(bash ~/.brain/scripts/provider-proxy.sh --task-type planning --prompt \"test\" --dry-run 2>&1)",
+      "Bash(bash ~/.brain/scripts/doctor.sh --json)",
+      "Bash(docker --version)"
+    ],
+    "defaultMode": "acceptEdits"
+  },
   "//": "Persistent Mode - Hybrid stable MCP setup.",
   "//2": "To activate: ln -sf ~/.brain/adapters/claude-code/settings.persistent.json ~/.claude/settings.json",
   "mcpServers": {
@@ -70,5 +99,6 @@
         "bh-rat/context-awesome:latest"
       ]
     }
-  }
+  },
+  "effortLevel": "high"
 }
