@@ -73,6 +73,41 @@ When in doubt, check the OWASP Top 10.
 A working v1 today beats a perfect v2 never.
 Every change should leave the codebase in a better state than it was found.
 
+### 9. Context isolation by default
+
+When delegating to any sub-agent or external tool, pass only what is needed
+for that specific task. Never forward the full session history, environment
+variables, or secrets. The contract is: goal + constraints + relevant files +
+expected output.
+
+### 10. Explicit degradation over silent failure
+
+When a dependency (MCP, model provider, external API) is unavailable:
+1. Log the failure with exact error
+2. Notify the user once, clearly
+3. Continue with reduced capability
+Never fail silently. Never retry endlessly without notifying.
+
+### 11. The brain repo learns from itself
+
+Every repeated pattern that is not yet a rule is a rule candidate.
+Save it to memory as entityType: RuleCandidate.
+Run /consolidate monthly to promote candidates to canonical rules.
+The system should improve its own instructions over time.
+
+### 12. Version everything explicitly
+
+MCPs, model names, and tool versions must be pinned. Floating references
+(@latest, unversioned) are only acceptable in local dev. Generated configs
+always use explicit versions.
+
+### 13. Autostart is a first-class concern
+
+The brain environment must be ready without manual steps after login.
+If the environment requires a command to activate, that command must be
+registered as an autostart service. The user should never have to think
+about starting the brain.
+
 ---
 
 ## How I Work with AI Agents
@@ -142,9 +177,36 @@ Never pollute the brain repo with project-specific knowledge.
 Never put global reasoning rules inside a project.
 
 
-\n## Module: Code Style
+## Module: Autostart
 
-\n### Universal (applies to every language)
+### Principle
+The brain environment must be ready without manual steps after login. If the environment requires a command to activate, that command must be registered as an autostart service.
+
+### Components
+1. **Startup Script**: `scripts/init.sh` is the primary entry point for environment initialization.
+2. **Registration**: `scripts/autostart-setup.sh` handles the registration of the startup script with the OS (systemd, shell profiles).
+
+### Initialization Steps
+At system startup (or shell login), the following must be executed:
+- **MCP Check**: Verify all required MCP servers are running.
+- **Rules Refresh**: Ensure adapter files match the latest `canonical.md`.
+- **Memory Sync**: Perform a background sync of the knowledge graph if cloud backup is enabled.
+- **Health Check**: Run a silent `doctor.sh` and log results to `~/.brain/logs/boot.log`.
+
+### Maintenance
+- Weekly: Automatically run `update.sh` to pull latest brain repo changes (user confirmed).
+- Daily: Run a validation check on all rule schemas.
+
+### Failure Handling
+If autostart fails:
+1. Log the failure to `~/.brain/logs/autostart-error.log`.
+2. Set `BRAIN_READY=0`.
+3. Notify the user in the next shell session with: `[BOOT-FAIL] Brain environment failed to initialize. Run 'brain doctor' to diagnose.`
+
+
+## Module: Code Style
+
+### Universal (applies to every language)
 
 **Naming conventions**
 - Variables and functions: descriptive, intent-revealing names
@@ -158,6 +220,7 @@ Never put global reasoning rules inside a project.
 - Single responsibility: one function does one thing
 - Pure functions preferred when possible (no side effects, easier to test)
 - Functions that can fail should communicate failure explicitly (return error/Result, throw exception - document which)
+- **Test-first mandatory**: For any new function or module: write the test before or simultaneously with the implementation. Do not mark a task as done if the new behavior has no verifiable test coverage.
 
 **File organization**
 - Imports/dependencies at the top, grouped: stdlib -> external -> internal
@@ -181,7 +244,7 @@ Never put global reasoning rules inside a project.
 - Remove unused imports, unused variables, unused functions
 - If something is "for later", open a TODO issue instead of leaving dead code
 
-\n### Language-specific hints (AI guidance)
+### Language-specific hints (AI guidance)
 
 When writing code in any language:
 1. Follow the idiomatic style of THAT language (e.g., error handling in Go vs. Python vs. Rust)
@@ -190,9 +253,9 @@ When writing code in any language:
 4. Ask which pattern to follow if you see multiple valid options in the existing codebase
 
 
-\n## Module: Communication
+## Module: Communication
 
-\n### How I communicate with AI agents
+### How I communicate with AI agents
 
 **Context first**: Always open with context before the request.
 Bad: "Fix the login bug"
@@ -208,7 +271,7 @@ Good: "Improve the readability of this function. Don't change the logic or the f
 **Acknowledge mistakes openly**: If I gave wrong context, I correct it immediately.
 Don't waste tokens on retries with the same bad context.
 
-\n### How AI agents should communicate with me
+### How AI agents should communicate with me
 
 - **Be direct**: Skip preamble. Don't start responses with "Sure!" or "Great question!"
 - **No Emojis or Symbols**: NEVER use emojis (😀, 🚀, etc.) or decorative symbols ([PASS], ->, [FAIL]). Use plain text.
@@ -219,7 +282,7 @@ Don't waste tokens on retries with the same bad context.
 - **Format code correctly**: Use proper code blocks with language tags
 - **Cite sources when relevant**: If referencing a library or pattern, mention where it's documented
 
-\n### Response length guidelines
+### Response length guidelines
 
 
 - Simple questions -> 1-3 sentences
@@ -228,9 +291,9 @@ Don't waste tokens on retries with the same bad context.
 - Never pad responses. Quality > quantity.
 
 
-\n## Module: Git
+## Module: Git
 
-\n### Commit messages
+### Commit messages
 
 Use Conventional Commits format:
 ```text
@@ -266,7 +329,7 @@ Caused 500 errors when unauthenticated requests reached the payment
 handler. Added early return with 401 response.
 ```text
 
-\n## Branch strategy
+## Branch strategy
 
 - `main` / `master`: always deployable, protected
 - `develop`: integration branch (if using GitFlow)
@@ -274,7 +337,7 @@ handler. Added early return with 401 response.
 - Fix branches: `fix/<issue-number>-<description>`
 - Hotfixes: `hotfix/<description>`
 
-\n## Workflow rules
+## Workflow rules
 
 1. **Never force-push to main/master** - use revert commits instead
 2. **Never commit secrets** - use pre-commit hooks or `.gitignore`
@@ -283,7 +346,7 @@ handler. Added early return with 401 response.
 5. **Pull before pushing** - always fetch/pull to avoid diverged history
 6. **Sign commits** when working on security-sensitive projects
 
-\n## PR / MR conventions
+## PR / MR conventions
 
 - Title: same format as commit message
 - Description: What changed, why, how to test
@@ -292,7 +355,7 @@ handler. Added early return with 401 response.
 - Don't merge your own PRs without review (unless solo project)
 - Keep PRs small: aim for < 400 lines changed per PR
 
-\n## Brain repo specific
+## Brain repo specific
 
 When updating `~/.brain/`:
 
@@ -447,41 +510,30 @@ Do NOT call `read_graph` to get all memories. The graph grows unboundedly.
 - Do NOT store project-specific state in the global brain memory without a namespace prefix
 
 
-## Module: Memory Protocol
+## Module: Observability
 
-### Topic keys and upserts
+### System Health
+The brain system must be observable to ensure it is operating correctly across sessions and IDEs.
 
-When storing persistent memory, prefer stable topic keys over ad-hoc duplicates.
+### Metrics to Capture
+1. **Response Time**: Track the time taken by each agent to fulfill a request.
+2. **MCP Availability**: Log every failed connection attempt to an MCP server.
+3. **Model Success Rate**: Track fallbacks and provider errors.
+4. **Token Usage**: Log token consumption per session and project.
 
-1. First call `mem_suggest_topic_key` or the equivalent topic-key selection step
-2. Reuse an existing topic key when the new information extends the same decision or concept
-3. Only create a new topic key when the subject is materially different
+### Logging
+- All system logs must be stored in `~/.brain/logs/`.
+- Use the following categories: `[INFO]`, `[WARN]`, `[ERROR]`, `[DEBUG]`.
+- Failure logging: If an MCP or Provider fails, log the exact error message and timestamp.
 
-### Progressive disclosure
+### Dashboards and Review
+- Use `scripts/dashboard.sh` to visualize system performance.
+- Review system health at the start of each week.
+- If an MCP is down > 10% of the time, investigate the cause (version conflict, resource limit).
 
-To minimize token usage, memory retrieval must happen in layers:
-
-1. `mem_search` for a high-level summary of relevant memories
-2. `mem_timeline` for chronological context on the shortlisted topic
-3. `mem_get_observation` only for the exact observation that needs full detail
-
-Do not pull full memory payloads before the summary and timeline indicate they are relevant.
-
-### Session closure
-
-At the end of any significant task or session:
-
-1. Save a concise `mem_session_summary`
-2. Include the final decision, validation result, unresolved risks, and next step
-3. Attach the project namespace when available
-
-### Multi-project namespace convention
-
-When a project root is known, derive a stable namespace with:
-
-`~/.brain/scripts/memory-namespace.sh [project_root]`
-
-Use that namespace for reads and writes so project memory stays isolated while global rules remain shared.
+### Alerts
+- Trigger an alert if a `CRITICAL` guardian check is bypassed.
+- Notify the user if a `RuleCandidate` is ready for promotion but has been ignored for > 7 days.
 
 
 ## Module: Spec-Driven Development
@@ -548,9 +600,9 @@ Specialists should receive:
 Avoid mixing artifacts from different phases in one response unless the task is tiny.
 
 
-\n## Module: Security
+## Module: Security
 
-\n### Non-negotiable rules (apply always, everywhere)
+### Non-negotiable rules (apply always, everywhere)
 
 1. **No hardcoded secrets** - API keys, passwords, tokens, private URLs must always come from environment variables or a secrets manager
 2. **`.env` is always in `.gitignore`** - always. No exceptions.
@@ -559,7 +611,7 @@ Avoid mixing artifacts from different phases in one response unless the task is 
 5. **Least privilege** - every component, service, and user should have only the permissions it needs
 6. **Destructive Operations**: Any command that deletes files (`rm`), modifies git history (`push --force`), or makes irreversible changes MUST be explicitly approved by the USER in the chat. NEVER auto-run these.
 
-\n### Secrets management
+### Secrets management
 
 - Use environment variables for local development
 - Use a secrets manager (Vault, AWS Secrets Manager, 1Password Secrets Automation) for production
@@ -567,15 +619,16 @@ Avoid mixing artifacts from different phases in one response unless the task is 
 - Rotate secrets regularly, especially after personnel changes
 - Use short-lived tokens when possible (JWT with expiry, OAuth refresh tokens)
 
-\n### Dependency security
+### Dependency security
 
 - Audit dependencies before adding them: check stars, maintenance status, known vulnerabilities
 - Run `npm audit` / `pip audit` / `cargo audit` regularly
 - Pin dependency versions in production
 - Update dependencies in a dedicated branch, run tests, then merge
 - Use Dependabot or Renovate for automated updates
+- **Version Pinning**: All MCPs, model names, and tool versions must be pinned. Floating references (@latest, unversioned) are only acceptable in local development. Generated configurations must always use explicit versions.
 
-\n### API security basics
+### API security basics
 
 - Always use HTTPS in production
 - Rate limit public endpoints
@@ -583,7 +636,7 @@ Avoid mixing artifacts from different phases in one response unless the task is 
 - Return 401 (unauthorized) not 403 (forbidden) when the user isn't logged in
 - Never expose internal error messages to end users - log internally, return generic message
 
-\n### AI-specific security
+### AI-specific security
 
 - **Prompt Injection Mitigation**:
 
@@ -597,8 +650,9 @@ Avoid mixing artifacts from different phases in one response unless the task is 
 - **Review Generated Code**: Don't trust AI-generated code blindly - review for security issues before deploying.
 - **Validate Shell Commands**: Be careful with AI-generated SQL/shell commands - verify before execution.
 - **Audit Logs**: Log AI requests and responses for audit purposes (with appropriate retention policy).
+- **Context Isolation**: When delegating to any sub-agent or external tool, pass only what is needed for that specific task. Never forward full session history, environment variables, or secrets. The contract is: goal + constraints + relevant files + expected output.
 
-\n### What to do when you find a vulnerability
+### What to do when you find a vulnerability
 
 1. Document what you found (description, severity, affected component)
 2. Don't push a fix directly to main - use a private branch
@@ -606,7 +660,7 @@ Avoid mixing artifacts from different phases in one response unless the task is 
 4. Add a test that would have caught it
 5. Update the `SECURITY.md` if the project has one
 
-\n### OWASP Top 10 awareness
+### OWASP Top 10 awareness
 
 Always keep in mind: Injection, Broken Auth, Sensitive Data Exposure, XXE, Broken Access Control,
 Security Misconfiguration, XSS, Insecure Deserialization, Known Vulnerable Components, Insufficient Logging.
@@ -614,41 +668,92 @@ Security Misconfiguration, XSS, Insecure Deserialization, Known Vulnerable Compo
 When building web-facing features, check each one is addressed.
 
 
-\n## Module: Workflow
+## Module: Workflow
 
-\n### The AI Engineering Loop
+### Quick Loop (for tasks < 30 minutes)
 
-\n## The AI Engineering Loop
+Every small task follows this cycle:
 
-Every task follows this cycle, no matter the size:
-
-```text
+```
 Understand -> Plan -> Delegate -> Review -> Integrate -> Document
-```text
+```
 
-\n### Spec-Driven Development (SDD) Phases
-For complex features, the loop expands into explicit phases:
-1. **Explore**: Analyze codebase, identify constraints, and feasibility
-2. **Propose**: Draft internal proposal/RFC with options
-3. **Spec**: Write formal technical specification
-4. **Design**: System architecture, data flow, and UI/UX design
-5. **Tasks**: Break down into atomic, manageable tasks (Kanban)
-6. **Apply**: Implement code changes task by task
-7. **Verify**: Run tests, linting, and manual validation
-8. **Archive**: Close task, update documentation, and sync memory
-
+**Steps:**
 1. **Understand**: What is the real problem? Who is it for? What does success look like?
 2. **Plan**: Break it down. Use `/plan` for anything >30 min of estimated work.
    - Consider **Token Economics**: Prefer lean context over excessive file reading.
 3. **Delegate**: Assign to the right agent with full context and constraints
 4. **Review**: Never accept AI output without reading it. Use `/review` before merging
-5. **Integrate**: Apply changes, run tests, verify behavior
+5. **Integrate**: Implement changes, run tests, verify behavior
 6. **Document**: Update README, add comments, create ADR if architectural decision was made
 
-\n### Project kickoff checklist
+---
+
+### Full SDD DAG (for tasks > 2 hours)
+
+For complex features, follow this explicit DAG in order:
+
+1. **Explore**: Analyze codebase, identify constraints, and feasibility
+2. **Propose**: Draft internal proposal/RFC with options
+3. **Spec**: Write formal technical specification
+4. **Design**: System architecture, data flow, and UI/UX design
+5. **Tasks**: Break down into atomic, manageable tasks (Kanban)
+6. **Implement**: Code changes task by task
+7. **Verify**: Run tests, linting, and manual validation
+8. **Archive**: Close task, update documentation, and sync memory
+
+Each phase must produce an artifact or explicit handoff note.
+Do not skip directly from vague intent to implementation.
+
+**Phase contracts:**
+- Explore -> inputs: user goal, repo state; outputs: constraints, assumptions, detected stack
+- Propose -> inputs: exploration notes; outputs: candidate approaches and tradeoffs
+- Spec -> inputs: chosen proposal; outputs: acceptance criteria and boundaries
+- Design -> inputs: spec; outputs: architecture, flow, interfaces, UX if relevant
+- Tasks -> inputs: design; outputs: atomic executable work items
+- Implement -> inputs: tasks; outputs: smallest effective code or doc changes
+- Verify -> inputs: implementation; outputs: test and validation evidence
+- Archive -> inputs: verification results; outputs: docs, handover, memory summary
+
+---
+
+### Context Window Management
+
+If context usage exceeds **70%**:
+1. Execute `/handover` to persist state to memory
+2. Notify: "[CONTEXT] Context at X%. State saved. Continuing."
+3. Proceed with work
+
+If context usage exceeds **90%**:
+1. Execute `/handover`
+2. Notify user that a new session is recommended
+3. Provide the handover document for the user to paste in a new session
+
+---
+
+### MCP Graceful Degradation
+
+When a required MCP is unavailable after 3 connection attempts:
+1. Log the failure to `~/.brain/logs/mcp-failures.log`
+2. Notify user once: `[MCP-FAIL] {name} unavailable. Continuing in degraded mode.`
+3. Continue with reduced capability
+4. Do NOT retry on every message - it creates noise
+
+---
+
+### RuleCandidate Promotion Workflow
+
+When a pattern is observed 3+ times across sessions:
+1. Save as `entityType: RuleCandidate` in memory with the pattern description
+2. Run `/consolidate` monthly to detect candidates ready for promotion
+3. The consolidate script proposes diffs to `canonical.md` or module files
+4. User reviews and approves before any rule is added
+
+---
+
+### Project kickoff checklist
 
 Before writing any code for a new project:
-
 
 - [ ] Problem clearly defined in 1-2 sentences
 - [ ] User/stakeholder identified
@@ -659,25 +764,29 @@ Before writing any code for a new project:
 - [ ] `.env.example` created if secrets will be needed
 - [ ] Basic project structure scaffolded
 
-\n### Session management
+---
 
-**Start of session**:
+### Session management
+
+**Start of session:**
 1. Read context from memory (Engram) for the relevant project
 2. Check what was left pending (use `/standup` or review last `/handover`)
 3. Set clear goal for this session: "By the end of this session I will have X done"
 
-**During session**:
+**During session:**
 - Commit frequently (every distinct working unit)
 - Save discoveries to memory as you make them
 - If you go down a rabbit hole, note it and come back to the main path
 
-**End of session**:
+**End of session:**
 1. Run `/handover` to generate context for next session
 2. Commit all pending changes
 3. Update the project's README or docs if anything changed
 4. Save session learnings to memory
 
-\n### Decision making
+---
+
+### Decision making
 
 When facing a decision with multiple valid options:
 1. State the options clearly
@@ -689,17 +798,21 @@ Use the planner agent for architectural decisions.
 Use the researcher agent for "what's the best library for X" questions.
 Don't spend more than 15 minutes deciding - pick the best option with current information.
 
-\n### Task sizing
+---
+
+### Task sizing
 
 - **< 30 min**: Just do it. No formal plan needed.
 - **30 min - 2 hrs**: Write a brief plan comment at the top of the session
 - **> 2 hrs**: Use `/plan` to create a structured breakdown before starting
 - **Multi-day**: Create a proper spec doc in `docs/`, track progress there
 
-\n### Debugging workflow
+---
+
+### Debugging workflow
 
 1. Reproduce the bug reliably first
-2. Identify the smallest code path that triggers it  
+2. Identify the smallest code path that triggers it
 3. Add logging/breakpoints at the boundary of "working" vs. "broken"
 4. Hypothesize cause (1-3 candidates)
 5. Test hypotheses one at a time

@@ -103,6 +103,17 @@ bash ~/.brain/scripts/doctor.sh
 bash ~/.brain/scripts/cron-setup.sh
 ```
 
+## Autostart
+
+The brain environment can be configured to start automatically upon login:
+
+```bash
+# Register autostart service (Linux/WSL)
+bash ~/.brain/scripts/autostart-setup.sh
+```
+
+This ensures that MCPs, memory servers, and core rule validators are active in every terminal and IDE session without manual intervention.
+
 ## Update rules (the core loop)
 
 ```bash
