@@ -1,32 +1,23 @@
 #!/bin/bash
 # post-tool-use/auto-invoke-agents.sh
-# Hook para autoinvocación de agentes/subagentes/skills según tipo de tarea
+# Hook for intelligent agent suggestion based on the tool used.
 
-BRAIN_DIR="$HOME/.brain"
-AGENTS_DIR="$BRAIN_DIR/agents"
-SKILLS_DIR="$BRAIN_DIR/skills"
+TOOL_NAME="$CLAUDE_TOOL_NAME"
 
-# Detectar tipo de tarea desde commit o mensaje
-TASK_TYPE=$(git log -1 --pretty=%B | grep -Eo 'type:\s*\w+' | awk '{print $2}')
-
-case "$TASK_TYPE" in
-  "plan")
-    echo "[HOOK] Invocando planner..."
-    # Aquí se podría llamar a un script o agente específico
+case "$TOOL_NAME" in
+  "write_file"|"edit_file"|"replace_file_content"|"multi_replace_file_content")
+    echo "[SUGGEST] Task involves file writing. Consider consulting @reviewer."
     ;;
-  "review")
-    echo "[HOOK] Invocando reviewer..."
+  "run_command"|"send_command_input")
+    echo "[SUGGEST] Shell execution detected. Consider consulting @guardian for security."
     ;;
-  "debug")
-    echo "[HOOK] Invocando debugger..."
+  "grep_search"|"find_by_name"|"search_web")
+    echo "[SUGGEST] Research activity detected. @researcher might have more context."
     ;;
-  "refactor")
-    echo "[HOOK] Invocando refactor..."
-    ;;
-  "research")
-    echo "[HOOK] Invocando researcher..."
+  "task_boundary")
+    echo "[SUGGEST] Planning in progress. Ensure @planner has defined the roadmap."
     ;;
   *)
-    echo "[HOOK] No se detectó tipo de tarea específico."
+    # No specific suggestion
     ;;
 esac
