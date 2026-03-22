@@ -1,6 +1,6 @@
-\n## Module: Code Style
+## Module: Code Style
 
-\n### Universal (applies to every language)
+### Universal (applies to every language)
 
 **Naming conventions**
 - Variables and functions: descriptive, intent-revealing names
@@ -14,6 +14,7 @@
 - Single responsibility: one function does one thing
 - Pure functions preferred when possible (no side effects, easier to test)
 - Functions that can fail should communicate failure explicitly (return error/Result, throw exception - document which)
+- **Test-first mandatory**: For any new function or module: write the test before or simultaneously with the implementation. Do not mark a task as done if the new behavior has no verifiable test coverage.
 
 **File organization**
 - Imports/dependencies at the top, grouped: stdlib -> external -> internal
@@ -37,7 +38,7 @@
 - Remove unused imports, unused variables, unused functions
 - If something is "for later", open a TODO issue instead of leaving dead code
 
-\n### Language-specific hints (AI guidance)
+### Language-specific hints (AI guidance)
 
 When writing code in any language:
 1. Follow the idiomatic style of THAT language (e.g., error handling in Go vs. Python vs. Rust)
