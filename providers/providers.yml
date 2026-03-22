@@ -16,33 +16,25 @@ providers:
     models:
       fast:     gpt-4o-mini
       standard: gpt-4o
-      powerful: gpt-5
+      powerful: o3
+      reasoning: o3
 
   gemini:
     available: true        # Free tier available via CLI
-    notes: "Free 1M context via Gemini CLI. Great for large codebase analysis."
+    notes: "Free 2M context via Gemini CLI. Great for large codebase analysis."
     models:
       fast:     gemini-2.5-flash
       standard: gemini-2.5-pro
-      powerful: gemini-2.5-ultra
+      powerful: gemini-2.5-pro
 
   ollama:
     available: true        # Ollama running at localhost:11435
     base_url: http://localhost:11435
     notes: "Local Ollama instance. Great for privacy-sensitive work."
     models:
-      fast:     qwen2.5-coder:7b
-      standard: llama3:8b
-      powerful: deepseek-r1:7b
-
-  local:
-    available: true        # Alias for ollama local instance
-    base_url: http://localhost:11435
-    notes: "Activate if you have Ollama installed. Great for privacy-sensitive work."
-    models:
-      fast:     qwen2.5-coder:7b
-      standard: llama3:8b
-      powerful: deepseek-r1:7b
+      fast:     qwen2.5-coder:7b-instruct-q4_K_M
+      standard: llama3.3:latest
+      powerful: deepseek-r1:14b
 
 # -- Task routing ---------------------------------------------
 # Maps task types to model tiers. Orchestrator reads this.
@@ -62,7 +54,6 @@ fallback_chain:
   - claude
   - gemini
   - openai
-  - local
 
 # -- Cost guidance --------------------------------------------
 cost_guidance:
