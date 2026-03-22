@@ -169,6 +169,10 @@ report = {
         f"Observed {v}x: '{k}' -- consider adding to canonical.md if universally applicable"
         for k, v in sorted(high_frequency.items(), key=lambda x: -x[1])[:5]
     ],
+    "rule_candidate_entities": [
+        {"name": ent.get("name"), "observations": ent.get("observations")}
+        for ent in by_type.get("RuleCandidate", [])
+    ],
     "recommendations": [],
 }
 
