@@ -1,6 +1,10 @@
 # .gitignore for brain repo
 
-# Never commit environment-specific state
+# ------------------------------------------------------------------
+# Secrets & env
+# ------------------------------------------------------------------
+# Never commit real environment files or secrets. Keep .env.example tracked.
+brain.env
 .env
 *.env
 .env.*
@@ -14,38 +18,63 @@
 *.crt
 *.cer
 
-# OS junk
+# ------------------------------------------------------------------
+# OS / editor / tooling
+# ------------------------------------------------------------------
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# Editor state
-.vscode/settings.json
+.vscode/
 .idea/
 *.swp
 *~
 
-# Generated adapter content (generated from source — optionally commit these)
-# Uncomment the lines below if you want to EXCLUDE generated adapter files:
-# adapters/claude-code/CLAUDE.md
-# adapters/cursor/.cursorrules
-# adapters/windsurf/.windsurfrules
-# adapters/gemini/GEMINI.md
+# Python
+__pycache__/
+*.pyc
 
-# Memory chunks (these sync via Engram git sync — handled separately)
-# memory/chunks/*.json  ← leave committed for cross-machine sync
+# Node
+node_modules/
+**/node_modules/
 
-# Temporary files
-*.tmp
+# Logs and temporary files
+logs/
 *.log
+*.tmp
+tmp/
 
-# Ignore real environment files for ai-local
-ai-local/.env
-/tmp/
+# ------------------------------------------------------------------
+# Generated and runtime data (do not commit heavy or reproducible artifacts)
+# ------------------------------------------------------------------
+# Docker / compose runtime state and generated data
+ai-local/open_webui_data/
+ai-local/mcp_data/
+ai-local/model_runner_data/
+qdrant_data/
+mcp_memory_data/
+open_webui_data/
+model_runner_data/
+mcp_data/
 
-# Local generated context and run artifacts
-/.brain/
-/logs/*
-!/logs/.gitkeep
+# Test run outputs and reports (generated)
+tests/results/
+tests/fixtures/
+
+# Compiled/generated rule artifacts and adapters
+rules/compiled/
+adapters/**/CLAUDE.md
+adapters/**/.cursorrules
+adapters/**/.windsurfrules
+
+# Generated MCP gateway artifacts
+mcp/gateway/node_modules/
+
+# Misc
+docker-compose.override.yml
+*.tgz
+*.tar
+
+# Keep important docs and source tracked (README, ARCHITECTURE.md, scripts/, bin/)
+
 
 
