@@ -1,22 +1,18 @@
 #!/bin/bash
 # pre-tool-use/inject-global-rules.sh
-# Validator: Ensures adapter files are up-to-date with canonical rules.
+# Inyecta reglas base (idioma, estilo, comentarios, commits, etc.) en cada sesión/tool use
 
 BRAIN_DIR="$HOME/.brain"
-CANONICAL="$BRAIN_DIR/rules/canonical.md"
-ADAPTERS=("$BRAIN_DIR/CLAUDE.md" "$BRAIN_DIR/.cursorrules" "$BRAIN_DIR/.windsurfrules")
+RULES_FILE="$BRAIN_DIR/rules/canonical.md"
+MODULES_DIR="$BRAIN_DIR/rules/modules"
 
-# Check if adapters are fresh
-for adapter in "${ADAPTERS[@]}"; do
-  if [ -f "$adapter" ]; then
-    if [ "$CANONICAL" -nt "$adapter" ]; then
-      echo "[WARN] Adapter $(basename "$adapter") is outdated vs canonical.md."
-      echo "      Run 'bash ~/.brain/adapters/generate.sh' to update."
-    fi
-  else
-    echo "[WARN] Adapter $(basename "$adapter") is missing."
-  fi
+# Ensambla reglas completas
+FULL_RULES=$(cat "$RULES_FILE")
+for module in "$MODULES_DIR"/*.md; do
+  [ -f "$module" ] || continue
+  FULL_RULES="${FULL_RULES}"$'\n\n'"$(cat "$module")"
 done
 
-# The mechanism of universal rules is now via adapter files (CLAUDE.md, etc.)
-# and NOT via environment variables, to ensure consistency across IDEs.
+# Exporta reglas como variable de entorno para inyección
+export BRAIN_GLOBAL_RULES="$FULL_RULES"
+echo "[HOOK] Reglas base inyectadas en la sesión/tool use."

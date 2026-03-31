@@ -1,0 +1,505 @@
+#!/bin/bash
+# ===========================================================
+#  brain - Single Entry Point CLI for Brain Repo Ecosystem
+#  Usage: brain [up|down|status|doctor|mcp|logs]
+# ===========================================================
+
+set -euo pipefail
+
+# ── Configuration Resolution ─────────────────────────────────
+export BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
+export BRAIN_CONFIG_DIR="${BRAIN_CONFIG_DIR:-$BRAIN_DIR/config}"
+export BRAIN_DATA_DIR="${BRAIN_DATA_DIR:-$HOME/.brain-data}"
+export BRAIN_LOGS_DIR="${BRAIN_LOGS_DIR:-$BRAIN_DATA_DIR/logs}"
+
+# ── Load Network Configuration ─────────────────────────────────
+# Generate if doesn't exist, then source it
+if [ ! -f "$BRAIN_DATA_DIR/network.config" ]; then
+    if [ -x "$BRAIN_DIR/bin/brain-config" ]; then
+        "$BRAIN_DIR/bin/brain-config" generate >/dev/null 2>&1 || true
+    fi
+fi
+
+# Source network configuration if available
+if [ -f "$BRAIN_DATA_DIR/network.config" ]; then
+    source "$BRAIN_DATA_DIR/network.config"
+fi
+
+# Set defaults with fallbacks for all network settings
+export BRAIN_MCP_GATEWAY_PORT="${BRAIN_MCP_GATEWAY_PORT:-3000}"
+export BRAIN_QDRANT_PORT="${BRAIN_QDRANT_PORT:-6333}"
+export BRAIN_OPEN_WEBUI_PORT="${BRAIN_OPEN_WEBUI_PORT:-8080}"
+export BRAIN_OLLAMA_PORT="${BRAIN_OLLAMA_PORT:-11434}"
+export BRAIN_MODEL_RUNNER_PORT="${BRAIN_MODEL_RUNNER_PORT:-12434}"
+
+# Build URLs from ports (or use overrides)
+export BRAIN_MCP_GATEWAY_URL="${BRAIN_MCP_GATEWAY_URL:-http://localhost:${BRAIN_MCP_GATEWAY_PORT}}"
+export BRAIN_QDRANT_URL="${BRAIN_QDRANT_URL:-http://localhost:${BRAIN_QDRANT_PORT}}"
+export BRAIN_OPEN_WEBUI_URL="${BRAIN_OPEN_WEBUI_URL:-http://localhost:${BRAIN_OPEN_WEBUI_PORT}}"
+export BRAIN_OLLAMA_URL="${BRAIN_OLLAMA_URL:-http://localhost:${BRAIN_OLLAMA_PORT}}"
+export BRAIN_MODEL_RUNNER_URL="${BRAIN_MODEL_RUNNER_URL:-http://localhost:${BRAIN_MODEL_RUNNER_PORT}}"
+
+# By default, force freeing ports on startup when conflicts are detected.
+# Set BRAIN_FORCE_FREE_PORTS=false to disable.
+export BRAIN_FORCE_FREE_PORTS="${BRAIN_FORCE_FREE_PORTS:-true}"
+# LLM Configuration
+export BRAIN_LLM_PRIMARY="${BRAIN_LLM_PRIMARY:-ollama}"
+export BRAIN_LLM_FALLBACK="${BRAIN_LLM_FALLBACK:-docker-model-runner}"
+
+# Container-accessible Ollama URL
+export OLLAMA_HOST="${OLLAMA_HOST:-host.docker.internal:${BRAIN_OLLAMA_PORT}}"
+
+# Colors
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+BLUE='\033[0;34m'; BOLD='\033[1m'; RESET='\033[0m'
+
+log_info() { echo -e "${BLUE}[brain]${RESET} $1"; }
+log_ok() { echo -e "${GREEN}[brain]${RESET} $1"; }
+log_warn() { echo -e "${YELLOW}[brain]${RESET} $1"; }
+log_error() { echo -e "${RED}[brain]${RESET} $1" >&2; }
+
+# Helper to stop/start Docker daemon in a portable way
+stop_docker_daemon() {
+    if command -v systemctl >/dev/null 2>&1; then
+        sudo systemctl stop docker.service 2>/dev/null || sudo systemctl stop docker 2>/dev/null || true
+    else
+        sudo service docker stop 2>/dev/null || true
+    fi
+}
+
+start_docker_daemon() {
+    if command -v systemctl >/dev/null 2>&1; then
+        sudo systemctl start docker.service 2>/dev/null || sudo systemctl start docker 2>/dev/null || true
+    else
+        sudo service docker start 2>/dev/null || true
+    fi
+}
+
+# ── Command: up ─────────────────────────────────────────────
+cmd_up() {
+    log_info "Starting Brain ecosystem..."
+    
+    # Before starting, free any processes or containers that are occupying required ports
+    free_ports_if_needed()
+    {
+        # helper: attempt to stop containers and kill processes listening on given ports
+        free_ports() {
+            local ports=("$@")
+            for port in "${ports[@]}"; do
+                # 1) Stop docker containers that expose this port (aggressive)
+                if command -v docker >/dev/null 2>&1; then
+                    local containers
+                    containers=$(docker ps --format '{{.ID}} {{.Ports}}' 2>/dev/null | awk -v p=":${port}" '$0~p{print $1}') || true
+                    if [ -n "$containers" ]; then
+                        log_warn "Stopping containers exposing port ${port}: ${containers}"
+                        echo "$containers" | xargs -r docker stop
+                        echo "$containers" | xargs -r docker rm -f
+                    fi
+
+                    # Also inspect all containers for published ports referencing this port
+                    local inspect_ids
+                    inspect_ids=$(docker ps -aq 2>/dev/null || true)
+                    for cid in $inspect_ids; do
+                        if docker inspect --format '{{json .NetworkSettings.Ports}}' "$cid" 2>/dev/null | grep -q "\"${port}/tcp\"" 2>/dev/null; then
+                            log_warn "Removing container $cid which has explicit mapping for port ${port}"
+                            docker stop "$cid" 2>/dev/null || true
+                            docker rm -f "$cid" 2>/dev/null || true
+                        fi
+                    done
+                fi
+
+                # 2) Kill remaining PIDs listening on the port (repeat attempts, graceful then force)
+                local attempt=1
+                local max_attempts=6
+                # If configured to force free ports aggressively, perform a pre-cleanup
+                # by stopping the docker daemon and killing any listeners on these ports.
+                if [ "${BRAIN_FORCE_FREE_PORTS:-false}" = "true" ]; then
+                    log_warn "BRAIN_FORCE_FREE_PORTS=true: performing aggressive pre-cleanup for port ${port} (stop docker, kill listeners)"
+                    if command -v sudo >/dev/null 2>&1; then
+                        stop_docker_daemon
+                        sleep 1
+                        if command -v fuser >/dev/null 2>&1; then
+                            sudo fuser -k "${port}/tcp" 2>/dev/null || true
+                        else
+                            # fallback to lsof/kill
+                            if command -v lsof >/dev/null 2>&1; then
+                                sudo lsof -t -iTCP:"${port}" -sTCP:LISTEN 2>/dev/null | xargs -r sudo kill -9 || true
+                            fi
+                        fi
+                        # try to remove any docker-proxy processes that might persist
+                        sudo pkill -f docker-proxy 2>/dev/null || true
+                        sleep 1
+                        start_docker_daemon
+                        sleep 1
+                    else
+                        log_warn "sudo not available; aggressive pre-cleanup skipped for port ${port}"
+                    fi
+                fi
+                while [ $attempt -le $max_attempts ]; do
+                    local pids=""
+                    if command -v lsof >/dev/null 2>&1; then
+                        pids=$(lsof -nP -iTCP:"${port}" -sTCP:LISTEN -t 2>/dev/null || true)
+                        if [ -z "$pids" ] && command -v sudo >/dev/null 2>&1; then
+                            pids=$(sudo lsof -nP -iTCP:"${port}" -sTCP:LISTEN -t 2>/dev/null || true)
+                        fi
+                    fi
+                    if [ -z "$pids" ] && command -v ss >/dev/null 2>&1; then
+                        pids=$(ss -ltnp 2>/dev/null | awk -v p=":${port}" '$0~p{match($0,/pid=[0-9]+/); if(RSTART){pid=substr($0,RSTART+4,RLENGTH-4); print pid}}' || true)
+                    fi
+
+                    # Normalize and dedupe PIDs
+                    if [ -n "$pids" ]; then
+                        pids=$(echo "$pids" | tr ' ' '\n' | grep -E '^[0-9]+' || true | sort -u | tr '\n' ' ')
+                        log_warn "Attempt $attempt: Killing PIDs listening on port ${port}: ${pids}"
+                        for pid in $pids; do
+                            if kill -0 "$pid" 2>/dev/null; then
+                                # try graceful
+                                kill "$pid" 2>/dev/null || true
+                                sleep 0.5
+                                if kill -0 "$pid" 2>/dev/null; then
+                                    # try with sudo if available, then force
+                                    if command -v sudo >/dev/null 2>&1; then
+                                        sudo kill "$pid" 2>/dev/null || sudo kill -9 "$pid" 2>/dev/null || log_error "Failed to kill PID $pid"
+                                    else
+                                        kill -9 "$pid" 2>/dev/null || log_error "Failed to force-kill PID $pid"
+                                    fi
+                                fi
+                            fi
+                        done
+                    else
+                        # nothing listening
+                        break
+                    fi
+
+                    # small pause and retry
+                    sleep 1
+                    attempt=$((attempt+1))
+                done
+
+                # final check
+                local remaining=""
+                if command -v lsof >/dev/null 2>&1; then
+                    remaining=$(lsof -nP -iTCP:"${port}" -sTCP:LISTEN -t 2>/dev/null || true)
+                    if [ -z "$remaining" ] && command -v sudo >/dev/null 2>&1; then
+                        remaining=$(sudo lsof -nP -iTCP:"${port}" -sTCP:LISTEN -t 2>/dev/null || true)
+                    fi
+                fi
+                if [ -z "$remaining" ] && command -v ss >/dev/null 2>&1; then
+                    remaining=$(ss -ltnp 2>/dev/null | awk -v p=":${port}" '$0~p{match($0,/pid=[0-9]+/); if(RSTART){pid=substr($0,RSTART+4,RLENGTH-4); print pid}}' || true)
+                fi
+                if [ -n "$remaining" ]; then
+                    log_error "Port ${port} still in use by PIDs: ${remaining}. This may block startup."
+
+                    # Force-free ports if configured to do so (stop docker, kill, restart)
+                    if [ "${BRAIN_FORCE_FREE_PORTS:-false}" = "true" ]; then
+                        log_warn "BRAIN_FORCE_FREE_PORTS=true: forcing release for port ${port}"
+                        if command -v sudo >/dev/null 2>&1; then
+                            # Stop docker daemon to ensure no docker-proxy or container holds the port
+                            stop_docker_daemon
+                            sleep 1
+
+                            # Kill any remaining pids listening on the port
+                            if command -v fuser >/dev/null 2>&1; then
+                                sudo fuser -k "${port}/tcp" 2>/dev/null || true
+                            else
+                                for pid in $(echo "$remaining" | tr ' ' '\n' | grep -E '^[0-9]+' || true); do
+                                    sudo kill -9 "$pid" 2>/dev/null || true
+                                done
+                            fi
+
+                            # Start docker daemon again
+                            start_docker_daemon
+                            sleep 1
+
+                            # Re-evaluate remaining listeners
+                            local recheck=""
+                            if command -v lsof >/dev/null 2>&1; then
+                                recheck=$(lsof -nP -iTCP:"${port}" -sTCP:LISTEN -t 2>/dev/null || true)
+                                if [ -z "$recheck" ] && command -v sudo >/dev/null 2>&1; then
+                                    recheck=$(sudo lsof -nP -iTCP:"${port}" -sTCP:LISTEN -t 2>/dev/null || true)
+                                fi
+                            fi
+                            if [ -z "$recheck" ] && command -v ss >/dev/null 2>&1; then
+                                recheck=$(ss -ltnp 2>/dev/null | awk -v p=":${port}" '$0~p{match($0,/pid=[0-9]+/); if(RSTART){pid=substr($0,RSTART+4,RLENGTH-4); print pid}}' || true)
+                            fi
+
+                            if [ -n "$recheck" ]; then
+                                log_error "After forced restart, port ${port} still in use by PIDs: ${recheck}"
+                            else
+                                log_ok "Port ${port} freed by force restart"
+                            fi
+                        else
+                            log_warn "sudo not available; cannot force-stop docker to free port ${port}"
+                        fi
+                    fi
+                fi
+            done
+        }
+
+        # build list of ports to free from environment
+        free_ports "$BRAIN_MCP_GATEWAY_PORT" "$BRAIN_QDRANT_PORT" "$BRAIN_OPEN_WEBUI_PORT" "$BRAIN_OLLAMA_PORT" "$BRAIN_MODEL_RUNNER_PORT"
+    }
+
+    # Execute freeing routine immediately
+    free_ports_if_needed
+
+    mkdir -p "$BRAIN_DATA_DIR"/{logs,mcp-data,memory,vector}
+    
+    # 1. Ensure Ollama is running (primary LLM)
+    # Use localhost for local check, host.docker.internal is for containers
+    local ollama_check_url="${BRAIN_OLLAMA_URL}"
+    
+    if ! curl -sf "${ollama_check_url}/api/tags" >/dev/null 2>&1; then
+        log_warn "Ollama not detected at ${ollama_check_url}"
+        
+        # Check if ollama is installed
+        if command -v ollama &>/dev/null; then
+            log_info "Starting Ollama automatically on port ${BRAIN_OLLAMA_PORT}..."
+            mkdir -p "$BRAIN_DATA_DIR/logs"
+            OLLAMA_HOST="127.0.0.1:${BRAIN_OLLAMA_PORT}" ollama serve > "$BRAIN_DATA_DIR/logs/ollama.log" 2>&1 &
+            OLLAMA_PID=$!
+            echo $OLLAMA_PID > "$BRAIN_DATA_DIR/ollama.pid"
+            
+            # Wait for Ollama to be ready (up to 60 seconds)
+            log_info "Waiting for Ollama to start (PID: $OLLAMA_PID)..."
+            local ollama_ready=0
+            for i in {1..60}; do
+                if curl -sf "${ollama_check_url}/api/tags" >/dev/null 2>&1; then
+                    log_ok "Ollama started and connected at ${ollama_check_url}"
+                    ollama_ready=1
+                    break
+                fi
+                sleep 1
+            done
+            
+            # Verify it started
+            if [ $ollama_ready -eq 0 ]; then
+                log_warn "Ollama slow to start, continuing anyway..."
+                log_info "Check logs: tail -f ~/.brain-data/logs/ollama.log"
+            fi
+        else
+            log_warn "Ollama not installed. Install from: https://ollama.com/download"
+            log_info "Or set BRAIN_OLLAMA_URL to an existing Ollama instance"
+        fi
+    else
+        log_ok "Ollama connected at ${ollama_check_url}"
+    fi
+    
+    # 2. Start Docker infrastructure (Qdrant, MCP Gateway, Model Runner)
+    if [ -f "$BRAIN_DIR/ai-local/docker-compose.yml" ]; then
+        COMPOSE_FILE="$BRAIN_DIR/ai-local/docker-compose.yml"
+        export WORKSPACE_DIR="${WORKSPACE_DIR:-$HOME}"
+        export HOST_UID=$(id -u)
+        export HOST_GID=$(id -g)
+        
+        docker compose -f "$COMPOSE_FILE" up -d
+        log_ok "Docker services started"
+    fi
+    
+    # 3. Wait for MCP Gateway
+    log_info "Waiting for MCP Gateway at ${BRAIN_MCP_GATEWAY_URL}..."
+    for i in {1..30}; do
+        if curl -sf "${BRAIN_MCP_GATEWAY_URL}/health" >/dev/null 2>&1; then
+            log_ok "MCP Gateway ready"
+            break
+        fi
+        sleep 1
+    done
+    
+    # 4. Sync MCP configs to all IDEs
+    if [ -x "$BRAIN_DIR/scripts/mcp-sync.sh" ]; then
+        bash "$BRAIN_DIR/scripts/mcp-sync.sh"
+    fi
+    
+    # 5. Validate brain-mcp-server
+    if python3 "$BRAIN_DIR/mcp/brain-mcp-server/server.py" --brain-dir "$BRAIN_DIR" --version >/dev/null 2>&1; then
+        log_ok "Brain MCP server ready"
+    fi
+    
+    log_ok "Brain ecosystem is UP"
+    echo ""
+    log_info "Services:"
+    echo "  - Ollama:        ${BRAIN_OLLAMA_URL}"
+    echo "  - Qdrant:        ${BRAIN_QDRANT_URL}"
+    echo "  - MCP Gateway:   ${BRAIN_MCP_GATEWAY_URL}"
+    echo "  - Model Runner:  ${BRAIN_MODEL_RUNNER_URL}"
+    echo ""
+    log_info "IDEs: Run 'brain sync' to update MCP configs"
+}
+
+# ── Command: down ────────────────────────────────────────────
+cmd_down() {
+    log_info "Stopping Brain ecosystem..."
+    
+    # Stop Ollama if we started it
+    if [ -f "$BRAIN_DATA_DIR/ollama.pid" ]; then
+        OLLAMA_PID=$(cat "$BRAIN_DATA_DIR/ollama.pid")
+        if kill -0 "$OLLAMA_PID" 2>/dev/null; then
+            log_info "Stopping Ollama (PID: $OLLAMA_PID)..."
+            kill "$OLLAMA_PID" 2>/dev/null || true
+            rm -f "$BRAIN_DATA_DIR/ollama.pid"
+        fi
+    fi
+    
+    if [ -f "$BRAIN_DIR/ai-local/docker-compose.yml" ]; then
+        docker compose -f "$BRAIN_DIR/ai-local/docker-compose.yml" down
+    fi
+    
+    log_ok "Brain ecosystem stopped"
+}
+
+# ── Command: status ──────────────────────────────────────────
+cmd_status() {
+    echo -e "${BOLD}Brain Ecosystem Status${RESET}"
+    echo ""
+    
+    # Ollama
+    if curl -sf "${BRAIN_OLLAMA_URL}/api/tags" >/dev/null 2>&1; then
+        log_ok "Ollama: Connected at ${BRAIN_OLLAMA_URL}"
+        local models=$(curl -sf "${BRAIN_OLLAMA_URL}/api/tags" | python3 -c "import sys,json; d=json.load(sys.stdin); print(', '.join([m['name'] for m in d.get('models', [])[:3]]))" 2>/dev/null || echo "unknown")
+        echo "  Models: $models"
+    else
+        log_warn "Ollama: Not available at ${BRAIN_OLLAMA_URL}"
+    fi
+    
+    # Docker services
+    if docker compose -f "$BRAIN_DIR/ai-local/docker-compose.yml" ps >/dev/null 2>&1; then
+        echo ""
+        log_info "Docker Services:"
+        docker compose -f "$BRAIN_DIR/ai-local/docker-compose.yml" ps --format "table {{.Service}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null | tail -n +2 || true
+    fi
+    
+    # MCPs
+    echo ""
+    log_info "MCP Servers:"
+    if curl -sf "${BRAIN_MCP_GATEWAY_URL}/mcps" >/dev/null 2>&1; then
+        curl -sf "${BRAIN_MCP_GATEWAY_URL}/mcps" | python3 -c "import sys,json; d=json.load(sys.stdin); [print(f'  - {name}: {info.get(\"status\", \"unknown\")}') for name,info in d.items()]" 2>/dev/null || log_warn "  Unable to fetch MCP status"
+    else
+        log_warn "  MCP Gateway not available at ${BRAIN_MCP_GATEWAY_URL}"
+    fi
+}
+
+# ── Command: mcp ─────────────────────────────────────────────
+cmd_mcp() {
+    local subcmd="${1:-list}"
+    shift || true
+    
+    case "$subcmd" in
+        list)
+            log_info "Available MCPs:"
+            if [ -f "$BRAIN_DIR/mcp/registry.yml" ]; then
+                grep -E "^\s+\w+:$" "$BRAIN_DIR/mcp/registry.yml" | sed 's/://g' | sed 's/^/  - /'
+            fi
+            ;;
+        add)
+            local name="${1:-}"
+            [ -z "$name" ] && { log_error "Usage: brain mcp add <name>"; exit 1; }
+            log_info "Adding MCP: $name"
+            # Delegate to gateway
+            curl -sf -X POST "${BRAIN_MCP_GATEWAY_URL}/mcps/$name/start" || log_error "Failed to start $name"
+            ;;
+        stop)
+            local name="${1:-}"
+            [ -z "$name" ] && { log_error "Usage: brain mcp stop <name>"; exit 1; }
+            curl -sf -X POST "${BRAIN_MCP_GATEWAY_URL}/mcps/$name/stop" || log_error "Failed to stop $name"
+            ;;
+        *)
+            log_error "Unknown mcp command: $subcmd"
+            echo "Usage: brain mcp [list|add|stop]"
+            exit 1
+            ;;
+    esac
+}
+
+# ── Command: doctor ──────────────────────────────────────────
+cmd_doctor() {
+    bash "$BRAIN_DIR/scripts/doctor.sh" "$@"
+}
+
+# ── Command: sync ────────────────────────────────────────────
+cmd_sync() {
+    log_info "Syncing MCP configs to all IDEs..."
+    bash "$BRAIN_DIR/scripts/mcp-sync.sh"
+    log_ok "Sync complete"
+}
+
+# ── Command: logs ────────────────────────────────────────────
+cmd_logs() {
+    local service="${1:-}"
+    if [ -n "$service" ]; then
+        docker compose -f "$BRAIN_DIR/ai-local/docker-compose.yml" logs -f "$service"
+    else
+        docker compose -f "$BRAIN_DIR/ai-local/docker-compose.yml" logs -f
+    fi
+}
+
+# ── Command: llm ─────────────────────────────────────────────
+cmd_llm() {
+    local action="${1:-list}"
+    
+    case "$action" in
+        list)
+            log_info "Available LLMs:"
+            echo ""
+            echo "Primary: $BRAIN_LLM_PRIMARY"
+            if [ "$BRAIN_LLM_PRIMARY" = "ollama" ]; then
+                curl -sf "${BRAIN_OLLAMA_URL}/api/tags" | python3 -c "import sys,json; d=json.load(sys.stdin); [print(f'  - {m[\"name\"]}') for m in d.get('models', [])]" 2>/dev/null || log_warn "  Ollama not available at ${BRAIN_OLLAMA_URL}"
+            fi
+            echo ""
+            echo "Fallback: $BRAIN_LLM_FALLBACK"
+            ;;
+        pull)
+            local model="${2:-}"
+            [ -z "$model" ] && { log_error "Usage: brain llm pull <model>"; exit 1; }
+            if [ "$BRAIN_LLM_PRIMARY" = "ollama" ]; then
+                ollama pull "$model"
+            fi
+            ;;
+        *)
+            log_error "Unknown llm command: $action"
+            ;;
+    esac
+}
+
+# ── Main ─────────────────────────────────────────────────────
+main() {
+    local cmd="${1:-help}"
+    shift || true
+    
+    case "$cmd" in
+        up) cmd_up "$@" ;;
+        down) cmd_down "$@" ;;
+        status|ps) cmd_status "$@" ;;
+        mcp) cmd_mcp "$@" ;;
+        doctor) cmd_doctor "$@" ;;
+        sync) cmd_sync "$@" ;;
+        logs) cmd_logs "$@" ;;
+        llm) cmd_llm "$@" ;;
+        help|--help|-h)
+            echo -e "${BOLD}Brain CLI${RESET} - Single entry point for the Brain ecosystem"
+            echo ""
+            echo "Commands:"
+            echo "  up       Start the Brain ecosystem"
+            echo "  down     Stop the Brain ecosystem"
+            echo "  status   Show status of all services"
+            echo "  doctor   Run health checks"
+            echo "  sync     Sync MCP configs to all IDEs"
+            echo "  mcp      Manage MCP servers (list, add, stop)"
+            echo "  llm      Manage LLMs (list, pull)"
+            echo "  logs     View logs [service]"
+            echo ""
+            echo "Environment:"
+            echo "  BRAIN_DIR              Brain repo location (default: ~/.brain)"
+            echo "  BRAIN_DATA_DIR         Data directory (default: ~/.brain-data)"
+            echo "  BRAIN_*_PORT           Custom ports for services"
+            echo "  BRAIN_*_URL            Custom URLs for services"
+            ;;
+        *)
+            log_error "Unknown command: $cmd"
+            echo "Run 'brain help' for usage"
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

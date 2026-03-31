@@ -99,7 +99,7 @@ start_services() {
     sleep 5
 
     # Check service health
-    SERVICES=("open-webui" "brain-qdrant" "brain-mcp-memory" "brain-mcp-filesystem" "brain-mcp-sequential")
+    SERVICES=("open-webui" "brain-qdrant" "brain-mcp-memory" "brain-mcp-filesystem" "brain-mcp-sequential" "docker-model-runner")
     for service in "${SERVICES[@]}"; do
         if docker ps --format "{{.Names}}" | grep -q "^${service}$"; then
             log_info "Service $service is running"
@@ -141,6 +141,7 @@ show_status() {
     echo "Memory MCP:    http://localhost:3001"
     echo "Filesystem MCP: http://localhost:3002"
     echo "Sequential MCP: http://localhost:3003"
+    echo "Docker Model:  http://localhost:12434/engines/v1"
 }
 
 show_logs() {

@@ -126,3 +126,21 @@ mcps:
       export UPSTASH_VECTOR_TOKEN=your-token
       npx -y @upstash/vector-mcp
     notes: Free 10k vectors at https://console.upstash.com -> Vector
+
+  skill-ninja:
+    package: "skill-ninja-mcp-server"
+    required: false
+    profile: [standard, full]
+    purpose: Automated discovery and installation of agent skills (SKILL.md)
+    when_to_use: Expanding the brain's capabilities with community-contributed skills
+    setup: "npx -y skill-ninja-mcp-server"
+    notes: Official skill-ninja server from aktsmm.
+
+  context-awesome:
+    url: "https://www.context-awesome.com/api/mcp"
+    required: false
+    profile: [standard, full]
+    purpose: Semantic search across 8,500+ curated awesome lists
+    when_to_use: Researching tools, libraries, and resources for any topic
+    setup: "Remote SSE - no local installation"
+    notes: Free hosted MCP server from bh-rat.

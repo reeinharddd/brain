@@ -1,7 +1,7 @@
 {
   "memory_cycle": {
     "status": "PASS",
-    "entity_id": "MCPRealTest_ac352b6e",
+    "entity_id": "MCPRealTest_65e69374",
     "write_ok": true,
     "read_found": true,
     "response_count": 3
@@ -38,7 +38,7 @@
       {
         "tool": "brain_list_agents",
         "status": "PASS",
-        "output_len": 1623,
+        "output_len": 1424,
         "valid": true
       },
       {

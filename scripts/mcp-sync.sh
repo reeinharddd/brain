@@ -3,6 +3,7 @@
 #  brain/scripts/mcp-sync.sh
 #  Synchronizes MCP configurations from global-config.json
 #  to all supported IDEs (Cursor, VS Code, Claude Code).
+#  Updated for MCP Gateway architecture.
 # ═══════════════════════════════════════════════════════════
 
 set -euo pipefail
@@ -14,9 +15,19 @@ GLOBAL_STDIO_CONFIG="$BRAIN_DIR/mcp/global-config-stdio.json"
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BOLD='\033[1m'; RESET='\033[0m'
 ok()   { echo -e "  ${GREEN}✓${RESET} $1"; }
 info() { echo -e "  ${BOLD}── $1${RESET}"; }
+warn() { echo -e "  ${YELLOW}!${RESET} $1"; }
+
+# ── Substitute environment variables in config ─────────────────
+substitute_env_vars() {
+    local content="$1"
+    # Replace ${VAR} and $VAR with actual values
+    content=$(echo "$content" | sed "s|\\\${BRAIN_DIR}|${BRAIN_DIR}|g")
+    content=$(echo "$content" | sed "s|\\\${HOME}|${HOME}|g")
+    echo "$content"
+}
 
 if [ ! -f "$GLOBAL_CONFIG" ] && [ ! -f "$GLOBAL_STDIO_CONFIG" ]; then
-    echo "ERROR: Config files not found. Run generate.sh first." >&2
+    echo "ERROR: Config files not found at $GLOBAL_CONFIG" >&2
     exit 1
 fi
 
@@ -28,23 +39,75 @@ fi
 
 info "Synchronizing MCP configurations from $SYNC_SOURCE"
 
+# Check if MCP Gateway is running
+if curl -sf http://localhost:3000/health >/dev/null 2>&1; then
+    ok "MCP Gateway detected at localhost:3000"
+else
+    warn "MCP Gateway not detected. Run 'brain up' first for full functionality."
+fi
+
 # 1. Claude Code
 CLAUDE_SETTINGS="$HOME/.claude/settings.json"
-if [ -f "$CLAUDE_SETTINGS" ]; then
-    # Update claude settings with MCP servers from global config
-    # We use python3 for robust JSON merging
+if [ -f "$CLAUDE_SETTINGS" ] || [ -d "$(dirname "$CLAUDE_SETTINGS")" ]; then
+    mkdir -p "$(dirname "$CLAUDE_SETTINGS")"
+    
     python3 -c "
-import json, sys
+import json, os, re
+
+brain_dir = os.environ.get('BRAIN_DIR', os.path.expanduser('~/.brain'))
+
 with open('$SYNC_SOURCE', 'r') as f:
     global_mcp = json.load(f).get('mcpServers', {})
-with open('$CLAUDE_SETTINGS', 'r') as f:
-    settings = json.load(f)
 
-# Merge mcpServers
+# Substitute environment variables
+def substitute_vars(obj):
+    if isinstance(obj, str):
+        obj = obj.replace('\\${BRAIN_DIR}', brain_dir)
+        obj = obj.replace('\\$BRAIN_DIR', brain_dir)
+        obj = obj.replace('\\${HOME}', os.path.expanduser('~'))
+        return obj
+    elif isinstance(obj, list):
+        return [substitute_vars(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {k: substitute_vars(v) for k, v in obj.items()}
+    return obj
+
+def normalize_entry(config):
+    # Ensure command is a string and args is a list when possible
+    if not isinstance(config, dict):
+        return config
+    cmd = config.get('command')
+    if isinstance(cmd, list) and len(cmd) > 0:
+        # convert list form to command + args
+        config['command'] = cmd[0]
+        if 'args' not in config:
+            config['args'] = cmd[1:]
+    # Recursively normalize nested dicts
+    for k, v in list(config.items()):
+        if isinstance(v, dict):
+            config[k] = normalize_entry(v)
+    return config
+
+global_mcp = substitute_vars(global_mcp)
+
+# Normalize entries so IDEs that expect a string 'command' don't crash
+for name in list(global_mcp.keys()):
+    global_mcp[name] = normalize_entry(global_mcp[name])
+
+# Read or create settings
+if os.path.exists('$CLAUDE_SETTINGS'):
+    with open('$CLAUDE_SETTINGS', 'r') as f:
+        try:
+            settings = json.load(f)
+        except json.JSONDecodeError:
+            settings = {}
+else:
+    settings = {}
+
 if 'mcpServers' not in settings:
     settings['mcpServers'] = {}
 
-# We only update if it's SSE based on our docker stack
+# Merge mcpServers
 for name, config in global_mcp.items():
     settings['mcpServers'][name] = config
 
@@ -88,8 +151,44 @@ for target in "${PATHS[@]}"; do
         info "Syncing to $target"
         python3 -c "
 import json, os
+
+brain_dir = os.environ.get('BRAIN_DIR', os.path.expanduser('~/.brain'))
+
 with open('$SYNC_SOURCE', 'r') as f:
     global_mcp = json.load(f).get('mcpServers', {})
+
+# Substitute environment variables
+def substitute_vars(obj):
+    if isinstance(obj, str):
+        obj = obj.replace('\\${BRAIN_DIR}', brain_dir)
+        obj = obj.replace('\\$BRAIN_DIR', brain_dir)
+        obj = obj.replace('\\${HOME}', os.path.expanduser('~'))
+        return obj
+    elif isinstance(obj, list):
+        return [substitute_vars(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {k: substitute_vars(v) for k, v in obj.items()}
+    return obj
+
+def normalize_entry(config):
+    # Ensure command is a string and args is a list when possible
+    if not isinstance(config, dict):
+        return config
+    cmd = config.get('command')
+    if isinstance(cmd, list) and len(cmd) > 0:
+        config['command'] = cmd[0]
+        if 'args' not in config:
+            config['args'] = cmd[1:]
+    for k, v in list(config.items()):
+        if isinstance(v, dict):
+            config[k] = normalize_entry(v)
+    return config
+
+global_mcp = substitute_vars(global_mcp)
+
+# Normalize so targets receive predictable shapes
+for name in list(global_mcp.keys()):
+    global_mcp[name] = normalize_entry(global_mcp[name])
 
 with open('$target', 'r') as f:
     try:
@@ -97,8 +196,7 @@ with open('$target', 'r') as f:
     except json.JSONDecodeError:
         settings = {}
 
-# Handle different key names: 'mcpServers' (vsc/cursor/cline) vs 'servers' (native vsc/windsurf)
-# We prioritize 'mcpServers' if it exists, otherwise check 'servers'
+# Handle different key names
 key = 'mcpServers'
 if 'servers' in settings and 'mcpServers' not in settings:
     key = 'servers'

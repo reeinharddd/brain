@@ -1,0 +1,188 @@
+#!/bin/bash
+# ===========================================================
+#  brain-llm - Unified LLM orchestration for Brain Repo
+#  Manages Ollama (primary) and Docker Model Runner (optional)
+# ===========================================================
+
+set -euo pipefail
+
+BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
+BRAIN_LLM_PRIMARY="${BRAIN_LLM_PRIMARY:-ollama}"
+BRAIN_LLM_FALLBACK="${BRAIN_LLM_FALLBACK:-docker-model-runner}"
+OLLAMA_HOST="${OLLAMA_HOST:-localhost:11434}"
+MODEL_RUNNER_URL="${MODEL_RUNNER_URL:-http://localhost:12434}"
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+BLUE='\033[0;34m'; BOLD='\033[1m'; RESET='\033[0m'
+
+log_info() { echo -e "${BLUE}[llm]${RESET} $1"; }
+log_ok() { echo -e "${GREEN}[llm]${RESET} $1"; }
+log_warn() { echo -e "${YELLOW}[llm]${RESET} $1"; }
+log_error() { echo -e "${RED}[llm]${RESET} $1" >&2; }
+
+# ── Status Check ───────────────────────────────────────────────
+cmd_status() {
+    echo -e "${BOLD}LLM Providers Status${RESET}"
+    echo ""
+    
+    # Ollama
+    if curl -sf "http://${OLLAMA_HOST}/api/tags" >/dev/null 2>&1; then
+        log_ok "Ollama: Connected at ${OLLAMA_HOST}"
+        local models=$(curl -sf "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | \
+            python3 -c "import sys,json; d=json.load(sys.stdin); \
+            print(', '.join([m['name'] for m in d.get('models', [])[:5]]))" 2>/dev/null || echo "unknown")
+        echo "  Models: $models"
+        echo "  Primary: $([ "$BRAIN_LLM_PRIMARY" = "ollama" ] && echo YES || echo no)"
+    else
+        log_warn "Ollama: Not available at ${OLLAMA_HOST}"
+        echo "  Start with: ollama serve"
+    fi
+    
+    echo ""
+    
+    # Docker Model Runner
+    if curl -sf "${MODEL_RUNNER_URL}/models" >/dev/null 2>&1; then
+        log_ok "Docker Model Runner: Connected at ${MODEL_RUNNER_URL}"
+        echo "  Fallback: $([ "$BRAIN_LLM_FALLBACK" = "docker-model-runner" ] && echo YES || echo no)"
+    else
+        log_warn "Docker Model Runner: Not available"
+        echo "  Start with: docker compose --profile model-runner up -d"
+    fi
+    
+    echo ""
+    log_info "Active Strategy: $BRAIN_LLM_PRIMARY (primary) -> $BRAIN_LLM_FALLBACK (fallback)"
+}
+
+# ── List Models ──────────────────────────────────────────────
+cmd_list() {
+    echo -e "${BOLD}Available Models${RESET}"
+    echo ""
+    
+    if [ "$BRAIN_LLM_PRIMARY" = "ollama" ]; then
+        log_info "Ollama models at ${OLLAMA_HOST}:"
+        curl -sf "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | \
+            python3 -c "import sys,json; d=json.load(sys.stdin); \
+            [print(f'  - {m[\"name\"]}') for m in d.get('models', [])]" || \
+            log_warn "  Could not fetch models"
+    fi
+    
+    echo ""
+    
+    if curl -sf "${MODEL_RUNNER_URL}/models" >/dev/null 2>&1; then
+        log_info "Docker Model Runner models:"
+        curl -sf "${MODEL_RUNNER_URL}/models" 2>/dev/null | \
+            python3 -c "import sys,json; d=json.load(sys.stdin); \
+            [print(f'  - {m.get(\"id\", \"unknown\")}') for m in d.get('models', [])]" || \
+            log_warn "  Could not fetch models"
+    fi
+}
+
+# ── Pull Model ───────────────────────────────────────────────
+cmd_pull() {
+    local model="${1:-}"
+    [ -z "$model" ] && { log_error "Usage: brain llm pull <model>"; exit 1; }
+    
+    if [ "$BRAIN_LLM_PRIMARY" = "ollama" ]; then
+        log_info "Pulling $model with Ollama..."
+        ollama pull "$model"
+        log_ok "Model pulled: $model"
+    else
+        log_error "Pull only supported for Ollama primary"
+        exit 1
+    fi
+}
+
+# ── Route Query ──────────────────────────────────────────────
+cmd_route() {
+    local model="${1:-}"
+    local prompt="${2:-}"
+    
+    [ -z "$model" ] && { log_error "Usage: brain llm route <model> <prompt>"; exit 1; }
+    [ -z "$prompt" ] && { log_error "Missing prompt"; exit 1; }
+    
+    # Try primary first
+    if [ "$BRAIN_LLM_PRIMARY" = "ollama" ]; then
+        if curl -sf "http://${OLLAMA_HOST}/api/tags" | grep -q "$model"; then
+            log_info "Routing to Ollama: $model"
+            curl -sf "http://${OLLAMA_HOST}/api/generate" \
+                -H "Content-Type: application/json" \
+                -d "{\"model\": \"$model\", \"prompt\": \"$prompt\", \"stream\": false}" | \
+                python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('response', 'no response'))"
+            return
+        fi
+    fi
+    
+    # Try fallback
+    log_info "Model not in primary, trying fallback..."
+    if [ "$BRAIN_LLM_FALLBACK" = "docker-model-runner" ]; then
+        log_info "Routing to Docker Model Runner"
+        # Model runner uses different API - placeholder
+        log_warn "Docker Model Runner routing not yet implemented"
+    fi
+}
+
+# ── Recommend Model ──────────────────────────────────────────
+cmd_recommend() {
+    local task="${1:-general}"
+    
+    echo -e "${BOLD}Model Recommendation for: $task${RESET}"
+    echo ""
+    
+    case "$task" in
+        coding|code|implementation)
+            log_info "Recommended: qwen2.5-coder:7b or llama3.3:latest"
+            echo "  Fast, good code completion, fits in most GPUs"
+            ;;
+        reasoning|planning|architecture)
+            log_info "Recommended: deepseek-r1:14b or qwq:32b"
+            echo "  Strong reasoning, good for complex decisions"
+            ;;
+        fast|quick|simple)
+            log_info "Recommended: qwen2.5-coder:1.5b or gemma2:2b"
+            echo "  Very fast, good for simple tasks"
+            ;;
+        *)
+            log_info "General recommendation: llama3.3:latest"
+            echo "  Balanced performance and capability"
+            ;;
+    esac
+    
+    echo ""
+    log_info "Install with: brain llm pull <model>"
+}
+
+# ── Main ───────────────────────────────────────────────────
+main() {
+    local cmd="${1:-status}"
+    shift || true
+    
+    case "$cmd" in
+        status) cmd_status "$@" ;;
+        list|ls) cmd_list "$@" ;;
+        pull) cmd_pull "$@" ;;
+        route) cmd_route "$@" ;;
+        recommend) cmd_recommend "$@" ;;
+        help|--help|-h)
+            echo -e "${BOLD}Brain LLM Manager${RESET}"
+            echo ""
+            echo "Commands:"
+            echo "  status      Show LLM provider status"
+            echo "  list        List available models"
+            echo "  pull        Download a model (Ollama)"
+            echo "  recommend   Get model recommendation for task"
+            echo "  route       Route prompt to best provider"
+            echo ""
+            echo "Environment:"
+            echo "  BRAIN_LLM_PRIMARY    Primary provider (ollama|docker-model-runner)"
+            echo "  OLLAMA_HOST          Ollama endpoint"
+            echo "  MODEL_RUNNER_URL     Docker Model Runner endpoint"
+            ;;
+        *)
+            log_error "Unknown command: $cmd"
+            echo "Run 'brain llm help' for usage"
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"

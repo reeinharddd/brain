@@ -32,11 +32,11 @@ The following MCPs and Skills were found during the crawl of `https://github.com
 ## Candidate Registry Update
 
 ```yaml
-  skill-ninja:
-    image: aktsmm/skill-ninja-mcp-server
-    tag: latest
-    purpose: Automated discovery and installation of agent skills (SKILL.md)
-    when_to_use: Expanding the brain's capabilities with community skills
-    docker_command: |
-      docker run -i --rm aktsmm/skill-ninja-mcp-server:latest
+skill-ninja:
+  image: aktsmm/skill-ninja-mcp-server
+  tag: latest
+  purpose: Automated discovery and installation of agent skills (SKILL.md)
+  when_to_use: Expanding the brain's capabilities with community skills
+  docker_command: |
+    docker run -i --rm aktsmm/skill-ninja-mcp-server
 ```

@@ -28,6 +28,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
+  "effortLevel": "medium",
   "//": "Persistent Mode - Hybrid stable MCP setup.",
   "//2": "To activate: ln -sf ~/.brain/adapters/claude-code/settings.persistent.json ~/.claude/settings.json",
   "mcpServers": {
@@ -72,15 +73,6 @@
         "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @upstash/context7-mcp@latest"
       ]
     },
-    "skill-ninja": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "aktsmm/skill-ninja-mcp-server:latest"
-      ]
-    },
     "duckduckgo": {
       "command": "docker",
       "args": [
@@ -90,15 +82,20 @@
         "mcp/duckduckgo:latest"
       ]
     },
-    "context-awesome": {
-      "command": "docker",
+    "skill-ninja": {
+      "command": "bash",
       "args": [
-        "run",
-        "-i",
-        "--rm",
-        "bh-rat/context-awesome:latest"
+        "-lc",
+        "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y skill-ninja-mcp-server"
       ]
+    },
+    "context-awesome": {
+      "command": "curl",
+      "args": [
+        "-sf",
+        "http://localhost:3000/mcp/context-awesome/sse"
+      ],
+      "description": "Awesome lists via MCP Gateway proxy"
     }
-  },
-  "effortLevel": "high"
+  }
 }

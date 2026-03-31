@@ -1,0 +1,81 @@
+{
+  "mcps": {
+    "memory": {
+      "type": "npm",
+      "package": "@modelcontextprotocol/server-memory",
+      "description": "Persistent in-session and cross-session memory via knowledge graph",
+      "required": true,
+      "args": [
+        "/data/memory"
+      ],
+      "env": {}
+    },
+    "filesystem": {
+      "type": "npm",
+      "package": "@modelcontextprotocol/server-filesystem",
+      "description": "Structured file system operations with explicit path scoping",
+      "required": false,
+      "args": [
+        "/brain"
+      ],
+      "env": {}
+    },
+    "sequential-thinking": {
+      "type": "npm",
+      "package": "@modelcontextprotocol/server-sequential-thinking",
+      "description": "Structured step-by-step reasoning for complex problems",
+      "required": false,
+      "env": {}
+    },
+    "context7": {
+      "type": "npm",
+      "package": "@upstash/context7-mcp",
+      "description": "Real-time, up-to-date library documentation retrieval",
+      "required": false,
+      "env": {}
+    },
+    "github": {
+      "type": "npm",
+      "package": "@modelcontextprotocol/server-github",
+      "description": "GitHub API operations - PRs, issues, repo management",
+      "required": false,
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "skill-ninja": {
+      "type": "npm",
+      "package": "skill-ninja-mcp-server",
+      "description": "Skill detection and management",
+      "required": false,
+      "env": {}
+    },
+    "duckduckgo": {
+      "type": "docker",
+      "image": "mcp/duckduckgo:latest",
+      "description": "Web search via DuckDuckGo",
+      "required": false
+    },
+    "brain-rules": {
+      "type": "docker",
+      "image": "python:3.11-alpine",
+      "description": "Custom brain repo MCP server exposing rules and agents",
+      "required": false,
+      "volumes": [
+        "/home/reeinharrrd/.brain:/brain:ro"
+      ],
+      "args": [
+        "python3",
+        "/brain/mcp/brain-mcp-server/server.py",
+        "--brain-dir",
+        "/brain"
+      ]
+    },
+    "context-awesome": {
+      "type": "sse",
+      "url": "https://www.context-awesome.com/api/mcp",
+      "description": "Search across 8,500+ awesome lists with curated resources",
+      "required": false
+    }
+  }
+}

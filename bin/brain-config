@@ -1,0 +1,136 @@
+#!/bin/bash
+# ===========================================================
+#  brain-config - Network configuration manager for Brain Repo
+#  Detects available ports and generates configs for all services
+# ===========================================================
+
+set -euo pipefail
+
+BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
+BRAIN_DATA_DIR="${BRAIN_DATA_DIR:-$HOME/.brain-data}"
+
+# ── Default Ports (can be overridden via env) ─────────────────
+DEFAULT_PORTS=(
+    "MCP_GATEWAY:3000"
+    "QDRANT:6333" 
+    "OPEN_WEBUI:8080"
+    "OLLAMA:11434"
+    "MODEL_RUNNER:12434"
+)
+
+# ── Check if port is available ────────────────────────────────
+port_available() {
+    local port="$1"
+    ! nc -z localhost "$port" 2>/dev/null
+}
+
+# ── Find next available port ──────────────────────────────────
+find_available_port() {
+    local start_port="$1"
+    local port="$start_port"
+    while ! port_available "$port"; do
+        ((port++))
+        if [ "$port" -gt 65535 ]; then
+            echo "No available ports found" >&2
+            return 1
+        fi
+    done
+    echo "$port"
+}
+
+# ── Generate network configuration ────────────────────────────
+generate_config() {
+    local config_file="$BRAIN_DATA_DIR/network.config"
+    
+    echo "# Brain Repo Network Configuration" > "$config_file"
+    echo "# Generated: $(date)" >> "$config_file"
+    echo "" >> "$config_file"
+    
+    for entry in "${DEFAULT_PORTS[@]}"; do
+        local name="${entry%%:*}"
+        local default_port="${entry##*:}"
+        local env_var="BRAIN_${name}_PORT"
+        
+        # Check if user override exists
+        local port="${!env_var:-$default_port}"
+        
+        # If port is taken, find alternative
+        if ! port_available "$port"; then
+            local new_port=$(find_available_port "$((port + 1))")
+            echo "# WARNING: Port $port for $name was occupied, using $new_port instead" >> "$config_file"
+            port="$new_port"
+        fi
+        
+        echo "export BRAIN_${name}_PORT=$port" >> "$config_file"
+    done
+    
+    # Add URLs
+    echo "" >> "$config_file"
+    echo "# Service URLs" >> "$config_file"
+    echo "export BRAIN_MCP_GATEWAY_URL=http://localhost:\${BRAIN_MCP_GATEWAY_PORT}" >> "$config_file"
+    echo "export BRAIN_QDRANT_URL=http://localhost:\${BRAIN_QDRANT_PORT}" >> "$config_file"
+    echo "export BRAIN_OPEN_WEBUI_URL=http://localhost:\${BRAIN_OPEN_WEBUI_PORT}" >> "$config_file"
+    echo "export BRAIN_OLLAMA_URL=http://localhost:\${BRAIN_OLLAMA_PORT}" >> "$config_file"
+    echo "export BRAIN_MODEL_RUNNER_URL=http://localhost:\${BRAIN_MODEL_RUNNER_PORT}" >> "$config_file"
+    
+    # Container-accessible Ollama URL
+    echo "" >> "$config_file"
+    echo "# Container-accessible Ollama (for Docker containers)" >> "$config_file"
+    echo "export OLLAMA_HOST=host.docker.internal:\${BRAIN_OLLAMA_PORT}" >> "$config_file"
+    
+    echo "$config_file"
+}
+
+# ── Load configuration ──────────────────────────────────────
+load_config() {
+    local config_file="$BRAIN_DATA_DIR/network.config"
+    if [ -f "$config_file" ]; then
+        source "$config_file"
+    fi
+}
+
+# ── Show current configuration ────────────────────────────────
+cmd_show() {
+    local config_file="$BRAIN_DATA_DIR/network.config"
+    
+    if [ ! -f "$config_file" ]; then
+        echo "No configuration found. Run: brain-config generate"
+        exit 1
+    fi
+    
+    echo "Current Network Configuration:"
+    echo ""
+    cat "$config_file" | grep -v "^#" | grep -v "^$"
+    
+    echo ""
+    echo "Port Status:"
+    for entry in "${DEFAULT_PORTS[@]}"; do
+        local name="${entry%%:*}"
+        local port_var="BRAIN_${name}_PORT"
+        local port="${!port_var}"
+        if port_available "$port"; then
+            echo "  ✓ $name: port $port available"
+        else
+            echo "  ✗ $name: port $port OCCUPIED"
+        fi
+    done
+}
+
+# ── Main ─────────────────────────────────────────────────────
+cmd="${1:-show}"
+
+case "$cmd" in
+    generate)
+        generate_config
+        echo "Configuration generated. Source it with:"
+        echo "  source $(generate_config)"
+        ;;
+    show)
+        load_config
+        cmd_show
+        ;;
+    *)
+        echo "Usage: brain-config [generate|show]"
+        exit 1
+        ;;
+esac

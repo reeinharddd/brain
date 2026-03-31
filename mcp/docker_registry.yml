@@ -1,5 +1,4 @@
 docker_mcps:
-
   duckduckgo:
     image: mcp/duckduckgo
     tag: latest
@@ -109,12 +108,5 @@ docker_mcps:
     purpose: Automated discovery and installation of agent skills (SKILL.md)
     when_to_use: Expanding the brain's capabilities with community-contributed skills
     docker_command: |
-      docker run -i --rm aktsmm/skill-ninja-mcp-server:latest
+      docker run -i --rm aktsmm/skill-ninja-mcp-server
 
-  context-awesome:
-    image: bh-rat/context-awesome
-    tag: latest
-    purpose: MCP interface for 8,500+ curated awesome lists and resource discovery
-    when_to_use: Researching high-quality tools, libraries, or patterns across any domain
-    docker_command: |
-      docker run -i --rm bh-rat/context-awesome:latest
