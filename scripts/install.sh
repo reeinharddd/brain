@@ -1,343 +1,239 @@
 #!/bin/bash
-# set -euo pipefail  <- removed for robustness in multi-platform environments
+# Script separator
+#  install.sh - Complete Brain repo setup (consolidated from 4 scripts)
+#  
+#  Integrates: OS bootstrap + persistent setup + CLI setup + autostart
+#
+#  Usage:
+#    bash ~/.brain/scripts/install.sh              # Full install
+#    bash ~/.brain/scripts/install.sh --bootstrap  # OS packages only
+#    bash ~/.brain/scripts/install.sh --persistent # Setup without bootstrap
+# Script separator
 
-# ===========================================================
-#  brain/scripts/install.sh - OS-aware bootstrap for the brain repo
-#  Supports: Linux / macOS / WSL
-#  Usage: bash ~/.brain/scripts/install.sh
-# ===========================================================
+set -e
 
 BRAIN_DIR="${BRAIN_DIR:-$HOME/.brain}"
 OS="unknown"
 PACKAGE_MANAGER="unknown"
 ERRORS=0
 DRY_RUN=0
-INTERACTIVE=0
-CLAUDE_MODE="persistent"
 
-# -- Colors --------------------------------------------------------
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-BLUE='\033[0;34m'; BOLD='\033[1m'; RESET='\033[0m'
+# -- Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+BOLD='\033[1m'
+NC='\033[0m'
 
-ok()   { echo -e "  ${GREEN}[ok]${RESET} $1"; }
-warn() { echo -e "  ${YELLOW}[warn]${RESET}  $1"; }
-fail() { echo -e "  ${RED}[fail]${RESET} $1"; ((ERRORS++)); }
-info() { echo -e "  ${BLUE}[info]${RESET} $1"; }
-section() { echo -e "\n${BOLD}-- $1${RESET}"; }
+ok()      { echo -e "  ${GREEN}[ok]${NC} $1"; }
+warn()    { echo -e "  ${YELLOW}[warn]${NC} $1"; }
+fail()    { echo -e "  ${RED}[fail]${NC} $1"; ((ERRORS++)); }
+info()    { echo -e "\n${BOLD}-- $1${NC}"; }
+section() { echo -e "\n${BOLD}$1${NC}"; }
 
 run_cmd() {
   if [ "$DRY_RUN" -eq 1 ]; then
     echo "[dry-run] $*"
   else
-    "$@"
+    "$@" || fail "Command failed: $*"
   fi
 }
 
-should_run_step() {
-  local label="$1"
-  if [ "$INTERACTIVE" -eq 0 ]; then
-    return 0
-  fi
-  read -r -p "$label? [Y/n] " answer
-  case "${answer:-y}" in
-    n|N) return 1 ;;
-    *) return 0 ;;
-  esac
-}
-
-choose_claude_mode() {
-  if [ "$INTERACTIVE" -eq 0 ]; then
-    return
-  fi
-
-  echo "Select Claude Code mode:"
-  echo "  1. Persistent"
-  echo "  2. Standard"
-  read -r -p "Choice [1/2]: " answer
-  case "${answer:-1}" in
-    2) CLAUDE_MODE="standard" ;;
-    *) CLAUDE_MODE="persistent" ;;
-  esac
-}
-
-# -- OS Detection -------------------------------------------------
-detect_os() {
-  section "Detecting environment"
-  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    if grep -q Microsoft /proc/version 2>/dev/null; then
-      OS="wsl"; info "Windows Subsystem for Linux (WSL)"
-    else
-      OS="linux"; info "Linux"
-    fi
-    # Detect package manager
-    if command -v apt &>/dev/null;    then PACKAGE_MANAGER="apt"
-    elif command -v dnf &>/dev/null;  then PACKAGE_MANAGER="dnf"
-    elif command -v pacman &>/dev/null; then PACKAGE_MANAGER="pacman"
-    elif command -v zypper &>/dev/null; then PACKAGE_MANAGER="zypper"
-    fi
-  elif [[ "$OSTYPE" == "darwin"* ]]; then
-    OS="macos"; PACKAGE_MANAGER="brew"; info "macOS"
-  else
-    warn "Unknown OS: $OSTYPE - proceeding with best effort"
-    OS="unknown"
-  fi
-  ok "OS: $OS | Package manager: $PACKAGE_MANAGER"
-}
-
-# -- Generate adapters ---------------------------------------------
-run_generate() {
-  section "Generating rule adapters"
-  if [ -f "$BRAIN_DIR/adapters/generate.sh" ]; then
-    run_cmd bash "$BRAIN_DIR/adapters/generate.sh"
-    ok "All adapters generated"
-  else
-    fail "adapters/generate.sh not found - skipping adapter generation"
-  fi
-}
-
-# -- Common symlinks (all OS) --------------------------------------
-link_common() {
-  section "Linking common files"
-
-  # Docker Environment
-  if [ ! -f "$BRAIN_DIR/docker/.env" ] && [ -f "$BRAIN_DIR/docker/.env.example" ]; then
-    run_cmd cp "$BRAIN_DIR/docker/.env.example" "$BRAIN_DIR/docker/.env"
-    if [ "$DRY_RUN" -eq 0 ]; then
-      sed -i "s|HOST_HOME=.*|HOST_HOME=$HOME|g" "$BRAIN_DIR/docker/.env"
-    else
-      echo "[dry-run] sed -i s|HOST_HOME=.*|HOST_HOME=$HOME|g $BRAIN_DIR/docker/.env"
-    fi
-    ok "Docker .env initialized from example"
-  fi
-
-  # Claude Code directories
-  run_cmd mkdir -p "$HOME/.claude/agents" "$HOME/.claude/commands"
-
-  # Claude Code settings
-  # Default to Docker Persistent for a warm-start experience
-  if [ "$CLAUDE_MODE" = "persistent" ] && [ -f "$BRAIN_DIR/adapters/claude-code/settings.persistent.json" ]; then
-    run_cmd ln -sf "$BRAIN_DIR/adapters/claude-code/settings.persistent.json" "$HOME/.claude/settings.json"
-    ok "Claude Code: Persistent Mode activated"
-  elif [ -f "$BRAIN_DIR/adapters/claude-code/settings.json" ]; then
-    # Keep existing if linked, otherwise default to settings.json
-    if [ ! -L "$HOME/.claude/settings.json" ]; then
-        run_cmd ln -sf "$BRAIN_DIR/adapters/claude-code/settings.json" "$HOME/.claude/settings.json"
-        ok "Claude Code settings.json linked"
-    else
-        ok "Claude Code settings.json already linked (currently: $(readlink "$HOME/.claude/settings.json"))"
-    fi
-  else
-    warn "claude-code/settings.json not found - skipping"
-  fi
-
-  # Claude Code CLAUDE.md
-  if [ -f "$BRAIN_DIR/adapters/claude-code/CLAUDE.md" ]; then
-    run_cmd ln -sf "$BRAIN_DIR/adapters/claude-code/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
-    ok "CLAUDE.md linked"
-  else
-    warn "claude-code/CLAUDE.md not found - run adapters/generate.sh"
-  fi
-
-  # Agents
-  if [ -d "$BRAIN_DIR/agents" ]; then
-    for agent in "$BRAIN_DIR/agents"/*.md; do
-      [ -f "$agent" ] || continue
-      run_cmd ln -sf "$agent" "$HOME/.claude/agents/$(basename "$agent")"
-    done
-    ok "Agents linked -> ~/.claude/agents/"
-  fi
-
-  # Commands
-  if [ -d "$BRAIN_DIR/commands" ]; then
-    for cmd in "$BRAIN_DIR/commands"/*.md; do
-      [ -f "$cmd" ] || continue
-      run_cmd ln -sf "$cmd" "$HOME/.claude/commands/$(basename "$cmd")"
-    done
-    ok "Commands linked -> ~/.claude/commands/"
-  fi
-
-  # Aider (universal)
-  if [ -f "$BRAIN_DIR/adapters/aider/.aider.conf.yml" ]; then
-    run_cmd ln -sf "$BRAIN_DIR/adapters/aider/.aider.conf.yml" "$HOME/.aider.conf.yml"
-    ok "Aider config linked"
-  fi
-}
-
-# -- OS-specific symlinks ------------------------------------------
-link_os_specific() {
-  section "Linking OS-specific files ($OS)"
-
-  # Cursor (.cursorrules goes to HOME on all platforms)
-  if [ -f "$BRAIN_DIR/adapters/cursor/.cursorrules" ]; then
-    run_cmd ln -sf "$BRAIN_DIR/adapters/cursor/.cursorrules" "$HOME/.cursorrules"
-    ok ".cursorrules linked"
-  fi
-
-  # Windsurf
-  if [ -f "$BRAIN_DIR/adapters/windsurf/.windsurfrules" ]; then
-    run_cmd ln -sf "$BRAIN_DIR/adapters/windsurf/.windsurfrules" "$HOME/.windsurfrules"
-    ok ".windsurfrules linked"
-  fi
-
-  # Gemini CLI
-  if [ -f "$BRAIN_DIR/adapters/gemini/GEMINI.md" ]; then
-    run_cmd mkdir -p "$HOME/.gemini"
-    run_cmd ln -sf "$BRAIN_DIR/adapters/gemini/GEMINI.md" "$HOME/.gemini/GEMINI.md"
-    ok "GEMINI.md linked"
-  fi
-
-  case $OS in
-    linux|wsl)
-      # OpenCode
-      if [ -f "$BRAIN_DIR/adapters/opencode/opencode.json" ]; then
-        run_cmd mkdir -p "$HOME/.config/opencode"
-        run_cmd ln -sf "$BRAIN_DIR/adapters/opencode/opencode.json" "$HOME/.config/opencode/opencode.json"
-        ok "OpenCode config linked"
-      fi
-      ;;
-    macos)
-      if [ -f "$BRAIN_DIR/adapters/opencode/opencode.json" ]; then
-        run_cmd mkdir -p "$HOME/Library/Application Support/opencode"
-        run_cmd ln -sf "$BRAIN_DIR/adapters/opencode/opencode.json" "$HOME/Library/Application Support/opencode/opencode.json"
-        ok "OpenCode config linked (macOS)"
-      fi
-      ;;
-  esac
-}
-
-# -- Tool check ----------------------------------------------------
-check_tools() {
-  section "Checking dependencies"
-  # Standard tools (individual checks)
-  if command -v git &>/dev/null; then ok "git"; else warn "git not found"; fi
-  if command -v node &>/dev/null; then ok "node"; else warn "node not found"; fi
-
-  # AI agents (at least one should exist)
-  local agents_found=0
-  for agent_cmd in claude opencode aider gemini; do
-    if command -v "$agent_cmd" &>/dev/null; then
-      ok "AI agent: $agent_cmd"
-      ((agents_found++))
-    fi
-  done
-
-  if [ $agents_found -eq 0 ]; then
-    warn "No AI agent found in PATH - install at least one (claude, opencode, aider, gemini)"
-  fi
-
-  # Docker Pre-pull for Persistent MCPs
-  if command -v docker &>/dev/null; then
-    section "Pre-pulling Docker MCPs (Bootstrap Speedup)"
-    local images=(
-      "node:20-alpine"
-      "mcp/github"
-      "mcp/duckduckgo"
-      "mcp/sequentialthinking"
-      "mcp/google-maps"
-    )
-    for img in "${images[@]}"; do
-      if [[ "$(docker images -q "$img" 2>/dev/null)" == "" ]]; then
-        info "Pulling $img..."
-        if [ "$DRY_RUN" -eq 0 ]; then
-          docker pull -q "$img" &>/dev/null || warn "Failed to pull $img (skipping)"
-        else
-          echo "[dry-run] docker pull -q $img"
-        fi
-      else
-        ok "$img already present"
-      fi
-    done
-  fi
-}
-
-# -- Git init ------------------------------------------------------
-init_git() {
-  section "Initializing git"
-  if [ ! -d "$BRAIN_DIR/.git" ]; then
-    run_cmd git -C "$BRAIN_DIR" init -q
-    run_cmd git -C "$BRAIN_DIR" config user.name "reeinharrrd"
-    run_cmd git -C "$BRAIN_DIR" config user.email "reeinharrrd@users.noreply.github.com"
-    run_cmd git -C "$BRAIN_DIR" add -A
-    run_cmd git -C "$BRAIN_DIR" commit -q -m "brain: initial setup"
-    ok "Git repo initialized"
-  else
-    ok "Git repo already initialized"
-  fi
-}
-
-# -- ai-local ------------------------------------------------------
-setup_ai_local() {
-  section "Setting up ai-local (Ollama orchestrator)"
-  if [ -d "$BRAIN_DIR/ai-local" ]; then
-    ok "ai-local module present"
-    info "To start local models, cd $BRAIN_DIR/ai-local && docker compose up -d"
-  else
-    warn "ai-local module not found"
-  fi
-}
-
-# -- Summary -------------------------------------------------------
-print_summary() {
-  section "Result"
-  if [ $ERRORS -eq 0 ]; then
-    echo -e "\n  ${GREEN}${BOLD}[ok] Brain repo scripts installed on $OS${RESET}"
-  else
-    echo -e "\n  ${YELLOW}${BOLD}[warn] Brain repo installed with $ERRORS issue(s)${RESET}"
-    echo "  Run ~/.brain/scripts/doctor.sh for details"
-  fi
-
-  echo ""
-  echo "  Active adapters:"
-  [ -L "$HOME/.claude/CLAUDE.md" ]   && echo "    [ok] Claude Code" || echo "    - Claude Code (not linked)"
-  [ -L "$HOME/.cursorrules" ]         && echo "    [ok] Cursor" || echo "    - Cursor (not linked)"
-  [ -L "$HOME/.windsurfrules" ]       && echo "    [ok] Windsurf" || echo "    - Windsurf (not linked)"
-  [ -L "$HOME/.gemini/GEMINI.md" ]    && echo "    [ok] Gemini CLI" || echo "    - Gemini CLI (not linked)"
-  [ -L "$HOME/.aider.conf.yml" ]      && echo "    [ok] Aider" || echo "    - Aider (not linked)"
-  [ -L "$HOME/.claude/commands/test.md" ] && echo "    [ok] Test Command" || echo "    - Test Command (not linked)"
-  [ -L "$HOME/.claude/commands/init.md" ] && echo "    [ok] Init Command" || echo "    - Init Command (not linked)"
-
-  echo ""
-  echo "  Next steps:"
-  echo "    1. Push to GitHub:     cd ~/.brain && git remote add origin git@github.com:reeinharrrd/brain.git && git push -u origin main"
-  echo "    2. Run doctor:         ~/.brain/scripts/doctor.sh"
-  echo "    3. Run validation:     ~/.brain/scripts/validate.sh"
-  echo "    4. Update architecture: edit ~/.brain/rules/canonical.md -> run ~/.brain/adapters/generate.sh"
-  echo ""
-}
-
-# -- Args ----------------------------------------------------------
+# Parse arguments
 for arg in "$@"; do
   case "$arg" in
-    --dry-run) DRY_RUN=1 ;;
-    --interactive) INTERACTIVE=1 ;;
+    --dry-run)  DRY_RUN=1 ;;
   esac
 done
 
-# -- Main ----------------------------------------------------------
-detect_os
-choose_claude_mode
-should_run_step "Generate adapters" && run_generate
-should_run_step "Link common files" && link_common
-should_run_step "Link OS-specific files" && link_os_specific
-# Centralize and sync MCP configs
-if [ -f "$BRAIN_DIR/scripts/mcp-sync.sh" ]; then
-  should_run_step "Sync MCP configs" && run_cmd bash "$BRAIN_DIR/scripts/mcp-sync.sh"
-fi
-should_run_step "Check tools" && check_tools
-should_run_step "Initialize git" && init_git
-should_run_step "Setup ai-local (Ollama)" && setup_ai_local
-print_summary
+# Script separator
+# PHASE 1: OS Bootstrap
+# Script separator
 
-# Auto-run doctor
-if [ -f "$BRAIN_DIR/scripts/doctor.sh" ]; then
-  if [ "$DRY_RUN" -eq 0 ]; then
-    bash "$BRAIN_DIR/scripts/doctor.sh"
-  else
-    echo "[dry-run] bash $BRAIN_DIR/scripts/doctor.sh"
+section "Phase 1: OS Bootstrap"
+
+# Detect OS and package manager
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  OS="Linux"
+  if command -v apt &>/dev/null; then
+    PACKAGE_MANAGER="apt"
+  elif command -v dnf &>/dev/null; then
+    PACKAGE_MANAGER="dnf"
   fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  OS="macOS"
+  PACKAGE_MANAGER="brew"
+else
+  OS="Unknown"
 fi
+
+info "Detected OS: $OS ($PACKAGE_MANAGER)"
+
+case "$PACKAGE_MANAGER" in
+  apt)
+    run_cmd sudo apt-get update
+    run_cmd sudo apt-get install -y python3 python3-pip bash zsh git docker.io docker-compose
+    ;;
+  dnf)
+    run_cmd sudo dnf install -y python3 python3-pip bash zsh git docker docker-compose
+    ;;
+  brew)
+    run_cmd brew install python3 git bash zsh docker docker-compose
+    ;;
+  *)
+    warn "Unsupported package manager - please install dependencies manually"
+    ;;
+esac
+
+ok "OS bootstrap complete"
+
+# Script separator
+# PHASE 2: Generate Adapters & Link IDE Rules
+# Script separator
+
+section "Phase 2: Adapter Generation & IDE Setup"
+
+if [ -f "$BRAIN_DIR/adapters/generate.sh" ]; then
+  run_cmd bash "$BRAIN_DIR/adapters/generate.sh"
+  ok "Adapters generated"
+fi
+
+# Link IDE config files
+[ -f "$BRAIN_DIR/adapters/cursor/.cursorrules" ] && \
+  run_cmd ln -sf "$BRAIN_DIR/adapters/cursor/.cursorrules" "$HOME/.cursorrules" && \
+  ok "Linked .cursorrules"
+
+[ -f "$BRAIN_DIR/adapters/windsurf/.windsurfrules" ] && \
+  run_cmd ln -sf "$BRAIN_DIR/adapters/windsurf/.windsurfrules" "$HOME/.windsurfrules" && \
+  ok "Linked .windsurfrules"
+
+[ -f "$BRAIN_DIR/adapters/aider/.aider.conf.yml" ] && \
+  run_cmd ln -sf "$BRAIN_DIR/adapters/aider/.aider.conf.yml" "$HOME/.aider.conf.yml" && \
+  ok "Linked aider config"
+
+ok "IDE adapters configured"
+
+# Script separator
+# PHASE 3: Persistent Setup (env, shell integration, git hooks)
+# Script separator
+
+section "Phase 3: Persistent Setup"
+
+# Create brain.env from example
+ENV_FILE="$BRAIN_DIR/brain.env"
+ENV_EXAMPLE="$BRAIN_DIR/brain.env.example"
+
+if [ ! -f "$ENV_FILE" ] && [ -f "$ENV_EXAMPLE" ]; then
+  run_cmd cp "$ENV_EXAMPLE" "$ENV_FILE"
+  ok "brain.env created (add API keys manually)"
+else
+  ok "brain.env already exists"
+fi
+
+# Shell integration
+SHELL_RC="$HOME/.zshrc"
+[ ! -f "$SHELL_RC" ] && [ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
+
+if [ -f "$SHELL_RC" ] && ! grep -q "brain.env" "$SHELL_RC"; then
+  run_cmd bash <<EOF
+cat >> "$SHELL_RC" <<'SHELL_EOF'
+
+# Brain repo - auto-source config
+[ -f "\$HOME/.brain/brain.env" ] && set -a && . "\$HOME/.brain/brain.env" && set +a
+export BRAIN_DIR="\$HOME/.brain"
+SHELL_EOF
+EOF
+  ok "Shell profile updated"
+fi
+
+# Git hooks
+if [ -f "$BRAIN_DIR/hooks/pre-commit.sh" ]; then
+  run_cmd bash "$BRAIN_DIR/hooks/pre-commit.sh"
+  ok "Git hooks installed"
+fi
+
+ok "Persistent setup complete"
+
+# Script separator
+# PHASE 4: CLI Setup (make executable, PATH, test)
+# Script separator
+
+section "Phase 4: CLI Setup"
+
+run_cmd chmod +x "$BRAIN_DIR/scripts/brain-cli.sh" "$BRAIN_DIR/scripts/init.sh" "$BRAIN_DIR/bin/brain"
+ok "Scripts made executable"
+
+run_cmd mkdir -p "$HOME/.local/bin"
+run_cmd ln -sf "$BRAIN_DIR/bin/brain" "$HOME/.local/bin/brain"
+
+if ! echo "$PATH" | grep -q "${HOME}/.local/bin"; then
+  warn "${HOME}/.local/bin not in PATH - add to ~/.zshrc or ~/.bashrc)"
+fi
+
+# Test
+if bash "$BRAIN_DIR/scripts/brain-cli.sh" --version >/dev/null 2>&1; then
+  ok "brain-cli.sh works"
+else
+  fail "brain-cli.sh test failed"
+fi
+
+ok "CLI setup complete"
+
+# Script separator
+# PHASE 5: Autostart Setup (systemd / shell profile)
+# Script separator
+
+section "Phase 5: Autostart Registration"
+
+OS_TYPE=$(uname -s)
+
+if [[ "$OS_TYPE" == "Linux"* ]]; then
+  mkdir -p "$HOME/.config/systemd/user"
+  run_cmd bash <<EOF
+cat > "$HOME/.config/systemd/user/brain.service" <<'SYSEOF'
+[Unit]
+Description=Brain Environment
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=$BRAIN_DIR/scripts/init.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
+SYSEOF
+EOF
+  if [ "$DRY_RUN" -eq 0 ]; then
+    systemctl --user daemon-reload 2>/dev/null || true
+    systemctl --user enable brain.service 2>/dev/null || true
+  fi
+  ok "Systemd user service registered"
+elif [[ "$OS_TYPE" == "Darwin"* ]]; then
+  warn "macOS: Manual LaunchAgent registration required"
+fi
+
+ok "Autostart registration complete"
+
+# Script separator
+# Summary
+# Script separator
+
+echo ""
+section "Installation Complete!"
 
 if [ "$ERRORS" -eq 0 ]; then
-  exit 0
+  ok "All phases completed successfully"
+  echo ""
+  echo "Next steps:"
+  echo "  1. Set API keys: edit $BRAIN_DIR/brain.env"
+  echo "  2. Test installation: brain status"
+  echo "  3. Start services: brain start"
+else
+  warn "Completed with $ERRORS error(s)"
+  echo "  Run script/doctor.sh for diagnosis"
+  exit 1
 fi
-exit 1
+
+echo ""
