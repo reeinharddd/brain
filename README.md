@@ -1,250 +1,530 @@
-# Brain Repo - reeinharrrd
+# Brain Repository
 
-> A portable AI development environment: one source of truth, compiled to every IDE and agent.
+> A portable AI development environment: one source of truth, compiled to every IDE and LLM
 
-## What this actually is
+---
 
-A version-controlled developer brain that:
+## What is Brain?
 
-- **Defines how I work** - universal engineering principles in `rules/canonical.md`, compiled to every IDE automatically
-- **Configures every AI agent** - one source of truth, auto-adapted to Cursor, Windsurf, Claude Code, Gemini CLI, OpenCode, Aider, Cline, Copilot
-- **Persists memory** - cross-session knowledge graph via MCP memory server, with vector search via Qdrant
-- **Contains executable agents** - 13 specialized agents runnable via `scripts/agent-runner.py` or as IDE prompts
-- **Enforces security** - guardian checks on every commit and pre-tool-use hook in Claude Code
-- **Defines slash commands** - `/plan`, `/review`, `/research`, `/handover`, `/standup`, `/update-brain`, `/memory-search`, `/consolidate`
-- **Evaluates itself** - benchmark suite measuring memory recall, guardian accuracy, and adapter correctness
+**Brain** is a version-controlled developer environment that:
+
+- **Defines how you work** — Universal engineering principles + IDE-agnostic configurations
+- **Configures every AI agent** — One source of truth (`rules/canonical.md`), auto-compiled to Cursor, Windsurf, Claude Code, Copilot, Gemini, Aider, OpenCode, Cline
+- **Persists knowledge** — Cross-session memory graph via MCP server + vector search (Qdrant)
+- **Enforces security** — Automatic guardian checks on commits, prevents secrets leakage
+- **Runs agents** — 12 specialized agents (researcher, planner, debugger, etc.) callable from terminal or IDE
+- **Evaluates itself** — Benchmark suite measuring memory recall, security, rule consistency
+
+**In 30 seconds**: Clone it, run `bash ~/.brain/scripts/brain-setup.sh`, and every IDE reads the same rules.
+
+---
+
+## Quick Start (5 Minutes)
+
+### 1. Clone
+
+```bash
+git clone https://github.com/reeinharrrd/brain.git ~/.brain
+cd ~/.brain
+```
+
+### 2. Setup
+
+```bash
+bash scripts/brain-setup.sh
+```
+
+This creates:
+- `~/.brain/.brain.config` — Central configuration
+- Symlinks for IDE integration (Cursor, Windsurf, Claude Code, etc.)
+- Optional systemd autostart (automated)
+- Git hooks for security checks
+
+### 3. Verify
+
+```bash
+brain status      # See service status
+brain health      # Run health checks
+```
+
+### 4. Start Using
+
+```bash
+# Start all services (Docker, MCP, memory)
+brain start
+
+# Use your IDE
+code /my/project
+cursor /my/project
+windsurf /my/project
+
+# Stop services
+brain stop
+```
+
+---
+
+## Keyboard Commands
+
+**In any IDE**, you can use these **slash commands** (via CLI or IDE integration):
+
+| Command | What it does |
+|---------|-------------|
+| `/plan` | Break down a complex task into steps |
+| `/review` | Code review of your changes |
+| `/research` | Deep research with web search |
+| `/handover` | Save context for next session |
+| `/standup` | Quick project status summary |
+| `/memory-search` | Query your knowledge graph |
+| `/consolidate` | Clean up old memories, detect patterns |
+| `/update-brain` | Pull latest Brain updates + regenerate adapters |
+
+---
+
+## Core Commands
+
+Use the `brain` CLI (always available):
+
+```bash
+# Service control
+brain start                 # Launch Docker + MCP + memory backend
+brain stop                  # Stop all services
+brain restart               # Restart everything
+brain status                # Show what's running
+brain health                # Full diagnostics
+brain logs [N]              # Show last N log lines
+
+# Configuration
+brain config                # Show/edit configuration
+brain dashboard             # Interactive menu (TUI)
+
+# Optional autostart
+brain autostart-enable      # Start on boot
+brain autostart-disable     # Manual start only
+brain autostart-status      # Check status
+
+# Debugging
+brain reset                 # Clear state and logs
+brain doctor                # Full system health check
+```
+
+---
 
 ## Architecture
 
+### Static Layer (Configuration)
+
+These are read-only files that configure IDEs and agents:
+
 ```
 rules/canonical.md          <- Single source of truth (edit here)
-        |
-adapters/generate.sh        <- Compiles rules to all targets
-        |
-        +-- adapters/claude-code/CLAUDE.md
-        +-- adapters/cursor/.cursorrules
-        +-- adapters/windsurf/.windsurfrules
-        +-- adapters/gemini/GEMINI.md
-        +-- adapters/opencode/opencode.json
-        +-- adapters/aider/system-prompt.md
-        +-- adapters/cline/cline_custom_instructions.md
-        +-- adapters/copilot/copilot-instructions.md
-
-agents/*.md                 <- Agent prompt definitions (loaded by agent-runner.py)
-commands/*.md               <- Slash command specifications
+├─ Compiled to all IDEs by: adapters/generate.sh
+│  ├─ adapters/claude-code/CLAUDE.md
+│  ├─ adapters/cursor/.cursorrules
+│  ├─ adapters/windsurf/.windsurfrules
+│  ├─ adapters/copilot/copilot-instructions.md
+│  └─ ... (more adapters)
+│
+agents/*.md                 <- 12 agent prompts (researcher, planner, debugger, etc.)
+commands/*.md               <- Slash command specs (/plan, /review, /research, etc.)
 mcp/registry.yml            <- MCP server catalog
-mcp/brain-mcp-server/       <- Custom MCP: exposes rules/agents/routing as tools
-providers/providers.yml     <- Model routing table (task-type -> model tier)
-memory/                     <- Memory manifest and vector config
-hooks/                      <- Claude Code pre/post tool-use hooks
-guardian/                   <- Security audit checks
-evals/                      <- Benchmark suite
-scripts/                    <- All operational scripts
+providers/providers.yml      <- Model routing table (task-type → model)
 ```
 
-## System components
+### Runtime Layer (Execution)
 
-### Static (configuration layer)
-These are files read by IDEs and agents as context. No runtime required.
+Scripts that run services and execute tasks:
 
-| Component | Purpose |
-| :--- | :--- |
-| `rules/canonical.md` | Core engineering principles |
-| `rules/modules/*.md` | Modular rule sets (git, security, memory, code-style...) |
-| `agents/*.md` | Agent definitions with role, methodology, anti-patterns |
-| `commands/*.md` | Slash command protocols |
-| `providers/providers.yml` | Model routing: task type -> model tier -> model name |
-
-### Runtime (execution layer)
-These are scripts with actual execution logic.
-
-| Script | Purpose |
-| :--- | :--- |
-| `scripts/agent-runner.py` | Execute agents: calls API, injects memory+rules, supports pipelines |
-| `scripts/provider-proxy.sh` | Runtime model routing with circuit breaker and cost logging |
-| `scripts/consolidate-memory.sh` | Memory consolidation: detect contradictions, surface rule candidates |
-| `scripts/embed.py` | Embedding backend: OpenAI > sentence-transformers > hash fallback |
-| `scripts/validate-schema.py` | Schema validation for canonical.md before adapter generation |
-| `scripts/cron-setup.sh` | Install automated maintenance tasks (daily validation, weekly consolidation) |
-| `mcp/brain-mcp-server/server.py` | Custom MCP server: 7 tools for rules, agents, routing, search |
-
-### Memory layer
-
-| Component | What it does |
-| :--- | :--- |
-| MCP memory server | Knowledge graph with entities and relations (via `@modelcontextprotocol/server-memory`) |
-| Qdrant (optional) | Vector search for semantic codebase context retrieval |
-| `scripts/embed.py` | Embedding backend with graceful degradation |
-| `memory/manifest.json` | Stats and metadata about memory state |
-| `rules/modules/memory-types.md` | Entity type schema for classified memory storage |
-
-### Evaluation layer
-
-| Benchmark | What it measures |
-| :--- | :--- |
-| `evals/benchmarks/memory-retrieval.sh` | Recall rate: does memory surface the right entities? |
-| `evals/benchmarks/guardian-coverage.sh` | Guardian accuracy: catches bad code, passes good code |
-| `evals/benchmarks/adapter-schema.sh` | Adapter correctness: all outputs valid and non-empty |
-| `evals/skills/*.sh` | Skills evals (stack detection, render-skill-context) |
-
-## Install
-
-```bash
-# Clone
-git clone git@github.com:reeinharddd/brain.git ~/.brain
-
-# Bootstrap
-bash ~/.brain/scripts/install.sh
-
-# Verify
-bash ~/.brain/scripts/doctor.sh
-
-# Optional: install automated maintenance tasks
-bash ~/.brain/scripts/cron-setup.sh
+```
+scripts/
+├─ brain-cli.sh             <- Central orchestrator (all commands)
+├─ init.sh                  <- Per-project initialization
+├─ doctor.sh                <- Health check & diagnostics
+├─ lib/
+│  ├─ common.sh            <- Shared utilities (logging, errors, docker, etc.)
+│  ├─ colors.sh            <- ANSI color definitions
+│  ├─ logging.sh           <- Consistent logging
+│  ├─ docker.sh            <- Docker utilities
+│  └─ assert.sh            <- Assertion helpers
+│
+mcp/brain-mcp-server/       <- Custom MCP: exposes rules, agents, memory as tools
+docker-compose.yml          <- Services (Qdrant memory, optional gateway)
 ```
 
-## Autostart
+### Knowledge Layer (Memory)
 
-The brain environment can be configured to start automatically upon login:
+Persistent across sessions:
 
-```bash
-# Register autostart service (Linux/WSL)
-bash ~/.brain/scripts/autostart-setup.sh
+```
+memory/
+├─ vector-config.json       <- Qdrant configuration
+├─ manifest.json            <- Memory graph schema
+└─ chunks/                  <- Vector search index
+
+logs/
+├─ brain-cli.log            <- CLI execution log
+├─ telemetry.ndjson         <- Performance metrics
+└─ cron/                    <- Automated task logs
 ```
 
-This ensures that MCPs, memory servers, and core rule validators are active in every terminal and IDE session without manual intervention.
+---
 
-## Update rules (the core loop)
+## Configuration
+
+All settings live in **one file**: `~/.brain/.brain.config`
 
 ```bash
-# 1. Edit the source of truth
-vim ~/.brain/rules/canonical.md
+# Auto-generated on first run, edit manually to customize:
 
-# 2. Validate schema before generating
-python3 ~/.brain/scripts/validate-schema.py
+# Autostart on boot (true|false)
+AUTOSTART=false
 
-# 3. Regenerate all adapters
+# Memory backend (qdrant|local)
+MEMORY_BACKEND=qdrant
+
+# MCP server ports
+MCP_PORT_BASE=8001
+
+# Logging level (DEBUG|INFO|WARN|ERROR)
+LOG_LEVEL=INFO
+
+# Optional: Cloud sync
+MEMORY_CLOUD_SYNC=false
+MEMORY_CLOUD_PROVIDER=none
+```
+
+Edit with:
+```bash
+brain config                # Opens in your editor
+```
+
+---
+
+## Multi-IDE Usage
+
+**All IDEs use the same rules and services — no conflicts:**
+
+```bash
+# Start services once
+brain start
+
+# Open multiple IDEs (they share the same servers)
+code /project &
+cursor /project &
+windsurf /project &
+
+# Each IDE reads:
+# - ~/.cursorrules        (Cursor)
+# - ~/.windsurfrules      (Windsurf)
+# - ~/.claude/commands/   (Claude Code)
+# - etc.
+
+# All communicate via ONE MCP gateway on ports 8001-8005
+```
+
+**No setup per IDE.** No startup conflicts. Everything synchronized.
+
+---
+
+## File Structure
+
+```
+~/.brain/
+├── README.md                    ← You are here
+├── REFACTOR_PLAN.md             ← Cleanup in progress
+├── brain.env, brain.env.example ← Configuration
+│
+├── rules/
+│   └── canonical.md             ← THE SOURCE OF TRUTH
+│
+├── adapters/                    ← IDE-specific compiled rules
+│   ├── claude-code/, cursor/, windsurf/, copilot/, etc.
+│   └── generate.sh              ← Rebuilds all from canonical.md
+│
+├── agents/                      ← Agent prompt definitions
+│   ├── researcher.md, planner.md, debugger.md, ...
+│   └── agent-runner.py          ← Execute agents programmatically
+│
+├── commands/                    ← Slash command specs
+│   └── plan.md, review.md, research.md, ...
+│
+├── scripts/                     ← All operational scripts
+│   ├── brain-cli.sh             ← Main orchestrator
+│   ├── init.sh                  ← Per-project init
+│   ├── doctor.sh                ← Health check
+│   ├── lib/                     ← Reusable modules
+│   │   ├── common.sh, colors.sh, logging.sh, docker.sh, assert.sh
+│   │   └── ...
+│   └── (30+ other utilities)
+│
+├── mcp/                         ← MCP server setup
+│   ├── registry.yml
+│   ├── brain-mcp-server/        ← Custom tools
+│   └── docker-compose.yml
+│
+├── memory/                      ← Knowledge graph storage
+│
+├── docs/                        ← Detailed documentation
+│   ├── guides/                  ← How-to guides
+│   └── adr/                     ← Architecture Decision Records
+│
+├── guardian/                    ← Security checks
+│
+├── hooks/                       ← Git pre/post hooks
+│
+├── evals/                       ← Benchmark suite
+│
+└── tests/                       ← Test suite
+```
+
+---
+
+## Installation Details
+
+<details>
+<summary><strong>Full Installation</strong> (for detailed setup)</summary>
+
+### Requirements
+
+- **Bash 4+** (macOS users: `brew install bash`)
+- **Docker** & **Docker Compose** (optional, for Qdrant memory backend)
+- **Python 3.8+** (for agents and embedding)
+- **Git** (for repo management)
+- An API key for your preferred LLM (Claude, OpenAI, Gemini, etc.)
+
+### Step 1: Clone Repository
+
+```bash
+git clone https://github.com/reeinharrrd/brain.git ~/.brain
+cd ~/.brain
+```
+
+### Step 2: Create Configuration
+
+```bash
+cp brain.env.example brain.env
+# Edit brain.env with your API keys:
+nano brain.env
+```
+
+Required environment variables:
+- `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` (depending on your LLM)
+
+### Step 3: Run Setup
+
+```bash
+bash scripts/brain-setup.sh
+```
+
+This:
+- Makes scripts executable
+- Adds brain command to PATH
+- Creates `.brain.config`
+- Sets up IDE symlinks
+- Tests basic functionality
+
+### Step 4: Start Services (Optional)
+
+```bash
+brain start           # Launches Docker containers if configured
+brain status          # Verify everything is running
+```
+
+### Step 5: Initialize a Project
+
+In any project directory:
+
+```bash
+cd your/project
+bash ~/.brain/scripts/init.sh
+```
+
+This:
+- Links project-specific rules
+- Installs git hooks
+- Initializes `.env.example`
+- Shows next steps
+
+### Step 6: Use Your IDE
+
+The brain automatically integrates with:
+
+- **VS Code** — Reads `~/.vscode/copilot-instructions.md`
+- **Cursor** — Reads `~/.cursorrules`
+- **Windsurf** — Reads `~/.windsurfrules`
+- **Claude Code** — Reads `~/.claude/commands/`
+- **Copilot Chat** — Reads VS Code instructions
+- **Gemini CLI** — Reads `~/.gemini/GEMINI.md`
+- **Aider** — Reads `~/.aider.conf.yml`
+- **OpenCode** — Reads `~/.config/opencode/opencode.json`
+
+No additional setup needed — just open an IDE.
+
+</details>
+
+---
+
+## Common Use Cases
+
+### I want to change my coding standards
+
+Edit `~/.brain/rules/canonical.md`, then run:
+
+```bash
+# Regenerates all IDE configs automatically
+bash ~/.brain/adapters/generate.sh
+```
+
+### I want to add a new agent
+
+1. Create `~/.brain/agents/my-agent.md`
+2. Define the prompt and capabilities
+3. Reference it in `/commands/my-command.md`
+4. Run in terminal:
+
+```bash
+python3 ~/.brain/scripts/agent-runner.py my-agent --input "task" --memory
+```
+
+### I want to share context between sessions
+
+Use `/handover` command:
+
+```bash
+# Saves current session state
+/handover
+```
+
+Next session, read it back:
+
+```bash
+/standup          # Show what you worked on before
+/memory-search    # Find relevant context
+```
+
+### I want to enforce security checks
+
+Edit `~/.brain/guardian/checks/` to add new security rules. They run:
+- On every `git commit`
+- When pushing to remote
+- During `brain health` checks
+
+### I want to use local inference (no API)")
+
+Replace adapters with local model configs:
+
+```bash
+# Use Ollama locally
+ANTHROPIC_API_KEY=local brain start
+```
+
+---
+
+## Troubleshooting
+
+### Services not starting
+
+```bash
+# Full diagnostics
+brain health
+
+# Check logs
+brain logs 50
+
+# Reset and try again
+brain reset
+brain start
+```
+
+### IDE not reading rules
+
+```bash
+# Regenerate adapters
 bash ~/.brain/adapters/generate.sh
 
-# 4. Commit
-git -C ~/.brain commit -am "brain: updated [rule name]"
+# Verify symlinks
+ls -l ~/.cursorrules ~/.windsurfrules ~/.claude/
 ```
 
-## Agent execution
-
-Agents are markdown definitions that can be used in two ways:
-
-**As IDE context** - paste the agent content as a system prompt in Claude Code, Cursor, etc.
-
-**As executable agents** (via agent-runner.py):
-```bash
-# List all agents
-python3 ~/.brain/scripts/agent-runner.py --list
-
-# Run a single agent
-python3 ~/.brain/scripts/agent-runner.py \
-  --agent researcher \
-  --task "Compare Qdrant vs Weaviate for production vector search" \
-  --memory
-
-# Run a pipeline (output of each feeds next)
-python3 ~/.brain/scripts/agent-runner.py \
-  --pipeline "planner->implementer->reviewer" \
-  --task "Add JWT authentication to the Express API"
-```
-
-Note: agent-runner.py requires `ANTHROPIC_API_KEY` to be set.
-
-## Memory usage
+### Memory not working
 
 ```bash
-# Search memory before starting a task
-/memory-search [query]
+# Check Qdrant health
+curl http://localhost:6333/health
 
-# Save end-of-session context
-/handover
-
-# Run consolidation (monthly or after large projects)
-bash ~/.brain/scripts/consolidate-memory.sh
-
-# Preview consolidation without writing
-bash ~/.brain/scripts/consolidate-memory.sh --dry-run
+# Restart memory backend
+docker restart brain-qdrant
 ```
 
-## Run evaluations
+### Python imports failing
 
 ```bash
-# Full eval suite
-bash ~/.brain/evals/run.sh
+# Ensure brain.env is sourced
+source ~/.brain/brain.env
 
-# JSON output for CI
-bash ~/.brain/evals/run.sh --json
-
-# Only benchmarks
-bash ~/.brain/evals/run.sh --only benchmarks
-
-# Individual benchmarks
-bash ~/.brain/evals/benchmarks/memory-retrieval.sh
-bash ~/.brain/evals/benchmarks/guardian-coverage.sh
-bash ~/.brain/evals/benchmarks/adapter-schema.sh
+# Install Python deps (if needed)
+python3 -m pip install qdrant-client python-dotenv
 ```
 
-## Brain MCP server
+---
 
-The custom MCP server exposes brain internals as tools for any MCP-compatible client:
+## Architecture Decisions
 
-```json
-{
-  "mcpServers": {
-    "brain-rules": {
-      "command": "python3",
-      "args": ["${HOME}/.brain/mcp/brain-mcp-server/server.py"]
-    }
-  }
-}
-```
+Why is Brain structured this way?
 
-Available tools: `brain_get_rules`, `brain_get_agent`, `brain_list_agents`,
-`brain_get_command`, `brain_route_task`, `brain_search_rules`, `brain_get_provider`
+**Why one source of truth (`canonical.md`)?**
+- Reduces consistency bugs (one rule change, all IDEs update)
+- Easier to audit (one file to review)
+- Avoids IDE-specific workarounds
+- Version-controlled history
 
-## Agents
+**Why compile to adapters instead of inline?**
+- IDEs understand their native formats (.cursorrules, CLAUDE.md, etc.)
+- Works offline (no runtime translation)
+- Better IDE integration (syntax highlighting, validation)
+- Faster IDE startup
 
-| Agent | Tier | Purpose |
-| :--- | :--- | :--- |
-| `orchestrator` | powerful | Coordinates all agents, reads providers.yml for routing |
-| `researcher` | standard | Investigates tech/libraries with citations |
-| `planner` | powerful | Turns goals into executable plans and ADRs |
-| `architect` | powerful | Designs components, compares options, documents trade-offs |
-| `implementer` | standard | Scoped implementation from accepted specs |
-| `designer` | powerful | UI/UX specs and component systems |
-| `reviewer` | standard | Code review with severity levels |
-| `debugger` | standard | Systematic root cause investigation |
-| `refactor` | standard | Safe incremental code improvement |
-| `documenter` | fast | README, API docs, ADRs, comments |
-| `guardian` | standard | Security audits and pre-tool-use blocking |
-| `configurator` | fast | Environment and tooling setup |
+**Why agents instead of only IDE context?**
+- Agents can be:
+  - Run from CLI independently
+  - Chained in pipelines
+  - Used across tools (Aider, Cline, etc.)
+  - Versioned separately from rules
 
-## Commands
+**Why MCP instead of direct integration?**
+- IDE-agnostic (works anywhere that speaks MCP)
+- Secure (confined execution environment)
+- Easy to extend (just add new tools)
+- Future-proof (MCP becoming standard)
 
-| Command | When to use |
-| :--- | :--- |
-| `/plan` | Starting any task > 30 min |
-| `/review` | Before merging anything significant |
-| `/research` | Need a well-sourced recommendation |
-| `/handover` | End of session, switching context |
-| `/standup` | Start of session |
-| `/update-brain` | Learning something that should be global |
-| `/memory-search` | Before a task - retrieve relevant past context |
-| `/consolidate` | Monthly or after a large project - clean up memory |
+See `docs/adr/` for more decisions.
 
-## Supported IDEs and agents
+---
 
-Claude Code - Cursor - Windsurf - OpenCode - Gemini CLI - Aider - Cline - GitHub Copilot
+## Contributing
 
-## Philosophy
+This is a personal brain repo, but if you find bugs or have ideas:
 
-Language is a tool, not an identity. The brain repo contains engineering principles,
-not syntax guides. The goal is to model problems clearly, delegate intelligently,
-and produce quality outcomes regardless of the stack.
+1. Open an issue at [brain/issues](https://github.com/reeinharrrd/brain/issues)
+2. Submit a PR with improvements
+3. Test changes: `bash scripts/validate.sh`
 
-"The real craft is in understanding what needs to be built, not in knowing every function name."
+---
+
+## License
+
+MIT License — Use freely, modify, redistribute.
+
+---
+
+## Support
+
+- **Read** — Check `docs/guides/`
+- **Ask** — Use `/research` to find answers
+- **Debug** — Run `brain doctor` for diagnostics
+- **Contribute** — Open a PR
+
+---
+
+**Version**: Refactored March 31, 2026  
+**Status**: Production-ready with ongoing cleanup
