@@ -1,0 +1,56 @@
+# Canonical Brain Control Plane Manifest
+# This is the root manifest that orchestrates the configuration sync across IDE targets.
+# It does NOT replace registry.yml or providers.yml, it references them.
+
+version: "1.0"
+
+settings:
+  backup_enabled: true
+  backup_dir: ~/.brain/backups
+  backup_retention_days: 7
+  dry_run_by_default: false
+
+domains:
+  mcp:
+    source: "mcp/registry.yml"
+    enabled: true
+  providers:
+    source: "providers/providers.yml"
+    enabled: true
+  rules:
+    source: "rules/canonical.md"
+    enabled: true
+  agents:
+    source: "agents/"
+    enabled: true
+
+targets:
+  vscode:
+    enabled: true
+    type: "copilot"
+    output_dirs:
+      instructions: "~/.config/Code/User/prompts/"
+      mcp: "~/.config/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json"
+    managed_sections: true
+
+  cursor:
+    enabled: true
+    type: "cursor"
+    output_dirs:
+      rules: "~/.cursorrules"
+    managed_sections: true
+
+  windsurf:
+    enabled: false
+    type: "windsurf"
+    output_dirs:
+      rules: "~/.windsurfrules"
+      mcp: "~/.codeium/windsurf/mcp.json"
+    managed_sections: true
+
+  claude_code:
+    enabled: true
+    type: "claude-code"
+    output_dirs:
+      mcp: "~/.claude.json"
+    managed_sections: false

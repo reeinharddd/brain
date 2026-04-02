@@ -19,7 +19,7 @@
 
 ---
 
-## Quick Start (5 Minutes)
+## Quick Start (from a fresh clone)
 
 ### 1. Clone
 
@@ -28,39 +28,45 @@ git clone https://github.com/reeinharrrd/brain.git ~/.brain
 cd ~/.brain
 ```
 
-### 2. Setup
+### 2. Install global commands (production-like)
 
 ```bash
-brain setup
+go run ./cli/cmd/brain/main.go install-global
 ```
 
-This creates:
+This installs:
 
-- `~/.brain/.brain.config` — Central configuration
-- Symlinks for IDE integration (Cursor, Windsurf, Claude Code, etc.)
-- Optional systemd autostart (automated)
-- Git hooks for security checks
+- `~/.local/bin/brain`
+- `~/.local/bin/braind`
+- `~/.config/brain/root` (points to your cloned repo root)
+
+If `brain` is not found in a new shell, add:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
 
 ### 3. Verify
 
 ```bash
-brain status      # See service status
-brain health      # Run health checks
+brain daemon-start
+brain status
+brain sync
 ```
 
 ### 4. Start Using
 
 ```bash
-# Start all services (Docker, MCP, memory)
-brain start
+# Start daemon
+brain daemon-start
 
 # Use your IDE
 code /my/project
 cursor /my/project
 windsurf /my/project
 
-# Stop services
-brain stop
+# Stop daemon
+brain daemon-stop
 ```
 
 ---
@@ -87,34 +93,25 @@ brain stop
 Use the `brain` CLI (always available):
 
 ```bash
-# Service control
-brain start                 # Launch Docker + MCP + memory backend
-brain stop                  # Stop all services
-brain restart               # Restart everything
-brain status                # Show what's running
-brain health                # Full diagnostics
-brain doctor                # Full integrity checks
-brain logs [N]              # Show last N log lines
+# Global install
+brain install-global        # Build/install brain + braind to ~/.local/bin
 
-# Repository and config maintenance
-brain setup                 # Bootstrap or repair the Brain repo locally
-brain init                  # Initialize the current project
-brain generate              # Regenerate adapters and derived outputs
-brain sync-mcp              # Sync MCP configs to supported IDEs
-brain validate              # Validate rules and configuration
-brain update                # Pull updates and refresh outputs
+# Daemon lifecycle
+brain daemon-start          # Start daemon in background
+brain daemon-stop           # Stop daemon
+brain status                # Show daemon status and process count
 
-# Configuration
-brain config                # Show/edit configuration
-brain dashboard             # Interactive menu (TUI)
+# Runtime operations
+brain sync                  # Trigger unified config sync through daemon
+brain ps                    # List managed sub-process states
+brain logs                  # Stream real-time daemon logs via WebSocket
 
-# Optional autostart
-brain autostart-enable      # Start on boot
-brain autostart-disable     # Manual start only
-brain autostart-status      # Check status
+# Desktop
+brain ui                    # Start desktop dev UI (and ensure daemon is running)
 
-# Debugging
-brain reset                 # Clear state and logs
+# Process control
+brain start <id> <cmd> ...  # Start a managed process
+brain stop <id>             # Stop a managed process
 ```
 
 ---
