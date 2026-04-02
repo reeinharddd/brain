@@ -1,17 +1,17 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
-	"time"
+"bytes"
+"encoding/json"
+"fmt"
+"net/http"
+"os"
+"os/exec"
+"path/filepath"
+"strings"
+"time"
 
-	"github.com/gorilla/websocket"
+"github.com/gorilla/websocket"
 )
 
 const DAEMON_URL = "http://localhost:9090"
@@ -65,8 +65,18 @@ func resolveBrainRoot() string {
 		return envRoot
 	}
 
-	if cwd, err := os.Getwd(); err == nil && isBrainRoot(cwd) {
-		return cwd
+	if cwd, err := os.Getwd(); err == nil {
+		search := cwd
+		for {
+			if isBrainRoot(search) {
+				return search
+			}
+			parent := filepath.Dir(search)
+			if parent == search {
+				break
+			}
+			search = parent
+		}
 	}
 
 	if configured := readConfiguredRoot(); configured != "" {
@@ -208,6 +218,12 @@ func main() {
 	case "install-global":
 		installGlobal()
 
+	case "root":
+		cwd, _ := os.Getwd()
+		fmt.Println("cwd:", cwd)
+		fmt.Println("configured-root:", readConfiguredRoot())
+		fmt.Println("resolved-root:", resolveBrainRoot())
+
 	case "daemon-start":
 		daemonStart()
 
@@ -277,15 +293,15 @@ func main() {
 			if len(os.Args) > 4 {
 				args = os.Args[4:]
 			}
-
+			
 			payload := map[string]interface{}{
-				"id":      id,
+				"id": id,
 				"command": cmd,
-				"args":    args,
+				"args": args,
 			}
 			body, _ := json.Marshal(payload)
-
-			resp, err := http.Post(DAEMON_URL+"/api/process/start", "application/json", bytes.NewBuffer(body))
+			
+			resp, err := http.Post(DAEMON_URL + "/api/process/start", "application/json", bytes.NewBuffer(body))
 			if err != nil || resp.StatusCode != 200 {
 				fmt.Println("❌ Failed to start process:", err)
 				return
@@ -300,8 +316,8 @@ func main() {
 			id := os.Args[2]
 			payload := map[string]interface{}{"id": id}
 			body, _ := json.Marshal(payload)
-
-			resp, err := http.Post(DAEMON_URL+"/api/process/stop", "application/json", bytes.NewBuffer(body))
+			
+			resp, err := http.Post(DAEMON_URL + "/api/process/stop", "application/json", bytes.NewBuffer(body))
 			if err != nil || resp.StatusCode != 200 {
 				fmt.Println("❌ Failed to stop process:", err)
 				return
@@ -312,7 +328,7 @@ func main() {
 		}
 
 	case "sync":
-		resp, err := http.Post(DAEMON_URL+"/api/sync", "application/json", nil)
+		resp, err := http.Post(DAEMON_URL + "/api/sync", "application/json", nil)
 		if err != nil || resp.StatusCode != 200 {
 			fmt.Println("❌ Failed to trigger sync:", err)
 			return
@@ -330,6 +346,7 @@ func printHelp() {
 	fmt.Println("\nCommands:")
 	fmt.Println("  install-global                 Build/install brain and braind into ~/.local/bin")
 	fmt.Println("                                 (auto-detects repo root and persists it)")
+	fmt.Println("  root                           Print current and resolved brain root")
 	fmt.Println("  daemon-start                   Start daemon in background")
 	fmt.Println("  daemon-stop                    Stop daemon")
 	fmt.Println("  ui                             Start desktop web UI (and daemon)")
