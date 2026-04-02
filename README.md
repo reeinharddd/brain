@@ -15,7 +15,7 @@
 - **Runs agents** — 12 specialized agents (researcher, planner, debugger, etc.) callable from terminal or IDE
 - **Evaluates itself** — Benchmark suite measuring memory recall, security, rule consistency
 
-**In 30 seconds**: Clone it, run `bash ~/.brain/scripts/brain-setup.sh`, and every IDE reads the same rules.
+**In 30 seconds**: Clone it, run `brain setup`, and every IDE reads the same rules.
 
 ---
 
@@ -31,10 +31,11 @@ cd ~/.brain
 ### 2. Setup
 
 ```bash
-bash scripts/brain-setup.sh
+brain setup
 ```
 
 This creates:
+
 - `~/.brain/.brain.config` — Central configuration
 - Symlinks for IDE integration (Cursor, Windsurf, Claude Code, etc.)
 - Optional systemd autostart (automated)
@@ -68,16 +69,16 @@ brain stop
 
 **In any IDE**, you can use these **slash commands** (via CLI or IDE integration):
 
-| Command | What it does |
-|---------|-------------|
-| `/plan` | Break down a complex task into steps |
-| `/review` | Code review of your changes |
-| `/research` | Deep research with web search |
-| `/handover` | Save context for next session |
-| `/standup` | Quick project status summary |
-| `/memory-search` | Query your knowledge graph |
-| `/consolidate` | Clean up old memories, detect patterns |
-| `/update-brain` | Pull latest Brain updates + regenerate adapters |
+| Command          | What it does                                    |
+| ---------------- | ----------------------------------------------- |
+| `/plan`          | Break down a complex task into steps            |
+| `/review`        | Code review of your changes                     |
+| `/research`      | Deep research with web search                   |
+| `/handover`      | Save context for next session                   |
+| `/standup`       | Quick project status summary                    |
+| `/memory-search` | Query your knowledge graph                      |
+| `/consolidate`   | Clean up old memories, detect patterns          |
+| `/update-brain`  | Pull latest Brain updates + regenerate adapters |
 
 ---
 
@@ -92,7 +93,16 @@ brain stop                  # Stop all services
 brain restart               # Restart everything
 brain status                # Show what's running
 brain health                # Full diagnostics
+brain doctor                # Full integrity checks
 brain logs [N]              # Show last N log lines
+
+# Repository and config maintenance
+brain setup                 # Bootstrap or repair the Brain repo locally
+brain init                  # Initialize the current project
+brain generate              # Regenerate adapters and derived outputs
+brain sync-mcp              # Sync MCP configs to supported IDEs
+brain validate              # Validate rules and configuration
+brain update                # Pull updates and refresh outputs
 
 # Configuration
 brain config                # Show/edit configuration
@@ -105,7 +115,6 @@ brain autostart-status      # Check status
 
 # Debugging
 brain reset                 # Clear state and logs
-brain doctor                # Full system health check
 ```
 
 ---
@@ -116,7 +125,7 @@ brain doctor                # Full system health check
 
 These are read-only files that configure IDEs and agents:
 
-```
+```text
 rules/canonical.md          <- Single source of truth (edit here)
 ├─ Compiled to all IDEs by: adapters/generate.sh
 │  ├─ adapters/claude-code/CLAUDE.md
@@ -135,7 +144,7 @@ providers/providers.yml      <- Model routing table (task-type → model)
 
 Scripts that run services and execute tasks:
 
-```
+```text
 scripts/
 ├─ brain-cli.sh             <- Central orchestrator (all commands)
 ├─ init.sh                  <- Per-project initialization
@@ -155,7 +164,7 @@ docker-compose.yml          <- Services (Qdrant memory, optional gateway)
 
 Persistent across sessions:
 
-```
+```text
 memory/
 ├─ vector-config.json       <- Qdrant configuration
 ├─ manifest.json            <- Memory graph schema
@@ -194,6 +203,7 @@ MEMORY_CLOUD_PROVIDER=none
 ```
 
 Edit with:
+
 ```bash
 brain config                # Opens in your editor
 ```
@@ -228,11 +238,11 @@ windsurf /project &
 
 ## File Structure
 
-```
+```text
 ~/.brain/
 ├── README.md                    ← You are here
-├── REFACTOR_PLAN.md             ← Cleanup in progress
 ├── brain.env, brain.env.example ← Configuration
+├── CLAUDE.md                    ← Root compatibility instruction file
 │
 ├── rules/
 │   └── canonical.md             ← THE SOURCE OF TRUTH
@@ -281,10 +291,11 @@ windsurf /project &
 
 ## Installation Details
 
-<details>
-<summary><strong>Full Installation</strong> (for detailed setup)</summary>
+### Full Installation
 
-### Requirements
+For detailed setup:
+
+#### Requirements
 
 - **Bash 4+** (macOS users: `brew install bash`)
 - **Docker** & **Docker Compose** (optional, for Qdrant memory backend)
@@ -292,14 +303,14 @@ windsurf /project &
 - **Git** (for repo management)
 - An API key for your preferred LLM (Claude, OpenAI, Gemini, etc.)
 
-### Step 1: Clone Repository
+#### Step 1: Clone Repository
 
 ```bash
 git clone https://github.com/reeinharrrd/brain.git ~/.brain
 cd ~/.brain
 ```
 
-### Step 2: Create Configuration
+#### Step 2: Create Configuration
 
 ```bash
 cp brain.env.example brain.env
@@ -308,29 +319,31 @@ nano brain.env
 ```
 
 Required environment variables:
+
 - `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` (depending on your LLM)
 
-### Step 3: Run Setup
+#### Step 3: Run Setup
 
 ```bash
-bash scripts/brain-setup.sh
+brain setup
 ```
 
 This:
+
 - Makes scripts executable
 - Adds brain command to PATH
 - Creates `.brain.config`
 - Sets up IDE symlinks
 - Tests basic functionality
 
-### Step 4: Start Services (Optional)
+#### Step 4: Start Services (Optional)
 
 ```bash
 brain start           # Launches Docker containers if configured
 brain status          # Verify everything is running
 ```
 
-### Step 5: Initialize a Project
+#### Step 5: Initialize a Project
 
 In any project directory:
 
@@ -340,12 +353,13 @@ bash ~/.brain/scripts/init.sh
 ```
 
 This:
+
 - Links project-specific rules
 - Installs git hooks
 - Initializes `.env.example`
 - Shows next steps
 
-### Step 6: Use Your IDE
+#### Step 6: Use Your IDE
 
 The brain automatically integrates with:
 
@@ -359,8 +373,6 @@ The brain automatically integrates with:
 - **OpenCode** — Reads `~/.config/opencode/opencode.json`
 
 No additional setup needed — just open an IDE.
-
-</details>
 
 ---
 
@@ -405,11 +417,12 @@ Next session, read it back:
 ### I want to enforce security checks
 
 Edit `~/.brain/guardian/checks/` to add new security rules. They run:
+
 - On every `git commit`
 - When pushing to remote
 - During `brain health` checks
 
-### I want to use local inference (no API)")
+### I want to use local inference (no API)
 
 Replace adapters with local model configs:
 
@@ -473,18 +486,21 @@ python3 -m pip install qdrant-client python-dotenv
 Why is Brain structured this way?
 
 **Why one source of truth (`canonical.md`)?**
+
 - Reduces consistency bugs (one rule change, all IDEs update)
 - Easier to audit (one file to review)
 - Avoids IDE-specific workarounds
 - Version-controlled history
 
 **Why compile to adapters instead of inline?**
+
 - IDEs understand their native formats (.cursorrules, CLAUDE.md, etc.)
 - Works offline (no runtime translation)
 - Better IDE integration (syntax highlighting, validation)
 - Faster IDE startup
 
 **Why agents instead of only IDE context?**
+
 - Agents can be:
   - Run from CLI independently
   - Chained in pipelines
@@ -492,6 +508,7 @@ Why is Brain structured this way?
   - Versioned separately from rules
 
 **Why MCP instead of direct integration?**
+
 - IDE-agnostic (works anywhere that speaks MCP)
 - Secure (confined execution environment)
 - Easy to extend (just add new tools)

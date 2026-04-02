@@ -510,6 +510,113 @@ Do NOT call `read_graph` to get all memories. The graph grows unboundedly.
 - Do NOT store project-specific state in the global brain memory without a namespace prefix
 
 
+# Memory Protocol - Engram
+
+This module defines the operating protocol and classification for the Brain's memory system.
+
+## Progressive disclosure
+
+Always retrieve memory in layers:
+
+1. `mem_search`
+2. `mem_timeline`
+3. `mem_get_observation`
+
+Do not jump to full payload retrieval unless the summary and timeline were not
+enough for the current task.
+
+## Stable topic keys
+
+Prefer semantic topic keys that survive multiple sessions.
+
+Format: `{project}:{domain}:{concept}`
+\
+Examples:
+\
+- `brain:architecture:sdd-dag`
+- `brain:decisions:guardian-local-mode`
+- `brain:patterns:skill-context-injection`
+\
+## Session closure
+
+For substantial work:
+\
+1. save or update the relevant topic key
+2. write a `mem_session_summary`
+3. include namespace, decision, validation result, unresolved risk, and next step
+\
+## Agent guidance
+
+- `orchestrator`: check prior memory before planning and at archive time
+- `researcher`: search memory before exploration
+- `architect`: search prior decisions before proposing or designing
+- `implementer`: avoid broad memory retrieval; use only narrow, relevant context
+- `debugger`: search similar bugs before root-cause analysis
+
+## Namespace
+
+When a project root is known, derive the namespace with:
+`~/.brain/scripts/memory-namespace.sh [project_root]`
+
+The namespace isolates project memory while global rules remain shared.
+
+---
+
+## Module: Memory Types and Classification
+
+Every memory entry stored in the MCP knowledge graph MUST be classified with one of the following
+entityType values. Unclassified memories cannot be retrieved reliably and degrade retrieval quality.
+
+### Entity Types
+
+| entityType | What it stores | Retention |
+| :--- | :--- | :--- |
+| `Decision` | Architecture or technology choices and their rationale | Permanent |
+| `Preference` | How the user prefers things done (style, tooling, workflow) | Permanent |
+| `Learning` | Mistakes made, bugs found, lessons from past sessions | Long (90 days) |
+| `ProjectState` | Current status of an active project (what is done, what is next) | Medium (30 days) |
+| `SessionSummary` | End-of-session summary including decisions and open items | Medium (30 days) |
+| `RuleCandidate` | Pattern observed repeatedly that might belong in canonical.md | Medium (60 days) |
+| `DeferredIdea` | Things to explore later, ideas not acted on immediately | Short (14 days) |
+| `Constraint` | Hard limits that must not be violated (security, compliance, budget) | Permanent |
+| `ExternalFact` | Facts about external systems, APIs, or libraries | Short (7 days) |
+
+### How to create a typed memory entry
+
+Always pass entityType explicitly:
+
+```javascript
+create_entities([{
+  name: "AuthStrategyDecision",
+  entityType: "Decision",
+  observations: [
+    "Chose JWT RS256 over sessions for stateless horizontal scaling",
+    "Rejected sessions because they require shared Redis in multi-instance deploy",
+    "Decided: 2026-03-20, project: api-gateway"
+  ]
+}])
+```
+
+Naming convention: `[Subject][Type]` in PascalCase.
+
+### Retrieval protocol (tiered)
+
+To minimize token usage, always retrieve in layers:
+1. `search_nodes(query)` - keyword scan, returns entity names and first observation
+2. `open_nodes([name1, name2])` - full detail for shortlisted entities only
+3. Stop when you have enough context - do not pull the full graph
+
+Do NOT call `read_graph` to get all memories. The graph grows unboundedly.
+
+### Memory lifecycle rules
+
+- `Decision` and `Constraint` entries are permanent - never delete without user confirmation
+\
+- `SessionSummary` older than 30 days should be archived
+- `ExternalFact` entries expire fastest - library versions and API shapes change
+- Run `scripts/consolidate-memory.sh` monthly to detect contradictions and promote RuleCandidates
+
+
 ## Module: Observability
 
 ### System Health

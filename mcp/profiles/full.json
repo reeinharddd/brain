@@ -25,6 +25,10 @@
         "GITHUB_TOKEN": "${GITHUB_TOKEN}"
       }
     },
+    "brain-rules": {
+      "command": "python3",
+      "args": ["${HOME}/.brain/mcp/brain-mcp-server/server.py"]
+    },
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp"]

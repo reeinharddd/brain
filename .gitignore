@@ -26,6 +26,7 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+.claude/
 *.swp
 *~
 
@@ -43,6 +44,21 @@ logs/
 *.tmp
 tmp/
 
+# Local Brain state and generated scratch files
+.brain/
+.brain-state/
+skill-context.md
+stack-tags.txt
+telemetry.ndjson
+doctor.sh
+README.md.bak
+EXECUTION_PLAN.md
+REFACTOR_PLAN.md
+REFACTORING_SUMMARY.md
+BRAIN_CLI_REFERENCE.txt
+.cursorrules
+.windsurfrules
+
 # ------------------------------------------------------------------
 # Generated and runtime data (do not commit heavy or reproducible artifacts)
 # ------------------------------------------------------------------
@@ -55,6 +71,7 @@ mcp_memory_data/
 open_webui_data/
 model_runner_data/
 mcp_data/
+memory/chunks/
 
 # Test run outputs and reports (generated)
 tests/results/

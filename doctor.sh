@@ -1,1 +1,0 @@
-/home/reeinharrrd/.brain/scripts/doctor.sh
