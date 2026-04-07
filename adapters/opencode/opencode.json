@@ -7,49 +7,34 @@
     "memory": {
       "type": "local",
       "command": [
-        "bash",
-        "-lc",
-        "npx -y @modelcontextprotocol/server-memory \"$HOME/.brain/memory\""
+        "bunx",
+        "@modelcontextprotocol/server-memory",
+        "/home/reeinharrrd/.brain/memory"
       ]
     },
     "filesystem": {
       "type": "local",
       "command": [
-        "bash",
-        "-lc",
-        "npx -y @modelcontextprotocol/server-filesystem \"$HOME\""
+        "bunx",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/reeinharrrd"
       ]
     },
     "sequential-thinking": {
       "type": "local",
-      "command": [
-        "bash",
-        "-lc",
-        "npx -y @modelcontextprotocol/server-sequential-thinking"
-      ]
+      "command": ["bunx", "@modelcontextprotocol/server-sequential-thinking"]
     },
     "context7": {
       "type": "local",
-      "command": [
-        "bash",
-        "-lc",
-        "npx -y @upstash/context7-mcp@latest"
-      ]
+      "command": ["bunx", "@upstash/context7-mcp@latest"]
     },
     "github": {
       "type": "local",
-      "command": [
-        "bash",
-        "-lc",
-        "npx -y @modelcontextprotocol/server-github"
-      ]
+      "command": ["bunx", "@modelcontextprotocol/server-github"]
     },
     "brain-rules": {
       "type": "local",
-      "command": [
-        "python3",
-        "/home/reeinharrrd/.brain/mcp/brain-mcp-server/server.py"
-      ]
+      "command": ["brain", "mcp", "serve"]
     },
     "skill-ninja": {
       "type": "local",

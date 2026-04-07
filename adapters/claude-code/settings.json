@@ -1,29 +1,24 @@
 {
   "mcpServers": {
     "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-memory"]
     },
     "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/home",
-        "/tmp"
-      ]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/home", "/tmp"]
     },
     "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-sequential-thinking"]
     },
     "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "command": "bunx",
+      "args": ["@upstash/context7-mcp@latest"]
     },
     "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-github"],
       "env": {
         "GITHUB_TOKEN": "${GITHUB_TOKEN}"
       }
@@ -40,8 +35,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
-            "args": ["-lc", "exec bash \"$HOME/.brain/hooks/pre-tool-use/block-env-writes.sh\""]
+            "command": "brain",
+            "args": ["hooks", "pre-tool-use", "block-env-writes"]
           }
         ]
       }
@@ -52,8 +47,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
-            "args": ["-lc", "exec bash \"$HOME/.brain/hooks/post-tool-use/run-linter.sh\""]
+            "command": "brain",
+            "args": ["hooks", "post-tool-use", "run-linter"]
           }
         ]
       }

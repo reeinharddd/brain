@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BRAIN_DIR: ${{ github.workspace }}
+      BRAIN_ENV: production
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,3 +35,9 @@ jobs:
           fi
 
           bash "$BRAIN_DIR/guardian/run.sh" --diff-range "$RANGE" --pr-mode --threshold critical
+
+      - name: Validate production environment boundary
+        working-directory: ${{ github.workspace }}/daemon
+        shell: bash
+        run: |
+          go test ./internal/environment ./internal/manager

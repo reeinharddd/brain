@@ -1,14 +1,16 @@
 # ===========================================================
 #  brain/docker/docker-compose.yml
 #
-#  Persistent helper services only.
-#  Core MCP servers run more reliably in stdio or on-demand mode
-#  from the generated adapter settings, instead of behind SSE bridges.
+#  Persistent helper services orchestrated by daemon.
+#  MCP servers run in stdio mode from generated adapter configs.
+#  This is the unified docker configuration replacing ai-local/.
 # ===========================================================
 
+version: "3.8"
 name: brain-persistent-helpers
 
 services:
+  # -- Vector Database: Qdrant (persistent) -----
   qdrant:
     image: qdrant/qdrant:latest
     container_name: brain-qdrant
@@ -17,8 +19,36 @@ services:
       - "6333:6333"
     volumes:
       - qdrant_data:/qdrant/storage
+    environment:
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/collections"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # -- Ollama (LLM Runtime - optional, local inference) -----
+  # Uncomment if running local models. Otherwise, use providers.yml routing.
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: brain-ollama
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   environment:
+  #     OLLAMA_HOST: "0.0.0.0:11434"
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 3
 
 volumes:
   qdrant_data:
     name: brain-qdrant-data
-    external: true
+    external: false
+  # ollama_data:
+  #   name: brain-ollama-data
+  #   external: false

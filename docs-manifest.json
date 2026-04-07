@@ -1,0 +1,334 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-04-03T00:00:00Z",
+  "purpose": "Immutable baseline for documentation structure and validation rules.",
+  "root_files": {
+    "README.md": {
+      "type": "navigation",
+      "required": true,
+      "validation_level": "reference",
+      "description": "Main docs landing page"
+    },
+    "INDEX.md": {
+      "type": "navigation",
+      "required": true,
+      "validation_level": "reference",
+      "description": "Master navigation index"
+    },
+    "QUICK-START.md": {
+      "type": "guide",
+      "required": true,
+      "validation_level": "reference",
+      "description": "Fast onboarding guide"
+    },
+    "STRUCTURE.md": {
+      "type": "reference",
+      "required": true,
+      "validation_level": "reference",
+      "description": "Documentation structure map"
+    },
+    "DOCUMENTATION-UNIFIED-SCHEMA.md": {
+      "type": "reference",
+      "required": true,
+      "validation_level": "reference",
+      "description": "Unified documentation schema"
+    }
+  },
+  "domains": {
+    "adr": {
+      "purpose": "Architecture decision records that capture the why behind major choices.",
+      "required": true,
+      "subdirs": [],
+      "files": [
+        "ADR-0001-combined-prompt-alignment.md",
+        "ADR-0002-centralized-brain-cli.md",
+        "ADR-0003-central-daemon-orchestration.md",
+        "ADR-0004-skill-system-contract.md",
+        "ADR-0005-strict-development-and-production-boundary.md",
+        "ADR-0006-docs-rag-mcp.md",
+        "ADR-0007-unified-capability-control-plane.md",
+        "README.md"
+      ],
+      "template": "adr-template.md",
+      "template_location": "docs/templates/adr-template.md",
+      "validation_level": "strict",
+      "rules": {
+        "naming": "Canonical ADR-0001-slug.md naming for all ADRs plus README.md",
+        "frontmatter_required": true,
+        "required_frontmatter_fields": [
+          "type",
+          "id",
+          "title",
+          "version",
+          "status",
+          "date_created",
+          "language",
+          "category"
+        ],
+        "language": "en",
+        "min_sections": [
+          "Context",
+          "Options Considered",
+          "Decision",
+          "Rationale",
+          "Consequences"
+        ],
+        "max_file_size_kb": 120
+      }
+    },
+    "architecture": {
+      "purpose": "System design, contracts, and integration guidance for the Brain runtime.",
+      "required": true,
+      "subdirs": [],
+      "files": [
+        "README.md",
+        "documentation-enforcement-system.md",
+        "agent-contracts.md",
+        "cli-integration.md",
+        "daemon-orchestration.md",
+        "github-operating-model.md",
+        "development-methodology.md",
+        "environment-configuration.md",
+        "mcp-ide-integration.md",
+        "skill-system-contract.md",
+        "capability-control-plane-roadmap.md"
+      ],
+      "template": "design-doc-template.md",
+      "template_location": "docs/templates/design-doc-template.md",
+      "validation_level": "strict",
+      "rules": {
+        "naming": "Existing lowercase-hyphen filenames plus README.md",
+        "frontmatter_required": true,
+        "required_frontmatter_fields": [
+          "type",
+          "id",
+          "title",
+          "version",
+          "status",
+          "date_created",
+          "language",
+          "category"
+        ],
+        "language": "en",
+        "min_sections": [
+          "Overview",
+          "Motivation",
+          "Goals",
+          "Non-Goals",
+          "High-Level Design"
+        ],
+        "max_file_size_kb": 120
+      }
+    },
+    "skills": {
+      "purpose": "Skill definitions, orchestration rules, and compatibility guidance.",
+      "required": true,
+      "subdirs": [],
+      "files": [
+        "README.md",
+        "SKILLS-ARCHITECTURE-GO-FIRST.md",
+        "SKILLS-COMPATIBILITY-MATRIX.md",
+        "SKILLS-DIRECTORY-GUIDE.md",
+        "SKILLS-ENFORCEMENT-STRATEGY.md",
+        "SKILLS-MANAGEMENT-UI.md",
+        "SKILLS-ORCHESTRATION-RULES.md",
+        "SKILLS-QUICK-REFERENCE.md"
+      ],
+      "template": "skill-template.md",
+      "template_location": "docs/templates/skill-template.md",
+      "validation_level": "strict",
+      "rules": {
+        "naming": "Existing SKILLS-* filenames plus README.md",
+        "frontmatter_required": true,
+        "required_frontmatter_fields": [
+          "type",
+          "id",
+          "title",
+          "version",
+          "status",
+          "date_created",
+          "language",
+          "category"
+        ],
+        "language": "en",
+        "min_sections": [
+          "What It Does",
+          "Input Contract",
+          "Output Contract",
+          "Error Cases & Handling",
+          "Examples"
+        ],
+        "max_file_size_kb": 120
+      }
+    },
+    "testing": {
+      "purpose": "Testing architecture, strategies, and validation guidance.",
+      "required": true,
+      "subdirs": [],
+      "files": [
+        "TESTING-ARCHITECTURE-PROPOSAL.md",
+        "TESTING-IMPLEMENTATION-GUIDE.md",
+        "TESTING-INDUSTRY-VALIDATION.md",
+        "TESTING-QUICK-REFERENCE.md",
+        "UI-TESTING-GUIDE.md"
+      ],
+      "template": "guidance-template.md",
+      "template_location": "docs/templates/guidance-template.md",
+      "validation_level": "strict",
+      "rules": {
+        "naming": "Existing TESTING-* and UI-TESTING-* filenames plus README.md",
+        "frontmatter_required": true,
+        "required_frontmatter_fields": [
+          "type",
+          "id",
+          "title",
+          "version",
+          "status",
+          "date_created",
+          "language",
+          "category"
+        ],
+        "language": "en",
+        "min_sections": ["Overview", "Goals", "Non-Goals", "How to Test"],
+        "max_file_size_kb": 120
+      }
+    },
+    "archive": {
+      "purpose": "Historical reference material and implementation handovers kept out of the active root.",
+      "required": false,
+      "subdirs": [],
+      "files": ["HANDOVER-DOCS-VALIDATION-SYSTEM.md"],
+      "template": "",
+      "template_location": "",
+      "validation_level": "reference",
+      "rules": {
+        "naming": "Historical reference files kept for traceability",
+        "frontmatter_required": true,
+        "required_frontmatter_fields": [
+          "type",
+          "id",
+          "title",
+          "version",
+          "status",
+          "date_created",
+          "language",
+          "category"
+        ],
+        "language": "en",
+        "min_sections": ["Summary", "Current References"],
+        "max_file_size_kb": 120
+      }
+    },
+    "templates": {
+      "purpose": "Copy-paste ready reference files for functional and internal documentation artifacts.",
+      "required": true,
+      "subdirs": ["functional", "internal"],
+      "files": [
+        "CHECKLIST.md",
+        "COMPLETION-REPORT.md",
+        "EXECUTIVE-SUMMARY.md",
+        "INDEX.md",
+        "QUICK-START.txt",
+        "README-OLD.md",
+        "README.md",
+        "adr-template.md",
+        "agent-template.md",
+        "design-doc-template.md",
+        "example-template.md",
+        "functional/agents/EXAMPLES/orchestrator.md",
+        "functional/agents/EXAMPLES/planner.md",
+        "functional/agents/GUIDE-DO-DONT.md",
+        "functional/agents/TEMPLATE.md",
+        "functional/commands/EXAMPLES/plan.md",
+        "functional/commands/GUIDE-DO-DONT.md",
+        "functional/commands/TEMPLATE.md",
+        "functional/hooks/EXAMPLES/pre-commit-validation.md",
+        "functional/hooks/GUIDE-DO-DONT.md",
+        "functional/hooks/TEMPLATE.md",
+        "functional/instructions/EXAMPLES/python-debugging.md",
+        "functional/instructions/GUIDE-DO-DONT.md",
+        "functional/instructions/TEMPLATE.md",
+        "functional/mcps/EXAMPLES/code-execution.md",
+        "functional/mcps/GUIDE-DO-DONT.md",
+        "functional/mcps/TEMPLATE.md",
+        "functional/rules/EXAMPLES/go-only-orchestration.md",
+        "functional/rules/EXAMPLES/no-hardcoded-secrets.md",
+        "functional/rules/GUIDE-DO-DONT.md",
+        "functional/rules/TEMPLATE.md",
+        "functional/skills/EXAMPLES/code-refactoring.md",
+        "functional/skills/EXAMPLES/debugging-methodology.md",
+        "functional/skills/GUIDE-DO-DONT.md",
+        "functional/skills/TEMPLATE.md",
+        "guidance-template.md",
+        "internal/decisions/EXAMPLES/skill-system-contract.md",
+        "internal/decisions/GUIDE-DO-DONT.md",
+        "internal/decisions/TEMPLATE.md",
+        "internal/learning/EXAMPLES/skills-race-condition.md",
+        "internal/learning/GUIDE-DO-DONT.md",
+        "internal/learning/TEMPLATE.md",
+        "internal/project-docs/EXAMPLES/onboarding.md",
+        "internal/project-docs/GUIDE-DO-DONT.md",
+        "internal/project-docs/TEMPLATE.md",
+        "mcp-template.md",
+        "project-status-template.md",
+        "skill-template.md",
+        "state-template.md",
+        "tool-template.md"
+      ],
+      "template": "README.md",
+      "template_location": "docs/templates/README.md",
+      "validation_level": "reference",
+      "rules": {
+        "naming": "Existing template and example filenames across functional/ and internal/ subdirectories",
+        "frontmatter_required": false,
+        "required_frontmatter_fields": [],
+        "language": "en",
+        "min_sections": [],
+        "max_file_size_kb": 160
+      }
+    }
+  },
+  "global_rules": {
+    "language": "en_only",
+    "no_emojis": true,
+    "filename_format": "lowercase-with-hyphens.md",
+    "frontmatter_fields": [
+      "type",
+      "id",
+      "title",
+      "version",
+      "status",
+      "date_created",
+      "language",
+      "category"
+    ],
+    "documentation_scope": "docs/",
+    "validation_mode": "incremental"
+  },
+  "file_count_target": {
+    "current": 87,
+    "target": 100,
+    "per_domain": {
+      "adr": {
+        "current": 8,
+        "target": 8
+      },
+      "architecture": {
+        "current": 11,
+        "target": 11
+      },
+      "skills": {
+        "current": 8,
+        "target": 12
+      },
+      "testing": {
+        "current": 5,
+        "target": 8
+      },
+      "templates": {
+        "current": 49,
+        "target": 64
+      }
+    }
+  }
+}

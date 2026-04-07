@@ -1,8 +1,8 @@
 mcps:
-
   memory:
     package: "@modelcontextprotocol/server-memory"
     required: true
+    visibility: prod-safe
     profile: [minimal, standard, full]
     purpose: Persistent in-session and cross-session memory via knowledge graph
     when_to_use: always - provides the memory layer for all agents
@@ -14,6 +14,7 @@ mcps:
   filesystem:
     package: "@modelcontextprotocol/server-filesystem"
     required: false
+    visibility: prod-safe
     profile: [minimal, standard, full]
     purpose: Structured file system operations with explicit path scoping
     when_to_use: when agents need structured FS access beyond basic Read/Write tools
@@ -22,6 +23,7 @@ mcps:
   context7:
     package: "@upstash/context7-mcp"
     required: false
+    visibility: prod-safe
     profile: [standard, full]
     purpose: Real-time, up-to-date library documentation retrieval
     when_to_use: when working with third-party libraries (avoids hallucinated docs)
@@ -31,6 +33,7 @@ mcps:
   sequential-thinking:
     package: "@modelcontextprotocol/server-sequential-thinking"
     required: false
+    visibility: prod-safe
     profile: [standard, full]
     purpose: Structured step-by-step reasoning for complex problems
     when_to_use: architectural decisions, debugging unknown issues, multi-step planning
@@ -39,6 +42,7 @@ mcps:
   github:
     package: "@modelcontextprotocol/server-github"
     required: false
+    visibility: prod-safe
     profile: [standard, full]
     env_required: [GITHUB_TOKEN]
     purpose: GitHub API operations - PRs, issues, repo management
@@ -51,6 +55,7 @@ mcps:
   playwright:
     package: "@playwright/mcp"
     required: false
+    visibility: prod-safe
     profile: [full]
     purpose: Browser automation, E2E testing, visual verification, scraping
     when_to_use: frontend testing, capturing UI state, browser-based workflows
@@ -60,6 +65,7 @@ mcps:
   postgres:
     package: "@modelcontextprotocol/server-postgres"
     required: false
+    visibility: prod-safe
     profile: [full]
     env_required: [DATABASE_URL]
     purpose: Direct database queries for schema inspection and data operations
@@ -72,6 +78,7 @@ mcps:
   slack:
     package: "@modelcontextprotocol/server-slack"
     required: false
+    visibility: prod-safe
     profile: [full]
     env_required: [SLACK_BOT_TOKEN]
     purpose: Send messages, create channels, read history for team coordination
@@ -81,6 +88,7 @@ mcps:
   linear:
     package: "@linear/mcp-server"
     required: false
+    visibility: prod-safe
     profile: [full]
     env_required: [LINEAR_API_KEY]
     purpose: Linear issue tracking integration
@@ -88,20 +96,22 @@ mcps:
     setup: "export LINEAR_API_KEY=... && npx -y @linear/mcp-server"
 
   brain-rules:
-    command: "python3"
-    args: ["${HOME}/.brain/mcp/brain-mcp-server/server.py"]
+    command: "brain"
+    args: ["mcp", "serve"]
     required: false
+    visibility: prod-safe
     profile: [standard, full]
     purpose: Exposes brain repo internals as queryable tools - rules, agents, task routing, provider selection
     when_to_use: always - gives agents live access to brain rules and routing logic without reading files
     setup: |
-      # No install needed - runs with system python3
-      python3 ~/.brain/mcp/brain-mcp-server/server.py
+      # No install needed - runs via the brain CLI
+      brain mcp serve
     notes: Custom brain MCP server. Gives any MCP-compatible IDE direct tool access to canonical rules and agent routing.
 
   mem0:
     package: "mem0ai/mem0-mcp"
     required: false
+    visibility: prod-safe
     profile: [standard, full]
     env_required: [MEM0_API_KEY]
     purpose: Managed cross-device memory with semantic search - replaces local MCP memory server
@@ -117,6 +127,7 @@ mcps:
   upstash-vector:
     package: "@upstash/vector-mcp"
     required: false
+    visibility: prod-safe
     profile: [full]
     env_required: [UPSTASH_VECTOR_URL, UPSTASH_VECTOR_TOKEN]
     purpose: Serverless vector search for semantic memory retrieval
@@ -126,3 +137,19 @@ mcps:
       export UPSTASH_VECTOR_TOKEN=your-token
       npx -y @upstash/vector-mcp
     notes: Free 10k vectors at https://console.upstash.com -> Vector
+
+  docs-rag-mcp:
+    binary: ~/.brain/bin/docs-rag-mcp
+    required: false
+    visibility: prod-safe
+    profile: [standard, full]
+    purpose: Semantic search over Brain documentation with vector embeddings
+    when_to_use: context injection for documentation references, knowledge retrieval
+    setup: |
+      # Build the MCP server binary
+      cd ~/.brain/mcp/docs-rag-mcp
+      go build -o ../../bin/docs-rag-mcp main.go
+    notes: |
+      Custom Brain MCP server for semantic documentation search. Requires Qdrant running.
+      Tools: docs_search (semantic search), docs_status (index status), docs_rebuild (dev-only)
+      Use BRAIN_ENV=production to prevent accidental rebuilds.

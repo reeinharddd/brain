@@ -1,0 +1,79 @@
+{
+  "mcpServers": {
+    "brain-rules": {
+      "args": [
+        "mcp",
+        "serve"
+      ],
+      "command": "brain"
+    },
+    "context7": {
+      "args": [
+        "@upstash/context7-mcp"
+      ],
+      "command": "bunx"
+    },
+    "filesystem": {
+      "args": [
+        "@modelcontextprotocol/server-filesystem",
+        "/home/reeinharrrd"
+      ],
+      "command": "bunx"
+    },
+    "github": {
+      "args": [
+        "@modelcontextprotocol/server-github"
+      ],
+      "command": "bunx"
+    },
+    "linear": {
+      "args": [
+        "@linear/mcp-server"
+      ],
+      "command": "bunx"
+    },
+    "mem0": {
+      "args": [
+        "mem0ai/mem0-mcp"
+      ],
+      "command": "bunx"
+    },
+    "memory": {
+      "args": [
+        "@modelcontextprotocol/server-memory",
+        "/home/reeinharrrd/.brain/memory"
+      ],
+      "command": "bunx"
+    },
+    "playwright": {
+      "args": [
+        "@playwright/mcp"
+      ],
+      "command": "bunx"
+    },
+    "postgres": {
+      "args": [
+        "@modelcontextprotocol/server-postgres"
+      ],
+      "command": "bunx"
+    },
+    "sequential-thinking": {
+      "args": [
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "command": "bunx"
+    },
+    "slack": {
+      "args": [
+        "@modelcontextprotocol/server-slack"
+      ],
+      "command": "bunx"
+    },
+    "upstash-vector": {
+      "args": [
+        "@upstash/vector-mcp"
+      ],
+      "command": "bunx"
+    }
+  }
+}

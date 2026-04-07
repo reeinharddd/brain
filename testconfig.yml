@@ -1,0 +1,35 @@
+version: "1.0"
+name: "Brain Testing System - Phase 1"
+
+test_suites:
+  daemon:
+    runner: go_test
+    path: ./daemon/...
+    timeout: 60s
+    description: "Daemon and core services"
+    dependencies:
+      - "daemon/**/*.go"
+
+  cli:
+    runner: go_test
+    path: ./cli/...
+    timeout: 45s
+    description: "CLI tools"
+    dependencies:
+      - "cli/**/*.go"
+
+runners:
+  go_test:
+    type: golang
+    timeout_default: 30s
+    parallel: true
+    max_workers: 4
+    flags:
+      - "-v"
+      - "-race"
+
+logging:
+  format: ndjson
+  output_dir: .logs
+  retention_days: 30
+  verbose: false

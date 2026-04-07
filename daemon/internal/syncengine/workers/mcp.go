@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/reeinharrrd/brain/daemon/internal/environment"
 	"gopkg.in/yaml.v3"
 )
 
@@ -19,6 +20,7 @@ type Registry struct {
 		Command string   `yaml:"command"`
 		Args    []string `yaml:"args"`
 		Profile []string `yaml:"profile"`
+		Visibility string `yaml:"visibility"`
 	} `yaml:"mcps"`
 }
 
@@ -35,9 +37,16 @@ func (w *MCPWorker) Sync(registryYamlPath string, outPath string, logger chan<- 
 		return fmt.Errorf("failed to parse registry.yml: %v", err)
 	}
 
+	activeEnvironment := environment.Current()
+
 	mcpServers := make(map[string]interface{})
 
 	for name, details := range reg.MCPs {
+		if !environment.AllowsVisibility(details.Visibility, activeEnvironment) {
+			logger <- fmt.Sprintf("[MCPWorker] Skipping %s in %s environment due to visibility=%s", name, activeEnvironment, strings.TrimSpace(details.Visibility))
+			continue
+		}
+
 		inValidProfile := false
 		for _, p := range details.Profile {
 			if p == "standard" || p == "full" {
@@ -59,17 +68,15 @@ func (w *MCPWorker) Sync(registryYamlPath string, outPath string, logger chan<- 
 				args = append(args, strings.ReplaceAll(arg, "${HOME}", home))
 			}
 		} else if details.Package != "" {
-			cmd = "bash"
+			cmd = "bunx"
 			home, _ := os.UserHomeDir()
-			argStr := fmt.Sprintf("-lc \"if command -v npx-nvm >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \\\"$NPX_BIN\\\" -y %s", details.Package)
+			args = []string{details.Package}
 
 			if name == "memory" {
-				argStr += fmt.Sprintf(" \\\"%s/.brain/memory\\\"", home)
+				args = append(args, filepath.Join(home, ".brain", "memory"))
 			} else if name == "filesystem" {
-				argStr += fmt.Sprintf(" \\\"%s\\\"", home)
+				args = append(args, home)
 			}
-			argStr += "\""
-			args = []string{"-c", argStr}
 		} else {
 			continue
 		}

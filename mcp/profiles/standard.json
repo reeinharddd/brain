@@ -3,31 +3,28 @@
   "profile": "standard",
   "mcpServers": {
     "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-memory", "/home/reeinharrrd/.brain/memory"]
     },
     "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/home/reeinharrrd"]
     },
     "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "command": "bunx",
+      "args": ["@upstash/context7-mcp@latest"]
     },
     "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-sequential-thinking"]
     },
     "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
-      }
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-github"]
     },
     "brain-rules": {
-      "command": "python3",
-      "args": ["${HOME}/.brain/mcp/brain-mcp-server/server.py"]
+      "command": "brain",
+      "args": ["mcp", "serve"]
     }
   }
 }

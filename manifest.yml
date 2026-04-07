@@ -5,12 +5,15 @@
 version: "1.0"
 
 settings:
-  backup_enabled: true
+  backup_enabled: false
   backup_dir: ~/.brain/backups
   backup_retention_days: 7
   dry_run_by_default: false
 
 domains:
+  skills:
+    source: "skills/registry.yml"
+    enabled: true
   mcp:
     source: "mcp/registry.yml"
     enabled: true
@@ -53,4 +56,13 @@ targets:
     type: "claude-code"
     output_dirs:
       mcp: "~/.claude.json"
+    managed_sections: false
+
+  cli:
+    enabled: true
+    type: "brain-cli"
+    output_dirs:
+      skills: "~/.brain/config/skills.json"
+      mcp: "~/.brain/config/mcps.json"
+      agents: "~/.brain/config/agents.json"
     managed_sections: false

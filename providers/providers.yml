@@ -1,65 +1,90 @@
 providers:
-
-  # -- Primary provider --------------------------------------
+  # -- Primary provider (Anthropic) ---------------------------
   claude:
     available: true
+    type: anthropic
+    endpoint: "https://api.anthropic.com/v1"
+    env_key: "ANTHROPIC_API_KEY"
     notes: "Default provider. Set ANTHROPIC_API_KEY in your shell profile."
     models:
-      fast:     claude-haiku-4-5-20251001
+      fast: claude-haiku-4-5-20251001
       standard: claude-sonnet-4-6
       powerful: claude-opus-4-6
 
-  # -- Alternative providers (activate when needed) ----------
+  # -- Alternative: OpenAI ---------------------------------
   openai:
-    available: false       # set to true after: export OPENAI_API_KEY=...
+    available: false # set to true after: export OPENAI_API_KEY=...
+    type: openai
+    endpoint: "https://api.openai.com/v1"
+    env_key: "OPENAI_API_KEY"
     notes: "Activate if you have an OpenAI API key"
     models:
-      fast:     gpt-4o-mini
+      fast: gpt-4o-mini
       standard: gpt-4o
       powerful: o3
       reasoning: o3
 
+  # -- Alternative: Google Gemini --------------------------
   gemini:
-    available: true        # Free tier available via CLI
+    available: true # Free tier available
+    type: google
+    endpoint: "https://generativelanguage.googleapis.com/v1beta"
+    env_key: "GOOGLE_API_KEY"
     notes: "Free 2M context via Gemini CLI. Great for large codebase analysis."
     models:
-      fast:     gemini-2.5-flash
+      fast: gemini-2.5-flash
       standard: gemini-2.5-pro
       powerful: gemini-2.5-pro
 
+  # -- Local: Ollama (self-hosted) -------------------------
   ollama:
-    available: true        # Ollama running at localhost:11435
-    base_url: http://localhost:11435
-    notes: "Local Ollama instance. Great for privacy-sensitive work."
+    available: true # Ollama running at localhost:11434 (daemon checks health)
+    type: local
+    endpoint: "http://localhost:11434"
+    notes: "Local Ollama instance orchestrated by daemon. Used when offline or privacy-sensitive."
+    requires_daemon_service: true # daemon ensures ollama container is running
     models:
-      fast:     qwen2.5-coder:7b-instruct-q4_K_M
+      fast: qwen2.5-coder:7b-instruct-q4_K_M
       standard: llama3.3:latest
       powerful: deepseek-r1:14b
 
-# -- Task routing ---------------------------------------------
-# Maps task types to model tiers. Orchestrator reads this.
+# ── Task Routing (daemon uses this to select provider) ────────
+# Maps task types to model tiers. Helps daemon balance:
+# - Speed (fast) vs Quality (powerful)
+# - Cost (local free vs API paid)
+# - Privacy (local vs cloud)
+
 task_routing:
-  exploration:     fast      # read-only, search, grep, browsing
-  documentation:   fast      # generate docs, README, ADRs
-  summarization:   fast      # summarize, extract, classify
-  implementation:  standard  # coding, feature building
-  debugging:       standard  # error analysis, root cause
-  review:          standard  # code review, security audit
-  planning:        powerful  # architecture, spec, major decisions
-  system-design:   powerful  # multi-component architecture
+  exploration: fast # read-only, search, grep, browsing
+  documentation: fast # generate docs, README, ADRs
+  summarization: fast # summarize, extract, classify
+  implementation: standard # coding, feature building
+  debugging: standard # error analysis, root cause
+  review: standard # code review, security audit
+  planning: powerful # architecture, spec, major decisions
+  system-design: powerful # multi-component architecture
 
-# -- Fallback chain -------------------------------------------
-# Order of providers to try when the primary is unavailable
+# ── Fallback Strategy (when primary provider unavailable) ────
 fallback_chain:
-  - claude
-  - gemini
-  - openai
+  - claude # Try Claude first
+  - openai # Fall back to OpenAI if available
+  - gemini # Try Gemini
+  - ollama # Fall back to local Ollama (always available if docker up)
 
-# -- Cost guidance --------------------------------------------
+# ── Daemon Responsibilities ─────────────────────────────────
+# The daemon (braind) reads this config and:
+# 1. Checks provider health on startup
+# 2. Routes requests via task_routing mapping
+# 3. Falls back via fallback_chain if primary unavailable
+# 4. Ensures local provider (ollama) is running via docker-compose
+# 5. Reports provider status via HTTP API (/api/providers/status)
+# 6. Agents use daemon API instead of direct provider calls
+
+# ── Cost Guidance ────────────────────────────────────────────
 cost_guidance:
   principle: "Use the cheapest model that can do the job well."
   rules:
-    - "Never use `powerful` for tasks that `fast` can handle"
-    - "Prefer `gemini` free tier for large context reads"
-    - "Use `local` for any task involving private/sensitive data"
-    - "Use `standard` for 90% of coding tasks"
+    - "Never use powerful for tasks that fast can handle"
+    - "Prefer gemini free tier for large context reads"
+    - "Use local for any task involving private/sensitive data"
+    - "Use standard for 90% of coding tasks"

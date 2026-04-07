@@ -1,74 +1,87 @@
-# ADR-0001: Combine the Two Brain Ecosystem Prompts Selectively
+---
+type: adr
+id: ADR-0001-combined-prompt-alignment
+title: Combine the Two Brain Ecosystem Prompts Selectively
+version: 1.0.0
+status: accepted
+date_created: 2026-03-31
+language: en
+category: architecture
+related: []
+keywords:
+  - prompt-alignment
+  - architecture
+  - compatibility
+rag_priority: high
+chunk_strategy: section
+---
 
-## Status
-
-Accepted
+## ADR-0001: Combine the Two Brain Ecosystem Prompts Selectively
 
 ## Context
 
-Two implementation prompts describe a similar target architecture for the brain
-repo, but they differ in strictness and scope. One prompt emphasizes the
-"Gentleman-Brain" architecture and staged batches. The other defines an
-enterprise implementation backlog with many explicit files and scripts.
+Two implementation prompts describe a similar target architecture for the Brain repository, but they differ in strictness and scope. One prompt emphasizes staged batches and a gentler implementation flow. The other defines a broader implementation backlog with many explicit files and scripts.
 
-Applying both prompts literally would overload the repo with duplicate concepts,
-parallel protocols, and more ceremony than the current Bash-and-Markdown-first
-design needs.
+Applying both prompts literally would duplicate concepts and create more ceremony than the current Bash-and-Markdown-first design needs.
 
 ## Decision Drivers
 
-- Preserve the existing "rules first" architecture
-- Keep the repo portable and Bash/Markdown-centric
+- Preserve the existing rules-first architecture
+- Keep the repository portable and Markdown-centric
 - Add compatibility where it improves clarity or onboarding
-- Avoid duplicate systems for SDD, Guardian, and memory
+- Avoid duplicate systems for orchestration, memory, and validation
 - Prefer reversible changes over large rewrites
 
-## Considered Options
+## Options Considered
 
 ### Option 1: Implement both prompts literally
 
-- Pros: maximum prompt compliance
-- Cons: duplicates files and protocols, increases maintenance cost, risks losing
-  the repo's current simplicity
+Pros:
 
-### Option 2: Keep current repo unchanged
+- Maximum prompt compliance
 
-- Pros: lowest risk
-- Cons: misses useful structure from both prompts and leaves obvious gaps
+Cons:
+
+- Duplicates files and protocols
+- Increases maintenance cost
+- Risks losing the repository's current simplicity
+
+### Option 2: Keep the current repository unchanged
+
+Pros:
+
+- Lowest risk
+
+Cons:
+
+- Misses useful structure from both prompts
+- Leaves obvious gaps in tooling and validation
 
 ### Option 3: Selective alignment with one canonical implementation
 
-- Pros: captures the highest-value ideas while preserving coherence
-- Cons: some prompt-specific files become compatibility layers rather than full
-  implementations
+Pros:
+
+- Captures the highest-value ideas while preserving coherence
+- Keeps the repository understandable
+- Supports gradual adoption
+
+Cons:
+
+- Some prompt-specific files become compatibility layers rather than exact replicas
 
 ## Decision
 
-Adopt **Option 3: selective alignment with one canonical implementation**.
+Adopt Option 3: selective alignment with one canonical implementation.
 
-## What We Adopt
+## Rationale
 
-- Canonical rules remain the single source of truth
-- Dynamic stack detection and skill-context injection
-- Delegate-first SDD as the default coordination model
-- Memory progressive disclosure and project namespaces
-- Git-native Guardian with local-first validation
-- Persistent runtime validation and context-pack generation
-- Compatibility shims where prompt-specific paths improve onboarding
-
-## What We Reject or Defer
-
-- Strict "do not advance batches without human approval" as a hard repo rule
-- Mandatory `.specs/` artifacts for every small task
-- LLM-dependent Guardian as the default enforcement path
-- Large stack-matrix skill expansion before there is real usage pressure
-- Replacing existing working scripts only to match prompt naming exactly
+Selective alignment keeps the repository coherent while still absorbing the highest-value ideas from both prompts. It avoids duplicate systems, preserves the current operational style, and leaves room for compatibility layers where they are genuinely useful.
 
 ## Consequences
 
 ### Positive
 
-- The repo aligns better with both prompts without splitting its identity
+- The repository aligns better with both prompts without splitting its identity
 - Missing conceptual pieces get first-class files where useful
 - Existing scripts remain the operational source of truth
 
@@ -79,7 +92,14 @@ Adopt **Option 3: selective alignment with one canonical implementation**.
 
 ## Implementation Notes
 
-- Add `architect` and `implementer` agent docs
-- Add `memory-protocol.md` as an explicit module
-- Add Guardian compatibility wrapper and hook installer
-- Improve handover and initialization around persistent operation
+- Add or keep the architect and implementer agent docs
+- Add explicit memory protocol documentation where needed
+- Keep the existing scripts as the execution layer
+- Prefer compatibility wrappers only when they materially reduce friction
+
+## Related ADRs
+
+- ADR-0002: Centralized Brain CLI for Multi-IDE Service Orchestration
+- ADR-0003: Centralization of Orchestration in Daemon
+- ADR-0004: Portable Skill Contract with Surface Adapters
+- ADR-0005: Strict Development and Production Boundary

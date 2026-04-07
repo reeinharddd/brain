@@ -15,7 +15,7 @@
 - **Runs agents** — 12 specialized agents (researcher, planner, debugger, etc.) callable from terminal or IDE
 - **Evaluates itself** — Benchmark suite measuring memory recall, security, rule consistency
 
-**In 30 seconds**: Clone it, run `brain setup`, and every IDE reads the same rules.
+**In 30 seconds**: Clone it, run `brain install-global` and `brain sync`, and every IDE reads the same rules.
 
 ---
 
@@ -106,13 +106,92 @@ brain sync                  # Trigger unified config sync through daemon
 brain ps                    # List managed sub-process states
 brain logs                  # Stream real-time daemon logs via WebSocket
 
-# Desktop
+# Desktop UI
 brain ui                    # Start desktop dev UI (and ensure daemon is running)
 
 # Process control
 brain start <id> <cmd> ...  # Start a managed process
 brain stop <id>             # Stop a managed process
 ```
+
+---
+
+## Desktop Control Plane
+
+The **Brain Desktop UI** (Tauri + React) provides a real-time control plane for daemon orchestration:
+
+### Features
+
+- **Manager Status Dashboard** — Real-time indicators for Docker, Qdrant, Ollama, MCP Registry
+- **Daemon Controls** — One-click Start/Stop for entire infrastructure
+- **LLM Provider Detection** — Auto-discover available providers (Claude, Gemini, Ollama, OpenAI)
+- **Live Daemon Logs** — WebSocket-based real-time log streaming (100-entry buffer)
+- **Process Management** — View and control running sub-processes
+
+### Starting the Desktop UI
+
+```bash
+# Option 1: From CLI
+brain ui
+
+# Option 2: Manual (development mode)
+cd ~/.brain/desktop
+npm run dev
+# Opens http://localhost:5173
+```
+
+### What You See
+
+```text
+┌─────────────────────────────────────────────┐
+│ Status: Running/Stopped                     │
+│ [START] [STOP] [REFRESH PROVIDERS]         │
+├─────────────────────────────────────────────┤
+│ Docker  │ Qdrant  │ Ollama  │ MCP  │Providers
+│ Ready   │ :6333   │ :11434  │Synced│ 3 avail
+├─────────────────────────────────────────────┤
+│ Available Providers:                        │
+│ Claude 3.5 Sonnet | Gemini 2.5 Pro         │
+│ Ollama (local)    | OpenAI GPT-4o          │
+├─────────────────────────────────────────────┤
+│ Processes         │ Live Daemon Logs       │
+│ [web_ping Running]│ [Daemon logs stream]   │
+└─────────────────────────────────────────────┘
+```
+
+### API Integration
+
+The desktop UI communicates with the daemon via HTTP + WebSocket on port 9090:
+
+**Status Endpoints** (polled every 5 seconds):
+
+- `GET /api/status` — Overall daemon status
+- `GET /api/docker/status` — Docker manager
+- `GET /api/qdrant/status` — Qdrant vector DB
+- `GET /api/ollama/status` — Ollama LLM runtime
+- `GET /api/mcp/status` — MCP registry sync
+
+**Provider Detection**:
+
+- `GET /api/providers/available` — Available LLM providers
+
+**Daemon Control**:
+
+- `POST /api/daemon/start` — Start all services
+- `POST /api/daemon/stop` — Stop all services
+
+**Real-time Logs**:
+
+- `WebSocket /ws` — Live log stream (no polling)
+
+### Keyboard Shortcuts
+
+| Action               | Method                           |
+| -------------------- | -------------------------------- |
+| Start all services   | Click [START] button             |
+| Stop all services    | Click [STOP] button              |
+| Refresh providers    | Click [REFRESH PROVIDERS] button |
+| View process details | Click process row                |
 
 ---
 
@@ -124,7 +203,7 @@ These are read-only files that configure IDEs and agents:
 
 ```text
 rules/canonical.md          <- Single source of truth (edit here)
-├─ Compiled to all IDEs by: adapters/generate.sh
+├─ Compiled to all IDEs by: brain sync
 │  ├─ adapters/claude-code/CLAUDE.md
 │  ├─ adapters/cursor/.cursorrules
 │  ├─ adapters/windsurf/.windsurfrules
@@ -139,22 +218,14 @@ providers/providers.yml      <- Model routing table (task-type → model)
 
 ### Runtime Layer (Execution)
 
-Scripts that run services and execute tasks:
+Go commands and runtime components:
 
 ```text
-scripts/
-├─ brain-cli.sh             <- Central orchestrator (all commands)
-├─ init.sh                  <- Per-project initialization
-├─ doctor.sh                <- Health check & diagnostics
-├─ lib/
-│  ├─ common.sh            <- Shared utilities (logging, errors, docker, etc.)
-│  ├─ colors.sh            <- ANSI color definitions
-│  ├─ logging.sh           <- Consistent logging
-│  ├─ docker.sh            <- Docker utilities
-│  └─ assert.sh            <- Assertion helpers
-│
-mcp/brain-mcp-server/       <- Custom MCP: exposes rules, agents, memory as tools
-docker-compose.yml          <- Services (Qdrant memory, optional gateway)
+cli/cmd/brain/main.go       <- Central orchestrator (all commands)
+daemon/cmd/braind/main.go   <- Runtime daemon and sync engine
+desktop/src/App.tsx         <- Visual control plane
+commands/*.md               <- Slash command definitions
+mcp/registry.yml            <- MCP catalog and routing
 ```
 
 ### Knowledge Layer (Memory)
@@ -246,23 +317,22 @@ windsurf /project &
 │
 ├── adapters/                    ← IDE-specific compiled rules
 │   ├── claude-code/, cursor/, windsurf/, copilot/, etc.
-│   └── generate.sh              ← Rebuilds all from canonical.md
+│   └── brain sync               ← Rebuilds generated configs from canonical sources
 │
 ├── agents/                      ← Agent prompt definitions
 │   ├── researcher.md, planner.md, debugger.md, ...
-│   └── agent-runner.py          ← Execute agents programmatically
+│   └── brain agents             ← Inspect and route agents from the CLI
 │
 ├── commands/                    ← Slash command specs
 │   └── plan.md, review.md, research.md, ...
 │
-├── scripts/                     ← All operational scripts
-│   ├── brain-cli.sh             ← Main orchestrator
-│   ├── init.sh                  ← Per-project init
-│   ├── doctor.sh                ← Health check
-│   ├── lib/                     ← Reusable modules
-│   │   ├── common.sh, colors.sh, logging.sh, docker.sh, assert.sh
-│   │   └── ...
-│   └── (30+ other utilities)
+├── cli/                         ← Brain CLI entrypoints
+│   └── cmd/brain/main.go        ← Main orchestrator
+├── daemon/                      ← Runtime daemon and sync engine
+│   └── cmd/braind/main.go       ← Background control plane
+├── desktop/                     ← Tauri + React UI
+├── commands/                    ← Slash command specs
+├── mcp/                         ← MCP registry and server
 │
 ├── mcp/                         ← MCP server setup
 │   ├── registry.yml
@@ -319,42 +389,39 @@ Required environment variables:
 
 - `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` (depending on your LLM)
 
-#### Step 3: Run Setup
+#### Step 3: Install the CLI
 
 ```bash
-brain setup
+brain install-global
 ```
 
 This:
 
-- Makes scripts executable
-- Adds brain command to PATH
-- Creates `.brain.config`
-- Sets up IDE symlinks
-- Tests basic functionality
+- Builds and installs `brain` and `braind`
+- Adds `brain` to your PATH when needed
+- Saves the resolved repo root for the CLI and daemon
 
 #### Step 4: Start Services (Optional)
 
 ```bash
-brain start           # Launches Docker containers if configured
+brain daemon-start    # Launches the daemon
 brain status          # Verify everything is running
 ```
 
 #### Step 5: Initialize a Project
 
-In any project directory:
+In any project directory, use the native project command or refresh the synced context:
 
-```bash
-cd your/project
-bash ~/.brain/scripts/init.sh
+```text
+/init
+brain sync
 ```
 
 This:
 
-- Links project-specific rules
-- Installs git hooks
-- Initializes `.env.example`
-- Shows next steps
+- Refreshes generated Brain configs
+- Updates the project context files used by supported IDEs
+- Applies the current Brain rules to the project
 
 #### Step 6: Use Your IDE
 
@@ -380,8 +447,7 @@ No additional setup needed — just open an IDE.
 Edit `~/.brain/rules/canonical.md`, then run:
 
 ```bash
-# Regenerates all IDE configs automatically
-bash ~/.brain/adapters/generate.sh
+brain sync
 ```
 
 ### I want to add a new agent
@@ -389,11 +455,7 @@ bash ~/.brain/adapters/generate.sh
 1. Create `~/.brain/agents/my-agent.md`
 2. Define the prompt and capabilities
 3. Reference it in `/commands/my-command.md`
-4. Run in terminal:
-
-```bash
-python3 ~/.brain/scripts/agent-runner.py my-agent --input "task" --memory
-```
+4. Use the `brain agents` commands to inspect or synchronize the agent set
 
 ### I want to share context between sessions
 
@@ -449,8 +511,7 @@ brain start
 ### IDE not reading rules
 
 ```bash
-# Regenerate adapters
-bash ~/.brain/adapters/generate.sh
+brain sync
 
 # Verify symlinks
 ls -l ~/.cursorrules ~/.windsurfrules ~/.claude/

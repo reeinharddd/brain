@@ -3,24 +3,24 @@
   "//2": "Switch to this with: ln -sf ~/.brain/adapters/claude-code/settings.docker.json ~/.claude/settings.json",
   "mcpServers": {
     "memory": {
-      "command": "bash",
-      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-memory \"$HOME/.brain/memory\""]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-memory", "/home/reeinharrrd/.brain/memory"]
     },
     "filesystem": {
-      "command": "bash",
-      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-filesystem \"$HOME\""]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/home/reeinharrrd"]
     },
     "sequential-thinking": {
-      "command": "bash",
-      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-sequential-thinking"]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-sequential-thinking"]
     },
     "context7": {
-      "command": "bash",
-      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @upstash/context7-mcp@latest"]
+      "command": "bunx",
+      "args": ["@upstash/context7-mcp@latest"]
     },
     "github": {
-      "command": "bash",
-      "args": ["-lc", "if command -v npx-nvm >/dev/null 2>&1 && npx-nvm -v >/dev/null 2>&1; then NPX_BIN=$(command -v npx-nvm); else NPX_BIN=$(command -v npx); fi; exec \"$NPX_BIN\" -y @modelcontextprotocol/server-github"]
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-github"]
     }
   },
   "permissions": {
@@ -34,8 +34,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
-            "args": ["-lc", "exec bash \"$HOME/.brain/hooks/pre-tool-use/block-env-writes.sh\""]
+            "command": "brain",
+            "args": ["hooks", "pre-tool-use", "block-env-writes"]
           }
         ]
       }
@@ -46,8 +46,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
-            "args": ["-lc", "exec bash \"$HOME/.brain/hooks/post-tool-use/run-linter.sh\""]
+            "command": "brain",
+            "args": ["hooks", "post-tool-use", "run-linter"]
           }
         ]
       }

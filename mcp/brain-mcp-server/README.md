@@ -17,7 +17,7 @@ Custom MCP server that exposes brain repo internals as queryable tools for any M
 ## Usage (stdio)
 
 ```bash
-python3 ~/.brain/mcp/brain-mcp-server/server.py
+brain mcp serve
 ```
 
 ## Add to Claude Code settings
@@ -26,14 +26,14 @@ python3 ~/.brain/mcp/brain-mcp-server/server.py
 {
   "mcpServers": {
     "brain": {
-      "command": "python3",
-      "args": ["${HOME}/.brain/mcp/brain-mcp-server/server.py"]
+      "command": "brain",
+      "args": ["mcp", "serve"]
     }
   }
 }
 ```
 
-## Add to generate.sh
+## Add to brain sync
 
-The brain MCP server is automatically included when `generate.sh` is run.
-It is registered in `mcp/registry.yml` under the `brain-rules` key.
+The brain MCP server is included through `mcp/registry.yml` under the
+`brain-rules` key and is served by the Go CLI.

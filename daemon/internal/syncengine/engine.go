@@ -3,6 +3,7 @@ package syncengine
 import (
 	"archive/tar"
 	"compress/gzip"
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -10,19 +11,26 @@ import (
 	"strings"
 	"time"
 
+	"github.com/reeinharrrd/brain/daemon/internal/manager"
 	"github.com/reeinharrrd/brain/daemon/internal/manifest"
 	"github.com/reeinharrrd/brain/daemon/internal/syncengine/workers"
 )
 
 type SyncEngine struct {
-	logger   chan<- string
-	manifest *manifest.AppManifest
+	logger         chan<- string
+	manifest       *manifest.AppManifest
+	skillsRegistry *manager.SkillsRegistry
 }
 
-func NewSyncEngine(m *manifest.AppManifest, logger chan<- string) *SyncEngine {
+type SyncOptions struct {
+	DryRun bool
+}
+
+func NewSyncEngine(m *manifest.AppManifest, logger chan<- string, skills *manager.SkillsRegistry) *SyncEngine {
 	return &SyncEngine{
-		logger:   logger,
-		manifest: m,
+		logger:         logger,
+		manifest:       m,
+		skillsRegistry: skills,
 	}
 }
 
@@ -35,9 +43,18 @@ func (s *SyncEngine) expandHome(path string) string {
 }
 
 func (s *SyncEngine) RunSync() error {
+	return s.RunSyncWithOptions(SyncOptions{})
+}
+
+func (s *SyncEngine) RunSyncWithOptions(opts SyncOptions) error {
 	s.logger <- "[SyncEngine] Initializing Native Synchronization..."
 
-	if s.manifest.Settings.BackupEnabled {
+	dryRun := opts.DryRun || s.manifest.Settings.DryRunByDefault
+	if dryRun {
+		s.logger <- "[SyncEngine] Dry run enabled - no files will be written"
+	}
+
+	if s.manifest.Settings.BackupEnabled && !dryRun {
 		if err := s.createBackup(); err != nil {
 			s.logger <- fmt.Sprintf("[SyncEngine] Backup Failed: %v", err)
 			return err
@@ -46,6 +63,8 @@ func (s *SyncEngine) RunSync() error {
 
 	rulesWorker := &workers.RulesWorker{}
 	mcpWorker := &workers.MCPWorker{}
+	skillsWorker := &workers.SkillsWorker{}
+	agentsWorker := &workers.AgentsWorker{}
 
 	brainDir := s.expandHome("~/.brain")
 
@@ -60,29 +79,69 @@ func (s *SyncEngine) RunSync() error {
 		for key, outDirRaw := range target.OutputDirs {
 			outDir := s.expandHome(outDirRaw)
 
-			if s.manifest.Settings.DryRunByDefault {
+			if dryRun {
 				s.logger <- fmt.Sprintf("[SyncEngine] [DRY-RUN] -> Would deploy %s to %s", key, outDir)
 				continue
 			}
 
 			s.logger <- fmt.Sprintf("[SyncEngine] -> Deploying %s to %s", key, outDir)
 
-			// Execute native Go workers based on the key
-			if key == "rules" || key == "instructions" {
+			switch key {
+			case "rules", "instructions":
 				if domConfig, exists := s.manifest.Domains["rules"]; exists && domConfig.Enabled {
 					source := filepath.Join(brainDir, domConfig.Source)
 					if err := rulesWorker.Sync(source, outDir, s.logger); err != nil {
-						s.logger <- fmt.Sprintf("[RulesWorker] Error: %v", err)
+						return fmt.Errorf("rules sync failed for target %s: %w", name, err)
 					}
 				}
-			} else if key == "mcp" {
+			case "mcp":
 				if domConfig, exists := s.manifest.Domains["mcp"]; exists && domConfig.Enabled {
-					source := filepath.Join(brainDir, domConfig.Source) // mcp/registry.yml
+					source := filepath.Join(brainDir, domConfig.Source)
 					if err := mcpWorker.Sync(source, outDir, s.logger); err != nil {
-						s.logger <- fmt.Sprintf("[MCPWorker] Error: %v", err)
+						return fmt.Errorf("mcp sync failed for target %s: %w", name, err)
 					}
 				}
-			} else {
+			case "skills":
+				if domConfig, exists := s.manifest.Domains["skills"]; exists && domConfig.Enabled {
+					// Pass lambda to get catalog from skills registry
+					getCatalogFunc := func() []*workers.CatalogItem {
+						items := s.skillsRegistry.GetAll(context.Background())
+						// Convert manager.CatalogItem to workers.CatalogItem
+						result := make([]*workers.CatalogItem, len(items))
+						for i, item := range items {
+							result[i] = &workers.CatalogItem{
+								ID:          item.ID,
+								Name:        item.Name,
+								Kind:        item.Kind,
+								Scope:       item.Scope,
+								Description: item.Description,
+								Tags:        item.Tags,
+								Path:        item.Path,
+								Version:     item.Version,
+								Maintained:  item.Maintained,
+								Source:      item.Source,
+								Type:        item.Type,
+								File:        item.File,
+								SyncTo:      item.SyncTo,
+								Requires:    item.Requires,
+								Category:    item.Category,
+							}
+						}
+						return result
+					}
+					
+					if err := skillsWorker.Sync(brainDir, outDir, s.logger, getCatalogFunc); err != nil {
+						return fmt.Errorf("skills sync failed for target %s: %w", name, err)
+					}
+				}
+			case "agents":
+				if domConfig, exists := s.manifest.Domains["agents"]; exists && domConfig.Enabled {
+					source := filepath.Join(brainDir, domConfig.Source)
+					if err := agentsWorker.Sync(source, outDir, s.logger); err != nil {
+						return fmt.Errorf("agents sync failed for target %s: %w", name, err)
+					}
+				}
+			default:
 				s.logger <- fmt.Sprintf("[SyncEngine] Warning: No native worker available for output key: %s (in target %s)", key, name)
 			}
 		}

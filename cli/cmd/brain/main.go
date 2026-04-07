@@ -1,17 +1,18 @@
 package main
 
 import (
-"bytes"
-"encoding/json"
-"fmt"
-"net/http"
-"os"
-"os/exec"
-"path/filepath"
-"strings"
-"time"
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+	"time"
 
-"github.com/gorilla/websocket"
+	"github.com/gorilla/websocket"
 )
 
 const DAEMON_URL = "http://localhost:9090"
@@ -122,7 +123,6 @@ func installGlobal() {
 		return
 	}
 
-	cliSrc := filepath.Join(brainRoot, "cli", "cmd", "brain", "main.go")
 	cliDir := filepath.Join(brainRoot, "cli")
 	daemonDir := filepath.Join(brainRoot, "daemon")
 
@@ -132,7 +132,7 @@ func installGlobal() {
 	_ = os.Remove(brainOut)
 	_ = os.Remove(braindOut)
 
-	cmd1 := exec.Command("go", "build", "-o", brainOut, cliSrc)
+	cmd1 := exec.Command("go", "build", "-o", brainOut, "./cmd/brain")
 	cmd1.Dir = cliDir
 	cmd1.Stdout = os.Stdout
 	cmd1.Stderr = os.Stderr
@@ -215,6 +215,14 @@ func main() {
 	command := os.Args[1]
 
 	switch command {
+	case "env":
+		brainEnv := strings.ToLower(strings.TrimSpace(os.Getenv("BRAIN_ENV")))
+		if brainEnv == "" {
+			brainEnv = "production"
+		}
+		fmt.Println("Brain environment:", brainEnv)
+		fmt.Println("BRAIN_ROOT:", resolveBrainRoot())
+
 	case "install-global":
 		installGlobal()
 
@@ -243,7 +251,17 @@ func main() {
 		var res map[string]interface{}
 		json.NewDecoder(resp.Body).Decode(&res)
 		fmt.Printf("🧠 Brain Daemon Status: %v (Time: %v)\n", res["status"], res["time"])
+		if env, ok := res["environment"].(string); ok && env != "" {
+			fmt.Printf("Environment: %v\n", env)
+		}
 		fmt.Printf("Active Managed Processes: %v\n", res["processes"])
+		fmt.Printf("Sync Status: %v (running=%v)\n", res["sync_status"], res["sync_running"])
+		if lastRun, ok := res["sync_last_run"]; ok {
+			fmt.Printf("Last Sync: %v\n", lastRun)
+		}
+		if syncErr, ok := res["sync_error"].(string); ok && syncErr != "" {
+			fmt.Printf("Sync Error: %v\n", syncErr)
+		}
 
 	case "ps":
 		resp, err := http.Get(DAEMON_URL + "/api/processes")
@@ -285,6 +303,26 @@ func main() {
 			}
 		}
 
+	case "mcp":
+		if len(os.Args) >= 3 && os.Args[2] == "serve" {
+			runMCPServer(os.Args[3:])
+			return
+		}
+		fmt.Println("Usage: brain mcp serve [--brain-dir PATH]")
+		fmt.Println("Runs the Brain MCP stdio server.")
+
+	case "hooks":
+		os.Exit(runHookCommand(os.Args[2:]))
+
+	case "skills":
+		HandleSkillsCommand(os.Args)
+
+	case "mcps":
+		HandleMCPsCommand(os.Args)
+
+	case "agents":
+		HandleAgentsCommand(os.Args)
+
 	case "start":
 		if len(os.Args) > 3 {
 			id := os.Args[2]
@@ -293,15 +331,15 @@ func main() {
 			if len(os.Args) > 4 {
 				args = os.Args[4:]
 			}
-			
+
 			payload := map[string]interface{}{
-				"id": id,
+				"id":      id,
 				"command": cmd,
-				"args": args,
+				"args":    args,
 			}
 			body, _ := json.Marshal(payload)
-			
-			resp, err := http.Post(DAEMON_URL + "/api/process/start", "application/json", bytes.NewBuffer(body))
+
+			resp, err := http.Post(DAEMON_URL+"/api/process/start", "application/json", bytes.NewBuffer(body))
 			if err != nil || resp.StatusCode != 200 {
 				fmt.Println("❌ Failed to start process:", err)
 				return
@@ -316,8 +354,8 @@ func main() {
 			id := os.Args[2]
 			payload := map[string]interface{}{"id": id}
 			body, _ := json.Marshal(payload)
-			
-			resp, err := http.Post(DAEMON_URL + "/api/process/stop", "application/json", bytes.NewBuffer(body))
+
+			resp, err := http.Post(DAEMON_URL+"/api/process/stop", "application/json", bytes.NewBuffer(body))
 			if err != nil || resp.StatusCode != 200 {
 				fmt.Println("❌ Failed to stop process:", err)
 				return
@@ -328,12 +366,39 @@ func main() {
 		}
 
 	case "sync":
-		resp, err := http.Post(DAEMON_URL + "/api/sync", "application/json", nil)
-		if err != nil || resp.StatusCode != 200 {
-			fmt.Println("❌ Failed to trigger sync:", err)
+		handleSyncCommand(os.Args)
+
+	case "daemon-orchestrate":
+		resp, err := http.Post(DAEMON_URL+"/api/daemon/start", "application/json", nil)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
 			return
 		}
-		fmt.Println("🔄 Synchronization Triggered. Use 'brain logs' to view progress.")
+		if resp.StatusCode == 200 {
+			fmt.Println("✓ Daemon orchestration started")
+		} else {
+			fmt.Println("❌ Failed to start daemon")
+		}
+		resp.Body.Close()
+
+	case "providers":
+		resp, err := http.Get(DAEMON_URL + "/api/providers/available")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if providers, ok := res["available"].([]interface{}); ok {
+			fmt.Println("Available Providers:")
+			for _, p := range providers {
+				fmt.Printf("  - %v\n", p)
+			}
+		}
+
+	case "test":
+		os.Exit(runTestCommand(os.Args[2:]))
 
 	default:
 		printHelp()
@@ -345,15 +410,129 @@ func printHelp() {
 	fmt.Println("Usage: brain <command> [args]")
 	fmt.Println("\nCommands:")
 	fmt.Println("  install-global                 Build/install brain and braind into ~/.local/bin")
-	fmt.Println("                                 (auto-detects repo root and persists it)")
 	fmt.Println("  root                           Print current and resolved brain root")
+	fmt.Println("  env                            Print the active Brain environment")
 	fmt.Println("  daemon-start                   Start daemon in background")
 	fmt.Println("  daemon-stop                    Stop daemon")
+	fmt.Println("  daemon-orchestrate             Start daemon with full service orchestration")
 	fmt.Println("  ui                             Start desktop web UI (and daemon)")
 	fmt.Println("  status                         Check daemon status")
-	fmt.Println("  sync                           Trigger unified config sync")
+	fmt.Println("  mcp serve                      Run the Brain MCP stdio server")
+	fmt.Println("  hooks ...                      Run hook helpers without shell wrappers")
+	fmt.Println("  providers                      List available LLM providers")
+	fmt.Println("  sync [--dry-run|status]        Trigger unified config sync")
+	fmt.Println("  test [suite] [flags]            Run test orchestrator (Phase 1)")
 	fmt.Println("  ps                             List managed processes")
 	fmt.Println("  logs                           Stream real-time global logs")
 	fmt.Println("  start <id> <command> [args..]  Start a specific process")
 	fmt.Println("  stop <id>                      Stop a specific process")
+}
+
+func runTestCommand(args []string) int {
+	brainRoot := resolveBrainRoot()
+	daemonDir := filepath.Join(brainRoot, "daemon")
+
+	goArgs := []string{"run", "./cmd/testor", "test"}
+	goArgs = append(goArgs, args...)
+
+	cmd := exec.Command("go", goArgs...)
+	cmd.Dir = daemonDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Env = append(os.Environ(), "BRAIN_ROOT="+brainRoot)
+
+	if err := cmd.Run(); err != nil {
+		var exitErr *exec.ExitError
+		if errors.As(err, &exitErr) {
+			return exitErr.ExitCode()
+		}
+		fmt.Println("❌ Failed to run test orchestrator:", err)
+		return 2
+	}
+
+	return 0
+}
+
+func handleSyncCommand(args []string) {
+	if len(args) < 3 {
+		triggerSync(false)
+		return
+	}
+
+	subcommand := args[2]
+	switch subcommand {
+	case "status":
+		syncStatus()
+	case "--dry-run", "-n", "dry-run":
+		triggerSync(true)
+	default:
+		fmt.Printf("Unknown sync subcommand: %s\n", subcommand)
+		printSyncHelp()
+	}
+}
+
+func triggerSync(dryRun bool) {
+	url := DAEMON_URL + "/api/sync"
+	if dryRun {
+		url += "?dry_run=true"
+	}
+
+	resp, err := http.Post(url, "application/json", nil)
+	if err != nil {
+		fmt.Println("❌ Failed to trigger sync:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusAccepted && resp.StatusCode != http.StatusOK {
+		fmt.Printf("❌ Failed to trigger sync (status %d)\n", resp.StatusCode)
+		return
+	}
+
+	if dryRun {
+		fmt.Println("🔎 Dry-run sync triggered. Use 'brain sync status' to inspect progress.")
+		return
+	}
+
+	fmt.Println("🔄 Synchronization triggered. Use 'brain sync status' or 'brain logs' to view progress.")
+}
+
+func syncStatus() {
+	resp, err := http.Get(DAEMON_URL + "/api/sync/status")
+	if err != nil {
+		fmt.Println("❌ Failed to fetch sync status:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	var res map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		fmt.Println("❌ Failed to parse sync status:", err)
+		return
+	}
+
+	fmt.Println("🧭 Sync Status:")
+	fmt.Printf("  Status: %v\n", res["status"])
+	fmt.Printf("  Running: %v\n", res["running"])
+	fmt.Printf("  Last Run: %v\n", res["last_run"])
+	fmt.Printf("  Watcher: %v\n", res["watcher_active"])
+	if errVal, ok := res["error"].(string); ok && errVal != "" {
+		fmt.Printf("  Error: %v\n", errVal)
+	}
+}
+
+func printSyncHelp() {
+	fmt.Println(`
+Usage: brain sync [subcommand]
+
+Subcommands:
+  status           Show sync status
+  --dry-run        Preview changes without writing files
+
+Examples:
+  brain sync
+  brain sync --dry-run
+  brain sync status
+	`)
 }

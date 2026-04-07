@@ -1,0 +1,50 @@
+---
+type: architecture
+id: documentation-enforcement-system
+title: Brain Documentation Enforcement System
+version: 1.0.0
+status: active
+date_created: 2026-04-03
+language: en
+category: architecture
+keywords:
+  - documentation
+  - enforcement
+  - validation
+  - automation
+  - pre-commit
+rag_priority: high
+chunk_strategy: section
+---
+
+## Brain Documentation Enforcement System
+
+## Purpose
+
+Documentation in Brain is validated automatically before commit. The goal is to keep the documentation baseline consistent, English-only, and easy to navigate.
+
+## Enforcement Layers
+
+- Pre-commit hook
+- Incremental validator
+- Manifest baseline
+- Documentation schema and structure rules
+
+## What Is Enforced
+
+- Required frontmatter fields
+- English-only text
+- File naming conventions
+- Markdown syntax correctness
+- Template and section structure
+
+## Where to Fix Issues
+
+- `docs/README.md`
+- `docs/STRUCTURE.md`
+- `docs-manifest.json`
+- `scripts/validate-docs-incremental.sh`
+
+## Outcome
+
+The documentation system stays clean, predictable, and safe to change without manual review of every file.

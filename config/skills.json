@@ -1,0 +1,15 @@
+{
+  "skills": {
+    "cvb": {
+      "description": "",
+      "id": "cvb",
+      "kind": "skill",
+      "maintained": true,
+      "name": "cvb",
+      "scope": "global",
+      "source": "registry.yml",
+      "type": "internal",
+      "version": "1.0.0"
+    }
+  }
+}
