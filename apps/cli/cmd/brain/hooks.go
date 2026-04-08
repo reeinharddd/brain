@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
 )
 
 var (
@@ -255,7 +257,8 @@ func hookBlockEnvWrites(out io.Writer) int {
 
 func hookInjectGlobalRules(out io.Writer) int {
 	brainDir := resolveBrainRoot()
-	canonical := filepath.Join(brainDir, "rules", "canonical.md")
+	locator := coreartifacts.NewLocator(brainDir)
+	canonical := locator.DomainFile("rules", "canonical.md")
 	canonicalInfo, err := os.Stat(canonical)
 	if err != nil {
 		fmt.Fprintln(out, "[warn] canonical rules not available:", err)
@@ -263,9 +266,9 @@ func hookInjectGlobalRules(out io.Writer) int {
 	}
 
 	adapters := []string{
-		filepath.Join(brainDir, "adapters", "claude-code", "CLAUDE.md"),
-		filepath.Join(brainDir, "adapters", "cursor", ".cursorrules"),
-		filepath.Join(brainDir, "adapters", "windsurf", ".windsurfrules"),
+		filepath.Join(locator.DomainDir("adapters"), "claude-code", "CLAUDE.md"),
+		filepath.Join(locator.DomainDir("adapters"), "cursor", ".cursorrules"),
+		filepath.Join(locator.DomainDir("adapters"), "windsurf", ".windsurfrules"),
 	}
 
 	outdated := false

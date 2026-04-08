@@ -23,11 +23,20 @@ func TestReadConfiguredRootValidation(t *testing.T) {
 		t.Setenv("HOME", homeDir)
 
 		root := filepath.Join(homeDir, "workspace", "brain")
-		if err := os.MkdirAll(root, 0755); err != nil {
+		if err := os.MkdirAll(filepath.Join(root, "apps", "cli", "cmd", "brain"), 0755); err != nil {
 			t.Fatalf("mkdir root: %v", err)
+		}
+		if err := os.MkdirAll(filepath.Join(root, "apps", "daemon", "cmd", "braind"), 0755); err != nil {
+			t.Fatalf("mkdir daemon app tree: %v", err)
 		}
 		if err := os.WriteFile(filepath.Join(root, "manifest.yml"), []byte("version: 1"), 0644); err != nil {
 			t.Fatalf("write manifest: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(root, "apps", "cli", "cmd", "brain", "main.go"), []byte("package main\n"), 0644); err != nil {
+			t.Fatalf("write cli main: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(root, "apps", "daemon", "cmd", "braind", "main.go"), []byte("package main\n"), 0644); err != nil {
+			t.Fatalf("write daemon main: %v", err)
 		}
 
 		configPath := configRootFilePath()
@@ -67,11 +76,20 @@ func TestResolveBrainRootPrefersEnvironment(t *testing.T) {
 	t.Setenv("HOME", homeDir)
 
 	envRoot := filepath.Join(homeDir, "env-brain")
-	if err := os.MkdirAll(envRoot, 0755); err != nil {
+	if err := os.MkdirAll(filepath.Join(envRoot, "apps", "cli", "cmd", "brain"), 0755); err != nil {
 		t.Fatalf("mkdir env root: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(envRoot, "apps", "daemon", "cmd", "braind"), 0755); err != nil {
+		t.Fatalf("mkdir env daemon tree: %v", err)
 	}
 	if err := os.WriteFile(filepath.Join(envRoot, "manifest.yml"), []byte("version: 1"), 0644); err != nil {
 		t.Fatalf("write manifest: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(envRoot, "apps", "cli", "cmd", "brain", "main.go"), []byte("package main\n"), 0644); err != nil {
+		t.Fatalf("write env cli main: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(envRoot, "apps", "daemon", "cmd", "braind", "main.go"), []byte("package main\n"), 0644); err != nil {
+		t.Fatalf("write env daemon main: %v", err)
 	}
 
 	t.Setenv("BRAIN_ROOT", envRoot)

@@ -14,6 +14,8 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	coreruntime "github.com/reeinharrrd/brain/core/runtime"
 )
 
 type TestSuiteConfig struct {
@@ -198,45 +200,11 @@ func parseCLIOptions(args []string) (CLIOptions, error) {
 }
 
 func resolveBrainRoot() (string, error) {
-	if envRoot := strings.TrimSpace(os.Getenv("BRAIN_ROOT")); isBrainRoot(envRoot) {
-		return envRoot, nil
+	root := coreruntime.ResolveBrainRoot()
+	if coreruntime.IsBrainRoot(root) {
+		return root, nil
 	}
-
-	if cwd, err := os.Getwd(); err == nil {
-		search := cwd
-		for {
-			if isBrainRoot(search) {
-				return search, nil
-			}
-			parent := filepath.Dir(search)
-			if parent == search {
-				break
-			}
-			search = parent
-		}
-	}
-
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	fallback := filepath.Join(home, ".brain")
-	if isBrainRoot(fallback) {
-		return fallback, nil
-	}
-
 	return "", fmt.Errorf("brain root not found")
-}
-
-func isBrainRoot(path string) bool {
-	if path == "" {
-		return false
-	}
-	manifestPath := filepath.Join(path, "manifest.yml")
-	if _, err := os.Stat(manifestPath); err != nil {
-		return false
-	}
-	return true
 }
 
 func loadTestConfig(root string) (*TestConfig, error) {
@@ -355,9 +323,9 @@ func cleanYAMLValue(value string) string {
 func discoverTestFiles(root, suite string) ([]string, error) {
 	base := filepath.Join(root, suite)
 	if suite == "daemon" {
-		base = filepath.Join(root, "daemon")
+		base = filepath.Join(root, "apps", "daemon")
 	} else if suite == "cli" {
-		base = filepath.Join(root, "cli")
+		base = filepath.Join(root, "apps", "cli")
 	}
 
 	files := make([]string, 0)
@@ -386,10 +354,10 @@ func discoverTestFiles(root, suite string) ([]string, error) {
 func runGoTestSuite(ctx context.Context, root string, suite TestSuiteConfig, paths []string, logger *Logger) (runStats, error) {
 	moduleDir := filepath.Join(root, suite.Name)
 	if suite.Name == "daemon" {
-		moduleDir = filepath.Join(root, "daemon")
+		moduleDir = filepath.Join(root, "apps", "daemon")
 	}
 	if suite.Name == "cli" {
-		moduleDir = filepath.Join(root, "cli")
+		moduleDir = filepath.Join(root, "apps", "cli")
 	}
 
 	if len(paths) == 0 {
@@ -496,10 +464,10 @@ func packagesFromTests(root, suite string, testFiles []string) []string {
 
 	base := filepath.Join(root, suite)
 	if suite == "daemon" {
-		base = filepath.Join(root, "daemon")
+		base = filepath.Join(root, "apps", "daemon")
 	}
 	if suite == "cli" {
-		base = filepath.Join(root, "cli")
+		base = filepath.Join(root, "apps", "cli")
 	}
 
 	set := make(map[string]struct{})

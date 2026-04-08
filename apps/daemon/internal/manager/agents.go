@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 
+	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
 	"gopkg.in/yaml.v3"
 )
 
@@ -42,26 +43,11 @@ func NewAgentsManager(brainRoot string, logCh chan string) *AgentsManager {
 }
 
 func (r *AgentsManager) resolveAgentsDir() string {
-	candidates := []string{
-		filepath.Join(r.brainRoot, "artifacts", "agents"),
-		filepath.Join(r.brainRoot, "agents"),
-	}
-
-	for _, dir := range candidates {
-		if info, err := os.Stat(dir); err == nil && info.IsDir() {
-			return dir
-		}
-	}
-
-	return candidates[0]
+	return coreartifacts.NewLocator(r.brainRoot).DomainDir("agents")
 }
 
 func (r *AgentsManager) relativePromptFile(name string) string {
-	artifactPath := filepath.Join("artifacts", "agents", name)
-	if _, err := os.Stat(filepath.Join(r.brainRoot, artifactPath)); err == nil {
-		return artifactPath
-	}
-	return filepath.Join("agents", name)
+	return coreartifacts.NewLocator(r.brainRoot).CanonicalRelative("agents", name)
 }
 
 // Load reads agents from the canonical artifacts tree and falls back to legacy paths.

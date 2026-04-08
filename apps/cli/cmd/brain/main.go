@@ -13,84 +13,22 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	coreruntime "github.com/reeinharrrd/brain/core/runtime"
 )
 
 const DAEMON_URL = "http://localhost:9090"
 const DAEMON_WS = "ws://localhost:9090/ws"
 
-func configRootFilePath() string {
-	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".config", "brain", "root")
-}
-
 func saveConfiguredRoot(root string) {
-	conf := configRootFilePath()
-	_ = os.MkdirAll(filepath.Dir(conf), 0755)
-	_ = os.WriteFile(conf, []byte(root+"\n"), 0644)
+	_ = coreruntime.SaveConfiguredRoot(root)
 }
 
 func readConfiguredRoot() string {
-	conf := configRootFilePath()
-	b, err := os.ReadFile(conf)
-	if err != nil {
-		return ""
-	}
-	root := strings.TrimSpace(string(b))
-	if root == "" {
-		return ""
-	}
-	if _, err := os.Stat(filepath.Join(root, "manifest.yml")); err == nil {
-		return root
-	}
-	return ""
-}
-
-func isBrainRoot(path string) bool {
-	if path == "" {
-		return false
-	}
-	if _, err := os.Stat(filepath.Join(path, "manifest.yml")); err != nil {
-		return false
-	}
-	if _, err := os.Stat(filepath.Join(path, "cli", "cmd", "brain", "main.go")); err != nil {
-		return false
-	}
-	if _, err := os.Stat(filepath.Join(path, "daemon", "cmd", "braind", "main.go")); err != nil {
-		return false
-	}
-	return true
+	return coreruntime.ReadConfiguredRoot()
 }
 
 func resolveBrainRoot() string {
-	if envRoot := strings.TrimSpace(os.Getenv("BRAIN_ROOT")); isBrainRoot(envRoot) {
-		return envRoot
-	}
-
-	if cwd, err := os.Getwd(); err == nil {
-		search := cwd
-		for {
-			if isBrainRoot(search) {
-				return search
-			}
-			parent := filepath.Dir(search)
-			if parent == search {
-				break
-			}
-			search = parent
-		}
-	}
-
-	if configured := readConfiguredRoot(); configured != "" {
-		return configured
-	}
-
-	home, _ := os.UserHomeDir()
-	fallback := filepath.Join(home, ".brain")
-	if isBrainRoot(fallback) {
-		return fallback
-	}
-
-	return fallback
+	return coreruntime.ResolveBrainRoot()
 }
 
 func daemonReachable() bool {
@@ -123,8 +61,8 @@ func installGlobal() {
 		return
 	}
 
-	cliDir := filepath.Join(brainRoot, "cli")
-	daemonDir := filepath.Join(brainRoot, "daemon")
+	cliDir := filepath.Join(brainRoot, "apps", "cli")
+	daemonDir := filepath.Join(brainRoot, "apps", "daemon")
 
 	brainOut := filepath.Join(outDir, "brain")
 	braindOut := filepath.Join(outDir, "braind")
@@ -166,7 +104,7 @@ func daemonStart() {
 	}
 
 	cmd := exec.Command(daemonBinaryPath())
-	cmd.Env = append(os.Environ(), "BRAIN_ROOT="+resolveBrainRoot())
+	cmd.Env = append(os.Environ(), coreruntime.BrainRootEnv+"="+resolveBrainRoot())
 	if err := cmd.Start(); err != nil {
 		fmt.Println("Failed to start daemon:", err)
 		return
@@ -195,7 +133,7 @@ func daemonStop() {
 
 func startUI() {
 	daemonStart()
-	desktopDir := filepath.Join(resolveBrainRoot(), "desktop")
+	desktopDir := filepath.Join(resolveBrainRoot(), "apps", "desktop")
 	cmd := exec.Command("bun", "run", "dev")
 	cmd.Dir = desktopDir
 	cmd.Stdout = os.Stdout
@@ -433,7 +371,7 @@ func printHelp() {
 
 func runTestCommand(args []string) int {
 	brainRoot := resolveBrainRoot()
-	daemonDir := filepath.Join(brainRoot, "daemon")
+	daemonDir := filepath.Join(brainRoot, "apps", "daemon")
 
 	goArgs := []string{"run", "./cmd/testor", "test"}
 	goArgs = append(goArgs, args...)
@@ -443,7 +381,7 @@ func runTestCommand(args []string) int {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
-	cmd.Env = append(os.Environ(), "BRAIN_ROOT="+brainRoot)
+	cmd.Env = append(os.Environ(), coreruntime.BrainRootEnv+"="+brainRoot)
 
 	if err := cmd.Run(); err != nil {
 		var exitErr *exec.ExitError

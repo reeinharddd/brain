@@ -32,7 +32,7 @@ func (g *DependencyGraph) ScanDependencies(root string) error {
 	sourcesByDir := make(map[string][]string)
 	testFiles := make([]string, 0)
 
-	daemonRoot := filepath.Join(root, "daemon")
+	daemonRoot := filepath.Join(root, "apps", "daemon")
 	err := filepath.WalkDir(daemonRoot, func(path string, d os.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr

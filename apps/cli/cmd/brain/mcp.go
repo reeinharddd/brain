@@ -12,6 +12,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
 )
 
 type mcpRequest struct {
@@ -271,14 +273,9 @@ func brainGetRules(brainDir, topic string, maxChars int) string {
 		return "No rules found for empty topic"
 	}
 
-	paths := firstExistingPaths(
-		filepath.Join(brainDir, "artifacts", "rules", "canonical.md"),
-		filepath.Join(brainDir, "rules", "canonical.md"),
-	)
-	paths = append(paths, firstExistingGlob(
-		filepath.Join(brainDir, "artifacts", "rules", "modules", "*.md"),
-		filepath.Join(brainDir, "rules", "modules", "*.md"),
-	)...)
+	locator := coreartifacts.NewLocator(brainDir)
+	paths := locator.FirstExisting(locator.DomainFile("rules", "canonical.md"))
+	paths = append(paths, locator.FirstExistingGlob(filepath.Join(locator.DomainDir("rules"), "modules", "*.md"))...)
 
 	var results []string
 	for _, path := range paths {
@@ -310,15 +307,10 @@ func brainGetAgent(brainDir, name string) string {
 		return "Agent name is required"
 	}
 
-	path, content, err := readFirstExistingFile(
-		filepath.Join(brainDir, "artifacts", "agents", name+".md"),
-		filepath.Join(brainDir, "agents", name+".md"),
-	)
+	locator := coreartifacts.NewLocator(brainDir)
+	path, content, err := locator.ReadFirstExistingFile(filepath.Join(locator.DomainDir("agents"), name+".md"))
 	if err != nil {
-		entries := firstExistingGlob(
-			filepath.Join(brainDir, "artifacts", "agents", "*.md"),
-			filepath.Join(brainDir, "agents", "*.md"),
-		)
+		entries := locator.FirstExistingGlob(filepath.Join(locator.DomainDir("agents"), "*.md"))
 		available := make([]string, 0, len(entries))
 		for _, entry := range entries {
 			available = append(available, strings.TrimSuffix(filepath.Base(entry), ".md"))
@@ -335,10 +327,8 @@ func brainGetAgent(brainDir, name string) string {
 }
 
 func brainListAgents(brainDir string) string {
-	entries := firstExistingGlob(
-		filepath.Join(brainDir, "artifacts", "agents", "*.md"),
-		filepath.Join(brainDir, "agents", "*.md"),
-	)
+	locator := coreartifacts.NewLocator(brainDir)
+	entries := locator.FirstExistingGlob(filepath.Join(locator.DomainDir("agents"), "*.md"))
 	if len(entries) == 0 {
 		return "artifacts/agents/ directory not found"
 	}
@@ -366,15 +356,10 @@ func brainGetCommand(brainDir, name string) string {
 		return "Command name is required"
 	}
 
-	_, content, err := readFirstExistingFile(
-		filepath.Join(brainDir, "artifacts", "commands", name+".md"),
-		filepath.Join(brainDir, "commands", name+".md"),
-	)
+	locator := coreartifacts.NewLocator(brainDir)
+	_, content, err := locator.ReadFirstExistingFile(filepath.Join(locator.DomainDir("commands"), name+".md"))
 	if err != nil {
-		entries := firstExistingGlob(
-			filepath.Join(brainDir, "artifacts", "commands", "*.md"),
-			filepath.Join(brainDir, "commands", "*.md"),
-		)
+		entries := locator.FirstExistingGlob(filepath.Join(locator.DomainDir("commands"), "*.md"))
 		available := make([]string, 0, len(entries))
 		for _, entry := range entries {
 			available = append(available, strings.TrimSuffix(filepath.Base(entry), ".md"))
@@ -384,36 +369,6 @@ func brainGetCommand(brainDir, name string) string {
 	}
 
 	return string(content)
-}
-
-func firstExistingPaths(paths ...string) []string {
-	var existing []string
-	for _, path := range paths {
-		if _, err := os.Stat(path); err == nil {
-			existing = append(existing, path)
-		}
-	}
-	return existing
-}
-
-func firstExistingGlob(patterns ...string) []string {
-	for _, pattern := range patterns {
-		entries, err := filepath.Glob(pattern)
-		if err == nil && len(entries) > 0 {
-			return entries
-		}
-	}
-	return nil
-}
-
-func readFirstExistingFile(paths ...string) (string, []byte, error) {
-	for _, path := range paths {
-		content, err := os.ReadFile(path)
-		if err == nil {
-			return path, content, nil
-		}
-	}
-	return "", nil, os.ErrNotExist
 }
 
 func brainRouteTask(taskDescription string) string {
@@ -460,8 +415,9 @@ func brainSearchRules(brainDir, query string) string {
 		return "No matches for: " + query
 	}
 
-	paths := []string{filepath.Join(brainDir, "rules", "canonical.md")}
-	modulePaths, _ := filepath.Glob(filepath.Join(brainDir, "rules", "modules", "*.md"))
+	locator := coreartifacts.NewLocator(brainDir)
+	paths := []string{locator.DomainFile("rules", "canonical.md")}
+	modulePaths := locator.FirstExistingGlob(filepath.Join(locator.DomainDir("rules"), "modules", "*.md"))
 	paths = append(paths, modulePaths...)
 
 	var results []string
@@ -502,7 +458,7 @@ func brainSearchRules(brainDir, query string) string {
 }
 
 func brainGetProvider(brainDir, taskType string) string {
-	content, err := os.ReadFile(filepath.Join(brainDir, "providers", "providers.yml"))
+	content, err := os.ReadFile(coreartifacts.NewLocator(brainDir).DomainFile("providers", "providers.yml"))
 	if err != nil {
 		return "providers.yml not found"
 	}

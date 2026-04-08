@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 	"sync"
 
+	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
 	"github.com/reeinharrrd/brain/daemon/internal/environment"
 	"gopkg.in/yaml.v3"
 )
@@ -51,16 +51,7 @@ func NewMCPsManager(brainRoot string, environment string, logCh chan string) *MC
 }
 
 func (r *MCPsManager) registryPath() string {
-	candidates := []string{
-		filepath.Join(r.brainRoot, "artifacts", "mcps", "registry.yml"),
-		filepath.Join(r.brainRoot, "mcp", "registry.yml"),
-	}
-	for _, candidate := range candidates {
-		if _, err := os.Stat(candidate); err == nil {
-			return candidate
-		}
-	}
-	return candidates[0]
+	return coreartifacts.NewLocator(r.brainRoot).DomainFile("mcps", "registry.yml")
 }
 
 // Load reads MCPs from registry.yml

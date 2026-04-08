@@ -201,7 +201,7 @@ export default function SkillsList({ onSkillsChange }: SkillsListProps) {
                 borderRadius: "3px",
               }}
             >
-              BRAIN_ROOT=$HOME/.brain ./daemon/braind
+              BRAIN_ROOT=$HOME/.brain ./apps/daemon/braind
             </code>
           </div>
         </div>

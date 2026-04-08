@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 
+	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
 	"gopkg.in/yaml.v3"
 )
 
@@ -68,42 +69,15 @@ func NewSkillsRegistry(brainRoot string, logCh chan string) *SkillsRegistry {
 }
 
 func (r *SkillsRegistry) registryPath() string {
-	candidates := []string{
-		filepath.Join(r.brainRoot, "artifacts", "skills", "registry.yml"),
-		filepath.Join(r.brainRoot, "skills", "registry.yml"),
-	}
-	for _, candidate := range candidates {
-		if _, err := os.Stat(candidate); err == nil {
-			return candidate
-		}
-	}
-	return candidates[0]
+	return coreartifacts.NewLocator(r.brainRoot).DomainFile("skills", "registry.yml")
 }
 
 func (r *SkillsRegistry) contextPacksPath() string {
-	candidates := []string{
-		filepath.Join(r.brainRoot, "artifacts", "skills", "dynamic-registry.tsv"),
-		filepath.Join(r.brainRoot, "skills", "dynamic-registry.tsv"),
-	}
-	for _, candidate := range candidates {
-		if _, err := os.Stat(candidate); err == nil {
-			return candidate
-		}
-	}
-	return candidates[0]
+	return coreartifacts.NewLocator(r.brainRoot).DomainFile("skills", "dynamic-registry.tsv")
 }
 
 func (r *SkillsRegistry) skillsDir() string {
-	candidates := []string{
-		filepath.Join(r.brainRoot, "artifacts", "skills"),
-		filepath.Join(r.brainRoot, "skills"),
-	}
-	for _, candidate := range candidates {
-		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
-			return candidate
-		}
-	}
-	return candidates[0]
+	return coreartifacts.NewLocator(r.brainRoot).DomainDir("skills")
 }
 
 // Load reads skills from registry.yml and context-packs from dynamic-registry.tsv

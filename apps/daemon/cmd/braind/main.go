@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 
+	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
+	coreruntime "github.com/reeinharrrd/brain/core/runtime"
 	"github.com/reeinharrrd/brain/daemon/internal/api/handlers"
 	brainenv "github.com/reeinharrrd/brain/daemon/internal/environment"
 	"github.com/reeinharrrd/brain/daemon/internal/manager"
@@ -53,38 +54,15 @@ type BrainDaemon struct {
 }
 
 func configRootFilePath() string {
-	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".config", "brain", "root")
+	return coreruntime.ConfigRootFilePath()
 }
 
 func readConfiguredRoot() string {
-	b, err := os.ReadFile(configRootFilePath())
-	if err != nil {
-		return ""
-	}
-	root := strings.TrimSpace(string(b))
-	if root == "" {
-		return ""
-	}
-	if _, err := os.Stat(filepath.Join(root, "manifest.yml")); err == nil {
-		return root
-	}
-	return ""
+	return coreruntime.ReadConfiguredRoot()
 }
 
 func resolveBrainRoot() string {
-	if envRoot := strings.TrimSpace(os.Getenv("BRAIN_ROOT")); envRoot != "" {
-		if _, err := os.Stat(filepath.Join(envRoot, "manifest.yml")); err == nil {
-			return envRoot
-		}
-	}
-
-	if configured := readConfiguredRoot(); configured != "" {
-		return configured
-	}
-
-	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".brain")
+	return coreruntime.ResolveBrainRoot()
 }
 
 func cors(w http.ResponseWriter, r *http.Request) bool {
@@ -977,6 +955,7 @@ func main() {
 }
 
 func (d *BrainDaemon) startSyncSubsystem() {
+	locator := coreartifacts.NewLocator(d.brainRoot)
 	watcher, err := syncengine.NewFileWatcher(d.logChannel, func() error {
 		return d.triggerSync(false)
 	})
@@ -987,18 +966,12 @@ func (d *BrainDaemon) startSyncSubsystem() {
 
 	paths := []string{
 		filepath.Join(d.brainRoot, "manifest.yml"),
-		filepath.Join(d.brainRoot, "artifacts", "skills", "registry.yml"),
-		filepath.Join(d.brainRoot, "artifacts", "skills", "dynamic-registry.tsv"),
-		filepath.Join(d.brainRoot, "skills", "registry.yml"),
-		filepath.Join(d.brainRoot, "skills", "dynamic-registry.tsv"),
-		filepath.Join(d.brainRoot, "artifacts", "mcps", "registry.yml"),
-		filepath.Join(d.brainRoot, "mcp", "registry.yml"),
-		filepath.Join(d.brainRoot, "artifacts", "providers", "providers.yml"),
-		filepath.Join(d.brainRoot, "providers", "providers.yml"),
-		filepath.Join(d.brainRoot, "artifacts", "rules", "canonical.md"),
-		filepath.Join(d.brainRoot, "rules", "canonical.md"),
-		filepath.Join(d.brainRoot, "artifacts", "agents"),
-		filepath.Join(d.brainRoot, "agents"),
+		locator.DomainFile("skills", "registry.yml"),
+		locator.DomainFile("skills", "dynamic-registry.tsv"),
+		locator.DomainFile("mcps", "registry.yml"),
+		locator.DomainFile("providers", "providers.yml"),
+		locator.DomainFile("rules", "canonical.md"),
+		locator.DomainDir("agents"),
 	}
 
 	if err := watcher.Start(paths...); err != nil {
