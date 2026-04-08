@@ -1,0 +1,20 @@
+name: Docs Boundary
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  markdown-boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate markdown boundary
+        shell: bash
+        run: |
+          bash ./utils/scripts/validate-markdown-boundary.sh

@@ -32,6 +32,8 @@ This is the official navigation entry for Brain documentation.
 - `docs/architecture/memory-and-knowledge-architecture.md`
 - `docs/architecture/llm-and-ide-operating-model.md`
 - `docs/architecture/context-agent-systems-and-cost-optimization.md`
+- `docs/architecture/model-compatibility-and-capability-layering.md`
+- `docs/architecture/artifact-migration-and-compatibility-plan.md`
 - `docs/architecture/capability-control-plane-roadmap.md`
 - `docs/architecture/environment-configuration.md`
 - `docs/architecture/development-methodology.md`

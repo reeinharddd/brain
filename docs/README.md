@@ -49,6 +49,7 @@ Start here for the official direction of the project:
 - [identity-policy-security.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/identity-policy-security.md)
 - [ai-runtime-and-context-optimization.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/ai-runtime-and-context-optimization.md)
 - [memory-and-knowledge-architecture.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/memory-and-knowledge-architecture.md)
+- [model-compatibility-and-capability-layering.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/model-compatibility-and-capability-layering.md)
 - [testing-strategy.md](/home/reeinharrrd/Work/Personal/brain/docs/testing/testing-strategy.md)
 
 ## Quality Principles

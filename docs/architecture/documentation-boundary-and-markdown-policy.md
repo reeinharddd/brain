@@ -36,15 +36,17 @@ Canonical documentation includes:
 
 ## Non-Canonical Markdown
 
-Markdown outside `docs/` may still exist when it is part of the product runtime or artifact payload.
+Markdown outside `docs/` may still exist only when it is part of the runtime or artifact payload layer.
+
+The canonical operational location is now `artifacts/`.
 
 Examples:
 
-- `agents/*.md`
-- `commands/*.md`
-- `rules/**/*.md`
-- `adapters/**/*.md`
-- `mcp/**/README.md`
+- `artifacts/agents/*.md`
+- `artifacts/commands/*.md`
+- `artifacts/rules/**/*.md`
+- `artifacts/adapters/**/*.md`
+- `artifacts/mcps/**/*.md`
 
 These files are not treated as documentation pages. They are operational source artifacts consumed by Brain or by external tools.
 
@@ -55,7 +57,9 @@ The long-term target is:
 - documentation Markdown only in `docs/`
 - operational artifacts migrated into the unified `artifacts/` system
 
-Until that migration is complete, Markdown outside `docs/` is allowed only when it is required by runtime behavior or adapter compatibility.
+Until that migration is complete, legacy paths such as `agents/`, `commands/`, `rules/`, `adapters/`, `mcp/`, `guardian/`, and `hooks/` may still exist only as compatibility shims.
+
+Legacy locations must not host canonical Markdown content directly.
 
 ## Prohibited Cases
 
@@ -84,6 +88,11 @@ Future documentation validation should enforce:
 - no duplicated canonical content between `docs/` and runtime artifact paths
 - explicit classification for Markdown outside `docs/`
 
+The repository now enforces this boundary with:
+
+- `utils/scripts/validate-markdown-boundary.sh`
+- `.github/workflows/docs-boundary.yml`
+
 ## Decision
 
-Brain will treat `docs/` as the only canonical documentation root, while allowing transitional Markdown outside `docs/` only for runtime artifact purposes.
+Brain will treat `docs/` as the only canonical documentation root, while allowing operational Markdown under `artifacts/` and temporary legacy symlink shims during migration.

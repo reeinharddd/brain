@@ -355,7 +355,10 @@ func hookRunAutoUpdate(out io.Writer) int {
 
 	needsSync := false
 	for _, path := range paths {
-		if strings.HasPrefix(path, "skills/") || strings.HasPrefix(path, "agents/") {
+		if strings.HasPrefix(path, "skills/") ||
+			strings.HasPrefix(path, "agents/") ||
+			strings.HasPrefix(path, "artifacts/skills/") ||
+			strings.HasPrefix(path, "artifacts/agents/") {
 			needsSync = true
 			break
 		}

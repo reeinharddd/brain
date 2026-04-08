@@ -23,9 +23,11 @@ This folder contains the canonical architecture documents for Brain.
 6. [memory-and-knowledge-architecture.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/memory-and-knowledge-architecture.md)
 7. [llm-and-ide-operating-model.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/llm-and-ide-operating-model.md)
 8. [context-agent-systems-and-cost-optimization.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/context-agent-systems-and-cost-optimization.md)
+9. [model-compatibility-and-capability-layering.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/model-compatibility-and-capability-layering.md)
 
 ## Supporting Documents
 
+- [artifact-migration-and-compatibility-plan.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/artifact-migration-and-compatibility-plan.md)
 - [capability-control-plane-roadmap.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/capability-control-plane-roadmap.md)
 - [environment-configuration.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/environment-configuration.md)
 - [development-methodology.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/development-methodology.md)

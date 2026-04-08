@@ -18,7 +18,7 @@ type Agent struct {
 	Description string   `yaml:"description" json:"description"`
 	Version     string   `yaml:"version" json:"version"`
 	Model       string   `yaml:"model" json:"model"`
-	Temperature float64 `yaml:"temperature" json:"temperature"`
+	Temperature float64  `yaml:"temperature" json:"temperature"`
 	PromptFile  string   `yaml:"prompt_file" json:"prompt_file"`
 	Tags        []string `yaml:"tags" json:"tags"`
 	Maintained  bool     `yaml:"maintained" json:"maintained"`
@@ -41,17 +41,40 @@ func NewAgentsManager(brainRoot string, logCh chan string) *AgentsManager {
 	}
 }
 
-// Load reads agents from the agents/ folder and manifest
+func (r *AgentsManager) resolveAgentsDir() string {
+	candidates := []string{
+		filepath.Join(r.brainRoot, "artifacts", "agents"),
+		filepath.Join(r.brainRoot, "agents"),
+	}
+
+	for _, dir := range candidates {
+		if info, err := os.Stat(dir); err == nil && info.IsDir() {
+			return dir
+		}
+	}
+
+	return candidates[0]
+}
+
+func (r *AgentsManager) relativePromptFile(name string) string {
+	artifactPath := filepath.Join("artifacts", "agents", name)
+	if _, err := os.Stat(filepath.Join(r.brainRoot, artifactPath)); err == nil {
+		return artifactPath
+	}
+	return filepath.Join("agents", name)
+}
+
+// Load reads agents from the canonical artifacts tree and falls back to legacy paths.
 func (r *AgentsManager) Load(ctx context.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	r.log("Loading agents from agents/ folder")
+	agentsDir := r.resolveAgentsDir()
+	r.log(fmt.Sprintf("Loading agents from %s", strings.TrimPrefix(agentsDir, r.brainRoot+string(os.PathSeparator))))
 
-	agentsDir := filepath.Join(r.brainRoot, "agents")
 	r.agents = make(map[string]*Agent)
 
-	// List all .md files in agents/
+	// List all .md files in the canonical or fallback agent directory.
 	entries, err := os.ReadDir(agentsDir)
 	if err != nil {
 		r.log(fmt.Sprintf("Error reading agents directory: %v", err))
@@ -59,7 +82,7 @@ func (r *AgentsManager) Load(ctx context.Context) error {
 	}
 
 	// Try to load agents manifest if it exists
-	manifestPath := filepath.Join(r.brainRoot, "agents", "manifest.yml")
+	manifestPath := filepath.Join(agentsDir, "manifest.yml")
 	var manifestData map[string]interface{}
 	if data, err := os.ReadFile(manifestPath); err == nil {
 		if err := yaml.Unmarshal(data, &manifestData); err == nil {
@@ -87,7 +110,7 @@ func (r *AgentsManager) Load(ctx context.Context) error {
 			agent := &Agent{
 				ID:          id,
 				Name:        strings.Title(id),
-				PromptFile:  filepath.Join("agents", entry.Name()),
+				PromptFile:  r.relativePromptFile(entry.Name()),
 				Version:     "1.0.0",
 				Model:       "claude-opus",
 				Temperature: 0.5,

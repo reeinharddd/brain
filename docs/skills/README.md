@@ -18,6 +18,8 @@ Skills are governed as artifacts, not as a separate documentation-heavy subsyste
 ## Current Canonical Files
 
 - [skill-artifact-authoring.md](/home/reeinharrrd/Work/Personal/brain/docs/skills/skill-artifact-authoring.md)
+- [prompt-engineering-for-brain-artifacts.md](/home/reeinharrrd/Work/Personal/brain/docs/skills/prompt-engineering-for-brain-artifacts.md)
+- [advanced-skill-design-and-composition.md](/home/reeinharrrd/Work/Personal/brain/docs/skills/advanced-skill-design-and-composition.md)
 
 ## Rules
 
@@ -34,7 +36,7 @@ The skill system is validated automatically by the Brain daemon and exposed thro
 
 ## Creating a New Skill
 
-1. **Use template**: `../templates/skill-template.md`
+1. **Use template**: `docs/templates/functional/skills/TEMPLATE.md`
 2. **Name it**: `skill-[descriptive-name].md`
 3. **Define contracts**: Input schema → Output schema
 4. **Document errors**: Error codes with handling procedures
@@ -73,4 +75,4 @@ Cost/Performance: Metrics
 
 ---
 
-**Last updated**: 2026-04-03
+**Last updated**: 2026-04-07

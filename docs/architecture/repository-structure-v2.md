@@ -115,6 +115,8 @@ artifacts/
 
 - Create new directories.
 - Add compatibility reads from old and new paths.
+- Move canonical operational Markdown into `artifacts/`.
+- Keep legacy directories as symlink-based shims only.
 
 ### Phase 2: Move Canonical Sources
 
