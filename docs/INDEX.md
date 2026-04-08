@@ -27,6 +27,7 @@ This is the official navigation entry for Brain documentation.
 - `docs/architecture/brain-v2-target-architecture.md`
 - `docs/architecture/repository-structure-v2.md`
 - `docs/architecture/artifact-system-contract.md`
+- `docs/architecture/control-plane-domain-map.md`
 - `docs/architecture/identity-policy-security.md`
 - `docs/architecture/ai-runtime-and-context-optimization.md`
 - `docs/architecture/memory-and-knowledge-architecture.md`

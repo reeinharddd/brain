@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brain.dev/schemas/identity-artifact.schema.json",
+  "title": "Brain Identity Artifact",
+  "allOf": [
+    {
+      "$ref": "https://brain.dev/schemas/artifact-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "identity"
+        },
+        "identity": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["authMode", "roleModel"],
+          "properties": {
+            "authMode": {
+              "type": "string",
+              "enum": ["local", "cloud", "hybrid"]
+            },
+            "roleModel": {
+              "type": "string",
+              "enum": ["rbac", "abac", "hybrid"]
+            },
+            "scopes": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      },
+      "required": ["identity"]
+    }
+  ]
+}

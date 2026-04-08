@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brain.dev/schemas/memory-artifact.schema.json",
+  "title": "Brain Memory Artifact",
+  "allOf": [
+    {
+      "$ref": "https://brain.dev/schemas/artifact-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "memory"
+        },
+        "memory": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["backend", "retrievalMode"],
+          "properties": {
+            "backend": {
+              "type": "string",
+              "enum": ["qdrant", "local-index", "managed"]
+            },
+            "retrievalMode": {
+              "type": "string",
+              "enum": ["structured", "semantic", "hybrid"]
+            },
+            "classification": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      },
+      "required": ["memory"]
+    }
+  ]
+}

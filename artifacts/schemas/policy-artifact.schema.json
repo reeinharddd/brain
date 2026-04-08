@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brain.dev/schemas/policy-artifact.schema.json",
+  "title": "Brain Policy Artifact",
+  "allOf": [
+    {
+      "$ref": "https://brain.dev/schemas/artifact-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "policy"
+        },
+        "policy": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["engine", "defaultEffect"],
+          "properties": {
+            "engine": {
+              "type": "string",
+              "enum": ["native", "opa", "hybrid"]
+            },
+            "defaultEffect": {
+              "type": "string",
+              "enum": ["allow", "deny", "deny-by-default"]
+            },
+            "enforcementMode": {
+              "type": "string",
+              "enum": ["advisory", "enforced", "mixed"]
+            }
+          }
+        }
+      },
+      "required": ["policy"]
+    }
+  ]
+}

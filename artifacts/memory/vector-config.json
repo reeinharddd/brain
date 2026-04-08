@@ -1,0 +1,8 @@
+{
+  "provider": "qdrant",
+  "enabled": true,
+  "collection": "brain-codebase-context",
+  "url": "http://localhost:6333",
+  "embedding_model": "text-embedding-3-small",
+  "notes": "Optional vector backend for codebase contextualization and semantic recall."
+}

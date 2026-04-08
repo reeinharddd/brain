@@ -29,6 +29,7 @@ This folder contains the canonical architecture documents for Brain.
 
 - [artifact-migration-and-compatibility-plan.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/artifact-migration-and-compatibility-plan.md)
 - [capability-control-plane-roadmap.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/capability-control-plane-roadmap.md)
+- [control-plane-domain-map.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/control-plane-domain-map.md)
 - [environment-configuration.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/environment-configuration.md)
 - [development-methodology.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/development-methodology.md)
 - [documentation-enforcement-system.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/documentation-enforcement-system.md)

@@ -1,0 +1,21 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "memory",
+  "id": "global-memory",
+  "displayName": "Global Memory Backend",
+  "description": "Primary semantic and structured memory baseline for Brain.",
+  "scope": "user",
+  "owner": "system:brain",
+  "visibility": "private",
+  "lifecycle": {"state": "active"},
+  "source": {"type": "local", "uri": "artifacts/memory/manifest.json"},
+  "sync": {"mode": "hybrid", "cloudEnabled": true},
+  "security": {"trust": "verified", "permissions": {"fs": "read-write", "net": "restricted", "exec": "none"}},
+  "content": {"entrypoint": "artifacts/memory/manifest.json", "files": ["artifacts/memory/manifest.json", "artifacts/memory/vector-config.json"]},
+  "labels": ["memory", "qdrant", "knowledge"],
+  "memory": {
+    "backend": "qdrant",
+    "retrievalMode": "hybrid",
+    "classification": ["structured", "semantic", "derived"]
+  }
+}

@@ -18,6 +18,10 @@ SCHEMA_BY_KIND = {
     "mcp": SCHEMAS_DIR / "mcp-artifact.schema.json",
     "skill": SCHEMAS_DIR / "skill-artifact.schema.json",
     "adapter": SCHEMAS_DIR / "adapter-artifact.schema.json",
+    "memory": SCHEMAS_DIR / "memory-artifact.schema.json",
+    "ai": SCHEMAS_DIR / "ai-artifact.schema.json",
+    "identity": SCHEMAS_DIR / "identity-artifact.schema.json",
+    "policy": SCHEMAS_DIR / "policy-artifact.schema.json",
 }
 
 BASE_SCHEMAS = [
@@ -32,6 +36,10 @@ MANIFEST_GLOBS = [
     ROOT / "artifacts" / "mcps" / "manifests" / "*.artifact.json",
     ROOT / "artifacts" / "skills" / "manifests" / "*.artifact.json",
     ROOT / "artifacts" / "providers" / "manifests" / "*.artifact.json",
+    ROOT / "artifacts" / "memory" / "manifests" / "*.artifact.json",
+    ROOT / "artifacts" / "ai" / "manifests" / "*.artifact.json",
+    ROOT / "artifacts" / "identity" / "manifests" / "*.artifact.json",
+    ROOT / "artifacts" / "policy" / "manifests" / "*.artifact.json",
 ]
 
 

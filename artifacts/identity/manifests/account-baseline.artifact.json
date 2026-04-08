@@ -1,0 +1,21 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "identity",
+  "id": "account-baseline",
+  "displayName": "Identity Baseline",
+  "description": "Baseline account and role hierarchy for Brain scopes and login flows.",
+  "scope": "organization",
+  "owner": "system:brain",
+  "visibility": "organization",
+  "lifecycle": {"state": "active"},
+  "source": {"type": "manual", "uri": "artifacts/identity/account-model.json"},
+  "sync": {"mode": "cloud", "cloudEnabled": true},
+  "security": {"trust": "verified", "permissions": {"fs": "read", "net": "restricted", "exec": "none"}},
+  "content": {"entrypoint": "artifacts/identity/account-model.json", "files": ["artifacts/identity/account-model.json"]},
+  "labels": ["identity", "accounts", "rbac"],
+  "identity": {
+    "authMode": "hybrid",
+    "roleModel": "rbac",
+    "scopes": ["platform", "organization", "team", "user", "workspace", "project", "session"]
+  }
+}

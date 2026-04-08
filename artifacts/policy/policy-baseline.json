@@ -1,0 +1,6 @@
+{
+  "evaluation_order": ["platform", "organization", "team", "user", "workspace", "project", "session"],
+  "default_effect": "deny-by-default",
+  "approval_required_for": ["exec:allow", "net:allow", "scope-escalation"],
+  "notes": "Shared baseline for policy evaluation and approval gates."
+}

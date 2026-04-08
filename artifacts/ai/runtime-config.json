@@ -1,0 +1,6 @@
+{
+  "default_runtime": "auto",
+  "runtimes": ["ollama", "openai-compatible", "cloud"],
+  "routing_policy": "cost-aware",
+  "notes": "Runtime baseline for local, hybrid, and hosted model execution."
+}

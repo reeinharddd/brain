@@ -1,0 +1,21 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "ai",
+  "id": "runtime-baseline",
+  "displayName": "AI Runtime Baseline",
+  "description": "Baseline runtime and routing contract for Brain-managed model execution.",
+  "scope": "user",
+  "owner": "system:brain",
+  "visibility": "private",
+  "lifecycle": {"state": "active"},
+  "source": {"type": "manual", "uri": "artifacts/ai/runtime-config.json"},
+  "sync": {"mode": "hybrid", "cloudEnabled": true},
+  "security": {"trust": "verified", "permissions": {"fs": "read", "net": "restricted", "exec": "restricted"}},
+  "content": {"entrypoint": "artifacts/ai/runtime-config.json", "files": ["artifacts/ai/runtime-config.json"]},
+  "labels": ["ai", "runtime", "routing"],
+  "ai": {
+    "runtimeType": "hybrid",
+    "routingMode": "cost-aware",
+    "capabilities": ["local-execution", "tool-calling", "routing", "fallbacks"]
+  }
+}

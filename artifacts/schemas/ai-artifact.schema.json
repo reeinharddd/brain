@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brain.dev/schemas/ai-artifact.schema.json",
+  "title": "Brain AI Artifact",
+  "allOf": [
+    {
+      "$ref": "https://brain.dev/schemas/artifact-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "ai"
+        },
+        "ai": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["runtimeType", "routingMode"],
+          "properties": {
+            "runtimeType": {
+              "type": "string",
+              "enum": ["local", "cloud", "hybrid"]
+            },
+            "routingMode": {
+              "type": "string",
+              "enum": ["manual", "policy-driven", "cost-aware", "latency-aware"]
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      },
+      "required": ["ai"]
+    }
+  ]
+}

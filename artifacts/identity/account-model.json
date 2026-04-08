@@ -1,0 +1,6 @@
+{
+  "hierarchy": ["platform", "organization", "team", "user", "workspace", "project", "session"],
+  "auth_modes": ["local", "cloud", "hybrid"],
+  "default_role_model": "rbac",
+  "notes": "Identity baseline for account, scope, and access coordination."
+}
