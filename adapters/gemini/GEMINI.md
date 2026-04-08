@@ -1,1 +1,0 @@
-../../artifacts/adapters/gemini/GEMINI.md

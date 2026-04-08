@@ -1,1 +1,0 @@
-../../artifacts/adapters/cline/cline_custom_instructions.md

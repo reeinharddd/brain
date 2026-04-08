@@ -1,1 +1,0 @@
-../../artifacts/rules/modules/workflow.md

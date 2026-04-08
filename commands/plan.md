@@ -1,1 +1,0 @@
-../artifacts/commands/plan.md

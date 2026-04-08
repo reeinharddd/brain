@@ -1,1 +1,0 @@
-../../artifacts/mcps/docs-rag-mcp/README.md

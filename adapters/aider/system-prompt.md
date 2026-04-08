@@ -1,1 +1,0 @@
-../../artifacts/adapters/aider/system-prompt.md

@@ -1,1 +1,0 @@
-../artifacts/agents/debugger.md

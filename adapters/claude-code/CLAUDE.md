@@ -1,1 +1,0 @@
-../../artifacts/adapters/claude-code/CLAUDE.md

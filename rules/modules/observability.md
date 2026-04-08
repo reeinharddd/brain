@@ -1,1 +1,0 @@
-../../artifacts/rules/modules/observability.md

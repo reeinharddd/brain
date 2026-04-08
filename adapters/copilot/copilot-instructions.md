@@ -1,1 +1,0 @@
-../../artifacts/adapters/copilot/copilot-instructions.md

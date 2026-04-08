@@ -1,1 +1,0 @@
-../../artifacts/rules/compiled/full.md

@@ -1,1 +1,0 @@
-../artifacts/agents/guardian.md

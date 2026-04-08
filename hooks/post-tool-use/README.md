@@ -1,1 +1,0 @@
-../../artifacts/hooks/post-tool-use/README.md

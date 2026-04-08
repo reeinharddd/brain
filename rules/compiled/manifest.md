@@ -1,1 +1,0 @@
-../../artifacts/rules/compiled/manifest.md

@@ -1,1 +1,0 @@
-../artifacts/internal/guardian/README.md

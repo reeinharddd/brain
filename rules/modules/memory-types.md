@@ -1,1 +1,0 @@
-../../artifacts/rules/modules/memory-types.md

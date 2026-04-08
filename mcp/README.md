@@ -1,1 +1,0 @@
-../artifacts/mcps/internal/README.md

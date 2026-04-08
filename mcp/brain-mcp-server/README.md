@@ -1,1 +1,0 @@
-../../artifacts/mcps/brain-mcp-server/README.md

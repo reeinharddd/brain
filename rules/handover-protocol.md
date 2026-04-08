@@ -1,1 +1,0 @@
-../artifacts/rules/handover-protocol.md
