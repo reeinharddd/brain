@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brain.dev/schemas/rule-artifact.schema.json",
+  "title": "Brain Rule Artifact",
+  "allOf": [
+    {
+      "$ref": "./artifact-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "rule"
+        },
+        "rule": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "priority",
+            "enforcement"
+          ],
+          "properties": {
+            "priority": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "enforcement": {
+              "type": "string",
+              "enum": [
+                "advisory",
+                "required",
+                "blocking"
+              ]
+            },
+            "mergeStrategy": {
+              "type": "string",
+              "enum": [
+                "append",
+                "replace",
+                "compose"
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "rule"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brain.dev/schemas/command-artifact.schema.json",
+  "title": "Brain Command Artifact",
+  "allOf": [
+    {
+      "$ref": "./artifact-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "command"
+        },
+        "command": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "trigger"
+          ],
+          "properties": {
+            "trigger": {
+              "type": "string",
+              "pattern": "^/[a-z0-9-]+$"
+            },
+            "autoInvokePolicy": {
+              "type": "string",
+              "enum": [
+                "manual",
+                "suggest",
+                "automatic"
+              ]
+            },
+            "outputContract": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "required": [
+        "command"
+      ]
+    }
+  ]
+}

@@ -168,6 +168,14 @@ func ValidateArtifact(input ValidateArtifactInput) error
 - Define base schema and per-kind extensions.
 - Add validation hooks.
 
+The initial schema set now lives under:
+
+- `artifacts/schemas/artifact-envelope.schema.json`
+- `artifacts/schemas/agent-artifact.schema.json`
+- `artifacts/schemas/command-artifact.schema.json`
+- `artifacts/schemas/rule-artifact.schema.json`
+- `artifacts/schemas/mcp-artifact.schema.json`
+
 ### Phase 2: Registry Normalization
 
 - Load all current domains through the common envelope.

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brain.dev/schemas/mcp-artifact.schema.json",
+  "title": "Brain MCP Artifact",
+  "allOf": [
+    {
+      "$ref": "./artifact-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "mcp"
+        },
+        "mcp": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "transport",
+            "profiles"
+          ],
+          "properties": {
+            "transport": {
+              "type": "string",
+              "enum": [
+                "stdio",
+                "http",
+                "sse",
+                "remote"
+              ]
+            },
+            "profiles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "requiredEnv": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "mcp"
+      ]
+    }
+  ]
+}
