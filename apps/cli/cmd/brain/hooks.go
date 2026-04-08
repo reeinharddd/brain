@@ -357,12 +357,25 @@ func hookRunAutoUpdate(out io.Writer) int {
 	}
 
 	needsSync := false
+	trackedDomains := []string{
+		"skills",
+		"agents",
+		"commands",
+		"rules",
+		"mcps",
+		"providers",
+		"adapters",
+	}
+
 	for _, path := range paths {
-		if strings.HasPrefix(path, "skills/") ||
-			strings.HasPrefix(path, "agents/") ||
-			strings.HasPrefix(path, "artifacts/skills/") ||
-			strings.HasPrefix(path, "artifacts/agents/") {
-			needsSync = true
+		for _, domain := range trackedDomains {
+			if coreartifacts.PathInDomain(path, domain) {
+				needsSync = true
+				break
+			}
+		}
+
+		if needsSync {
 			break
 		}
 	}

@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
 	"github.com/reeinharrrd/brain/daemon/internal/manager"
 	"github.com/reeinharrrd/brain/daemon/internal/manifest"
 	"github.com/reeinharrrd/brain/daemon/internal/syncengine/workers"
@@ -59,41 +60,19 @@ func (s *SyncEngine) resolveDomainSource(domainName string) string {
 		return ""
 	}
 
-	candidates := []string{filepath.Join(s.brainRoot(), domConfig.Source)}
-
+	locator := coreartifacts.NewLocator(s.brainRoot())
 	switch domainName {
 	case "rules":
-		candidates = append(candidates,
-			filepath.Join(s.brainRoot(), "artifacts", "rules", "canonical.md"),
-			filepath.Join(s.brainRoot(), "rules", "canonical.md"),
-		)
+		return locator.DomainFile("rules", "canonical.md")
 	case "agents":
-		candidates = append(candidates,
-			filepath.Join(s.brainRoot(), "artifacts", "agents"),
-			filepath.Join(s.brainRoot(), "agents"),
-		)
+		return locator.DomainDir("agents")
 	case "mcp":
-		candidates = append(candidates,
-			filepath.Join(s.brainRoot(), "artifacts", "mcps", "registry.yml"),
-			filepath.Join(s.brainRoot(), "mcp", "registry.yml"),
-		)
+		return locator.DomainFile("mcps", "registry.yml")
 	case "skills":
-		candidates = append(candidates,
-			filepath.Join(s.brainRoot(), "artifacts", "skills", "registry.yml"),
-			filepath.Join(s.brainRoot(), "skills", "registry.yml"),
-		)
+		return locator.DomainFile("skills", "registry.yml")
 	}
 
-	for _, candidate := range candidates {
-		if candidate == "" {
-			continue
-		}
-		if _, err := os.Stat(candidate); err == nil {
-			return candidate
-		}
-	}
-
-	return candidates[0]
+	return filepath.Join(s.brainRoot(), domConfig.Source)
 }
 
 func (s *SyncEngine) RunSync() error {

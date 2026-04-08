@@ -9,7 +9,7 @@ import (
 
 func TestMCPsManagerSkipsDevOnlyInProduction(t *testing.T) {
 	brainRoot := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(brainRoot, "mcp"), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Join(brainRoot, "artifacts", "mcps"), 0755); err != nil {
 		t.Fatalf("Failed to create mcp dir: %v", err)
 	}
 
@@ -23,7 +23,7 @@ func TestMCPsManagerSkipsDevOnlyInProduction(t *testing.T) {
     profile: [standard]
     visibility: dev-only
 `
-	if err := os.WriteFile(filepath.Join(brainRoot, "mcp", "registry.yml"), []byte(registry), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(brainRoot, "artifacts", "mcps", "registry.yml"), []byte(registry), 0644); err != nil {
 		t.Fatalf("Failed to write registry.yml: %v", err)
 	}
 
@@ -49,7 +49,7 @@ func TestMCPsManagerSkipsDevOnlyInProduction(t *testing.T) {
 
 func TestMCPsManagerKeepsDevOnlyInDevelopment(t *testing.T) {
 	brainRoot := t.TempDir()
-	if err := os.MkdirAll(filepath.Join(brainRoot, "mcp"), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Join(brainRoot, "artifacts", "mcps"), 0755); err != nil {
 		t.Fatalf("Failed to create mcp dir: %v", err)
 	}
 
@@ -59,7 +59,7 @@ func TestMCPsManagerKeepsDevOnlyInDevelopment(t *testing.T) {
     profile: [standard]
     visibility: dev-only
 `
-	if err := os.WriteFile(filepath.Join(brainRoot, "mcp", "registry.yml"), []byte(registry), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(brainRoot, "artifacts", "mcps", "registry.yml"), []byte(registry), 0644); err != nil {
 		t.Fatalf("Failed to write registry.yml: %v", err)
 	}
 

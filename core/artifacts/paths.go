@@ -3,6 +3,7 @@ package artifacts
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Locator struct {
@@ -73,13 +74,64 @@ func (l Locator) CanonicalRelative(domain, name string) string {
 	return filepath.Join("artifacts", domain, name)
 }
 
-func legacyDomainDir(root, domain string) string {
+func DomainPrefixes(domain string) []string {
+	canonical := filepath.ToSlash(filepath.Join("artifacts", domain)) + "/"
+	legacy := legacyDomainSegment(domain) + "/"
+
+	if canonical == legacy {
+		return []string{canonical}
+	}
+
+	return []string{canonical, legacy}
+}
+
+func PathInDomain(path, domain string) bool {
+	normalized := normalizePath(path)
+	for _, prefix := range DomainPrefixes(domain) {
+		if strings.HasPrefix(normalized, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+func CanonicalizePath(path, domain string) string {
+	normalized := normalizePath(path)
+	canonicalPrefix := filepath.ToSlash(filepath.Join("artifacts", domain)) + "/"
+
+	if idx := strings.Index(normalized, "/"+canonicalPrefix); idx >= 0 {
+		return normalized[idx+1:]
+	}
+	if strings.HasPrefix(normalized, canonicalPrefix) {
+		return normalized
+	}
+
+	legacyPrefix := legacyDomainSegment(domain) + "/"
+	if idx := strings.Index(normalized, "/"+legacyPrefix); idx >= 0 {
+		return canonicalPrefix + normalized[idx+len("/"+legacyPrefix):]
+	}
+	if strings.HasPrefix(normalized, legacyPrefix) {
+		return canonicalPrefix + strings.TrimPrefix(normalized, legacyPrefix)
+	}
+
+	return normalized
+}
+
+func normalizePath(path string) string {
+	normalized := filepath.ToSlash(filepath.Clean(path))
+	normalized = strings.TrimPrefix(normalized, "./")
+	return normalized
+}
+
+func legacyDomainSegment(domain string) string {
 	switch domain {
 	case "mcps":
-		return filepath.Join(root, "mcp")
-	case "providers":
-		return filepath.Join(root, "providers")
+		return "mcp"
 	default:
-		return filepath.Join(root, domain)
+		return domain
 	}
+}
+
+func legacyDomainDir(root, domain string) string {
+	return filepath.Join(root, legacyDomainSegment(domain))
 }

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
 	"gopkg.in/yaml.v3"
 )
 
@@ -208,14 +209,7 @@ type AgentsWorker struct {
 }
 
 func canonicalAgentPromptPath(agentPath string) string {
-	cleanPath := filepath.ToSlash(filepath.Clean(agentPath))
-	if idx := strings.Index(cleanPath, "/artifacts/agents/"); idx >= 0 {
-		return cleanPath[idx+1:]
-	}
-	if idx := strings.Index(cleanPath, "/agents/"); idx >= 0 {
-		return "artifacts/agents/" + cleanPath[idx+len("/agents/"):]
-	}
-	return cleanPath
+	return coreartifacts.CanonicalizePath(agentPath, "agents")
 }
 
 // Agent represents an agent
