@@ -28,19 +28,7 @@ BASE_SCHEMAS = [
     SCHEMAS_DIR / "artifact-envelope.schema.json",
 ]
 
-MANIFEST_GLOBS = [
-    ROOT / "artifacts" / "agents" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "commands" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "rules" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "adapters" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "mcps" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "skills" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "providers" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "memory" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "ai" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "identity" / "manifests" / "*.artifact.json",
-    ROOT / "artifacts" / "policy" / "manifests" / "*.artifact.json",
-]
+MANIFEST_PATTERN = "artifacts/*/manifests/*.artifact.json"
 
 
 def load_json(path: Path):
@@ -74,9 +62,7 @@ def main() -> int:
         if schema_id:
             schema_store[schema_id] = schema
 
-    manifests = []
-    for pattern in MANIFEST_GLOBS:
-        manifests.extend(sorted(pattern.parent.glob(pattern.name)))
+    manifests = sorted(ROOT.glob(MANIFEST_PATTERN))
 
     if not manifests:
         print("[artifact-manifests] no manifests found")
