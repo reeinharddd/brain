@@ -172,7 +172,9 @@ The initial schema set now lives under:
 
 - `artifacts/schemas/artifact-envelope.schema.json`
 - `artifacts/schemas/agent-artifact.schema.json`
+- `artifacts/schemas/adapter-artifact.schema.json`
 - `artifacts/schemas/command-artifact.schema.json`
+- `artifacts/schemas/skill-artifact.schema.json`
 - `artifacts/schemas/rule-artifact.schema.json`
 - `artifacts/schemas/mcp-artifact.schema.json`
 

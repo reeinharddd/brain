@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://brain.dev/schemas/adapter-artifact.schema.json",
+  "title": "Brain Adapter Artifact",
+  "allOf": [
+    {
+      "$ref": "./artifact-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "adapter"
+        },
+        "adapter": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "target",
+            "format"
+          ],
+          "properties": {
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "markdown",
+                "json",
+                "yaml",
+                "generated"
+              ]
+            },
+            "projection": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "required": [
+        "adapter"
+      ]
+    }
+  ]
+}
