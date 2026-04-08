@@ -2,41 +2,28 @@
 type: documentation
 id: readme-skills
 title: Skills Documentation
-version: 1.0.0
+version: 2.0.0
 status: active
-date_created: 2026-04-03
+date_created: 2026-04-07
 language: en
 category: documentation
 ---
 
 ## Skills Documentation
 
-This folder contains definitions for reusable agent capabilities (skills). Each skill documents what it does, how to call it, error handling, and examples.
+This folder contains only the canonical documentation needed to explain how skills fit into Brain v2.
 
-## What's Here
+Skills are governed as artifacts, not as a separate documentation-heavy subsystem.
 
-- Skill definitions with complete input/output contracts
-- Error codes and handling procedures
-- Usage examples and anti-patterns
-- Compatibility information
-- Performance and cost metrics
-- Automatic validation and orchestration guidance for the Go-based skill system
+## Current Canonical Files
 
-## How to Find Skills
+- [skill-artifact-authoring.md](/home/reeinharrrd/Work/Personal/brain/docs/skills/skill-artifact-authoring.md)
 
-All skills in this folder follow the naming convention: `skill-[name].md`
+## Rules
 
-**By category**: Check the `category` field in frontmatter
-
-**By function**: Browse the skills list below
-
-**By validation status**: Use the daemon-backed check exposed through `brain skills validate`
-
-## Available Skills
-
-- [Enforcement Rules](ENFORCEMENT-RULES.md) — Validation & integrity rules
-
-## Validation Model
+- Cross-project reusable guidance should be promoted upward instead of duplicated in every skill.
+- Skill behavior is resolved by daemon policy and scope hierarchy.
+- Historical skill process notes and UI walkthroughs do not belong in this folder.
 
 The skill system is validated automatically by the Brain daemon and exposed through the CLI and UI.
 

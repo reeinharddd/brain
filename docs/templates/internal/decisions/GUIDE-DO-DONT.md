@@ -14,7 +14,7 @@ internal: true
 
 **Decisions** document architectural choices with rationale, options considered, and consequences.
 
-Examples: Skill system architecture, Async validation approach, Go-only orchestration
+Examples: Artifact system architecture, async validation approach, Go-only orchestration
 
 ---
 
@@ -68,7 +68,7 @@ Examples: Skill system architecture, Async validation approach, Go-only orchestr
 
 ## Examples to Reference
 
-- skill-system-contract — Hybrid registry architecture
+- artifact-system-contract — Unified artifact architecture
 - go-only-orchestration — Why shell scripts banned
 
 Location: `docs/templates/internal/decisions/EXAMPLES/`

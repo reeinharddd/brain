@@ -117,4 +117,3 @@ A single repository with explicit environment classification gives Brain the bes
 ## Related ADRs
 
 - ADR-0003: Centralization of Orchestration in Daemon
-- ADR-0004: Portable Skill Contract with Surface Adapters

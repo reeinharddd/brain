@@ -323,6 +323,9 @@ func main() {
 	case "agents":
 		HandleAgentsCommand(os.Args)
 
+	case "docs-rag":
+		HandleDocsRagCommand(os.Args)
+
 	case "start":
 		if len(os.Args) > 3 {
 			id := os.Args[2]

@@ -196,9 +196,10 @@ The roadmap is considered successful when all gates pass:
 
 - `docs/adr/ADR-0002-centralized-brain-cli.md`
 - `docs/adr/ADR-0003-central-daemon-orchestration.md`
-- `docs/adr/ADR-0004-skill-system-contract.md`
 - `docs/adr/ADR-0005-strict-development-and-production-boundary.md`
-- `docs/adr/ADR-0006-docs-rag-mcp.md`
 - `docs/adr/ADR-0007-unified-capability-control-plane.md`
-- `docs/architecture/skill-system-contract.md`
+- `docs/adr/ADR-0008-unified-artifact-packaging-and-lifecycle.md`
+- `docs/adr/ADR-0009-clean-repository-structure-and-domain-boundaries.md`
+- `docs/adr/ADR-0010-hierarchical-identity-policy-and-security-model.md`
+- `docs/adr/ADR-0011-ai-runtime-and-curator-subsystem.md`
 - `docs/architecture/environment-configuration.md`

@@ -156,9 +156,9 @@ Initial rollout phases:
 
 - ADR-0002: Centralized Brain CLI for Multi-IDE Service Orchestration (relationship: enables)
 - ADR-0003: Centralization of Orchestration in Daemon (relationship: depends_on)
-- ADR-0004: Portable Skill Contract with Surface Adapters (relationship: extends)
 - ADR-0005: Strict Development and Production Boundary (relationship: constrains)
-- ADR-0006: Docs-RAG MCP - Semantic Search Over Documentation (relationship: complements)
+- ADR-0008: Unified Artifact Packaging and Lifecycle (relationship: extends)
+- ADR-0010: Hierarchical Identity, Policy, and Security Model (relationship: constrained_by)
 
 Status: Active  
 Decided by: Brain Architecture Team  

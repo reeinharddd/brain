@@ -1564,14 +1564,10 @@ Use this before finalizing any document:
 |------|------|----------|
 | Record a major decision | ADR | `docs/adr/ADR-NNN-slug.md` |
 | Propose a feature/design | Design Doc | `docs/architecture/DESIGN-slug.md` |
-| Track project progress | Project Status | `docs/status/PROJECT-code-phase.md` |
-| Define LLM role/protocol | Agent | `docs/agents/agent-id.md` |
-| Define reusable capability | Skill | `docs/skills/skill-id/SKILL.md` |
-| Document single LLM tool | Tool | `docs/tools/tool-name.md` |
-| Define MCP server | MCP | `docs/mcp/mcp-name.md` |
-| Document system state | State Doc | `docs/state/state-name.md` |
-| Handoff project | Handover | `docs/handovers/HANDOVER-project.md` |
-| Example/tutorial | Example | `docs/examples/EXAMPLE-scenario.md` |
+| Define architecture direction | Design Doc | `docs/architecture/[name].md` |
+| Explain skill placement and rules | Skill Doc | `docs/skills/[name].md` |
+| Define quality baseline | Testing Doc | `docs/testing/[name].md` |
+| Define reusable authoring pattern | Template | `docs/templates/.../TEMPLATE.md` |
 
 ---
 

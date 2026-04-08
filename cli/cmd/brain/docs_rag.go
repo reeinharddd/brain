@@ -1,230 +1,118 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
-	"time"
-
-	"github.com/reeinharrrd/brain/mcp/docs-rag-mcp/internal/indexer"
-	"github.com/reeinharrrd/brain/mcp/docs-rag-mcp/internal/tools"
 )
 
-func main() {
-	if len(os.Args) < 2 {
-		printUsage()
-		os.Exit(1)
+// HandleDocsRagCommand handles 'brain docs-rag' subcommands
+func HandleDocsRagCommand(args []string) {
+	if len(args) < 3 {
+		fmt.Println("Usage: brain docs-rag <command>")
+		fmt.Println("  search <query>   - Search documentation")
+		fmt.Println("  status          - Show docs search status")
+		fmt.Println("  rebuild         - Rebuild documentation index")
+		return
 	}
 
-	command := os.Args[1]
-
-	switch command {
+	switch args[2] {
 	case "search":
-		cmdSearch(os.Args[2:])
+		cmdDocsRagSearch(args[3:])
 	case "status":
-		cmdStatus()
+		cmdDocsRagStatus()
 	case "rebuild":
-		cmdRebuild()
+		fmt.Println("ℹ️  Rebuilding documentation index (via daemon)...")
+		resp, err := http.Post(DAEMON_URL+"/api/docs-rag/rebuild", "application/json", nil)
+		if err != nil {
+			fmt.Println("❌ Failed to connect to daemon:", err)
+			return
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode == 200 {
+			fmt.Println("✓ Rebuild triggered")
+		} else {
+			fmt.Println("❌ Rebuild failed:", resp.Status)
+		}
 	case "help", "-h", "--help":
-		printUsage()
+		fmt.Println("Usage: brain docs-rag <command>")
+		fmt.Println("  search <query>   - Search documentation")
+		fmt.Println("  status          - Show docs search status")
+		fmt.Println("  rebuild         - Rebuild documentation index")
 	default:
-		fmt.Fprintf(os.Stderr, "Unknown command: %s\n", command)
-		printUsage()
-		os.Exit(1)
+		fmt.Printf("Unknown command: %s\n", args[2])
 	}
 }
 
-func cmdSearch(args []string) {
-	fs := flag.NewFlagSet("search", flag.ExitOnError)
+func cmdDocsRagSearch(args []string) {
+	fs := flag.NewFlagSet("search", flag.ContinueOnError)
 	limit := fs.Int("limit", 10, "Max results to return")
 	domain := fs.String("domain", "", "Optional domain filter")
-	json_ := fs.Bool("json", false, "Output JSON format")
+	jsonOutput := fs.Bool("json", false, "Output JSON format")
+	fs.SetOutput(os.Stderr)
 
-	fs.Parse(args)
+	err := fs.Parse(args)
+	if err != nil {
+		return
+	}
 
 	remaining := fs.Args()
 	if len(remaining) == 0 {
 		fmt.Fprintf(os.Stderr, "Error: query required\n")
 		fmt.Fprintf(os.Stderr, "Usage: brain docs-rag search [flags] <query>\n")
-		os.Exit(1)
+		return
 	}
 
 	query := strings.Join(remaining, " ")
 
-	// Get brain root and create indexer
-	brainRoot := os.Getenv("BRAIN_ROOT")
-	if brainRoot == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
-		brainRoot = homeDir + "/.brain"
+	// Build request to daemon
+	searchParams := map[string]interface{}{
+		"query": query,
+		"limit": limit,
 	}
+	if *domain != "" {
+		searchParams["domain"] = domain
+	}
+	body, _ := json.Marshal(searchParams)
 
-	idx, err := indexer.NewIndexer(brainRoot)
+	resp, err := http.Post(DAEMON_URL+"/api/docs-rag/search", "application/json", strings.NewReader(string(body)))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error creating indexer: %v\n", err)
-		os.Exit(1)
+		fmt.Println("❌ Failed to connect to daemon:", err)
+		return
 	}
+	defer resp.Body.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
+	var result interface{}
+	json.NewDecoder(resp.Body).Decode(&result)
 
-	// Perform search
-	req := tools.SearchRequest{
-		Query:  query,
-		Limit:  *limit,
-		Domain: *domain,
-	}
-
-	resp := tools.DocsSearch(ctx, idx, req)
-
-	if resp.Error != "" {
-		fmt.Fprintf(os.Stderr, "Search error: %s\n", resp.Error)
-		os.Exit(1)
-	}
-
-	if *json_ {
-		printJSON(resp)
+	if *jsonOutput {
+		data, _ := json.MarshalIndent(result, "", "  ")
+		fmt.Println(string(data))
 	} else {
-		printSearchResults(resp)
+		fmt.Printf("Search results for: %q\n", query)
+		if m, ok := result.(map[string]interface{}); ok {
+			if results, ok := m["results"].([]interface{}); ok {
+				for i, r := range results {
+					fmt.Printf("%d. %v\n", i+1, r)
+				}
+			}
+		}
 	}
 }
 
-func cmdStatus() {
-	brainRoot := os.Getenv("BRAIN_ROOT")
-	if brainRoot == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
-		brainRoot = homeDir + "/.brain"
-	}
-
-	idx, err := indexer.NewIndexer(brainRoot)
+func cmdDocsRagStatus() {
+	resp, err := http.Get(DAEMON_URL + "/api/docs-rag/status")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error creating indexer: %v\n", err)
-		os.Exit(1)
+		fmt.Println("❌ Failed to connect to daemon:", err)
+		return
 	}
+	defer resp.Body.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	resp := tools.DocsStatus(ctx, idx)
-
-	fmt.Printf("Documentation Index Status\n")
-	fmt.Printf("--------------------------\n")
-	fmt.Printf("State:              %s\n", resp.IndexStatus.State)
-	fmt.Printf("Document Count:     %d\n", resp.IndexStatus.DocumentCount)
-	fmt.Printf("Last Rebuild:       %s\n", resp.IndexStatus.LastRebuildTime)
-	fmt.Printf("Qdrant Health:      %s\n", resp.IndexStatus.QdrantHealth)
-
-	if len(resp.IndexStatus.Errors) > 0 {
-		fmt.Printf("\nErrors:\n")
-		for _, err := range resp.IndexStatus.Errors {
-			fmt.Printf("  - %s\n", err)
-		}
-	}
-}
-
-func cmdRebuild() {
-	brainRoot := os.Getenv("BRAIN_ROOT")
-	if brainRoot == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
-		brainRoot = homeDir + "/.brain"
-	}
-
-	brainEnv := os.Getenv("BRAIN_ENV")
-	if brainEnv == "" {
-		brainEnv = "development"
-	}
-
-	idx, err := indexer.NewIndexer(brainRoot)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error creating indexer: %v\n", err)
-		os.Exit(1)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	fmt.Printf("Rebuilding documentation index...\n")
-
-	resp := tools.DocsRebuild(ctx, idx, brainEnv)
-
-	if resp.Error != "" {
-		fmt.Fprintf(os.Stderr, "Rebuild error: %s\n", resp.Error)
-		os.Exit(1)
-	}
-
-	fmt.Printf("Rebuild complete!\n")
-	fmt.Printf("  Documents indexed: %d\n", resp.DocumentCount)
-	fmt.Printf("  Duration: %s\n", resp.Duration)
-}
-
-func printSearchResults(resp tools.SearchResponse) {
-	fmt.Printf("Search Results (%d found)\n", resp.Metadata.ResultsCount)
-	fmt.Printf("===========================\n\n")
-
-	for i, result := range resp.Results {
-		fmt.Printf("%d. %s\n", i+1, result.Title)
-		fmt.Printf("   Path:     %s\n", result.Path)
-		fmt.Printf("   Category: %s\n", result.Category)
-		fmt.Printf("   Priority: %s\n", result.RAGPriority)
-		fmt.Printf("   Score:    %.2f\n", result.Score)
-		if result.Snippet != "" {
-			fmt.Printf("   Snippet:  %s...\n", result.Snippet[:min(len(result.Snippet), 100)])
-		}
-		fmt.Printf("\n")
-	}
-
-	fmt.Printf("Metadata:\n")
-	fmt.Printf("  Total Indexed: %d\n", resp.Metadata.TotalIndexed)
-	fmt.Printf("  Index Status:  %s\n", resp.Metadata.IndexStatus)
-}
-
-func printJSON(resp tools.SearchResponse) {
-	data, _ := json.MarshalIndent(resp, "", "  ")
+	var result map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&result)
+	data, _ := json.MarshalIndent(result, "", "  ")
 	fmt.Println(string(data))
-}
-
-func printUsage() {
-	fmt.Fprintf(os.Stderr, `Brain Docs-RAG CLI
-
-Commands:
-  search [flags] <query>    Search documentation
-    -limit N                Max results (default: 10)
-    -domain DOMAIN          Filter by domain
-    -json                   Output JSON format
-
-  status                    Show index status
-
-  rebuild                   Rebuild the index (dev-only)
-
-  help                      Show this help message
-
-Examples:
-  brain docs-rag search authentication
-  brain docs-rag search -limit 5 "daemon architecture"
-  brain docs-rag search -domain architecture "MCP server"
-  brain docs-rag status
-  brain docs-rag rebuild
-
-`)
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }

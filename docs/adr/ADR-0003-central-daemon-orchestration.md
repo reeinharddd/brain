@@ -107,5 +107,4 @@ A central daemon makes the runtime easier to observe, reduces configuration drif
 ## Related ADRs
 
 - ADR-0002: Centralized Brain CLI for Multi-IDE Service Orchestration
-- ADR-0004: Portable Skill Contract with Surface Adapters
 - ADR-0005: Strict Development and Production Boundary
