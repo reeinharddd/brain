@@ -1,0 +1,30 @@
+apiVersion: brain/v1
+kind: rule
+id: canonical
+displayName: Canonical
+description: Brain rule artifact for Canonical.
+scope: organization
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/rules/canonical.md
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/rules/canonical.md
+  files:
+    - artifacts/rules/canonical.md
+rule:
+  priority: 100
+  enforcement: blocking
+  mergeStrategy: compose

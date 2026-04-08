@@ -1,0 +1,31 @@
+apiVersion: brain/v1
+kind: agent
+id: configurator
+displayName: Configurator
+description: Brain agent artifact for Configurator.
+scope: project
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/agents/configurator.md
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/agents/configurator.md
+  files:
+    - artifacts/agents/configurator.md
+agent:
+  role: Configurator
+  modelPolicy:
+    preferredTier: powerful
+    minimumTier: standard

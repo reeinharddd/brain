@@ -1,0 +1,30 @@
+apiVersion: brain/v1
+kind: rule
+id: memory-protocol
+displayName: Memory Protocol
+description: Brain rule artifact for Memory Protocol.
+scope: organization
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/rules/modules/memory-protocol.md
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/rules/modules/memory-protocol.md
+  files:
+    - artifacts/rules/modules/memory-protocol.md
+rule:
+  priority: 50
+  enforcement: required
+  mergeStrategy: compose

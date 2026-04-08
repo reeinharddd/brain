@@ -1,0 +1,31 @@
+apiVersion: brain/v1
+kind: agent
+id: orchestrator
+displayName: Orchestrator
+description: Brain agent artifact for Orchestrator.
+scope: project
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/agents/orchestrator.md
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/agents/orchestrator.md
+  files:
+    - artifacts/agents/orchestrator.md
+agent:
+  role: Orchestrator
+  modelPolicy:
+    preferredTier: powerful
+    minimumTier: standard

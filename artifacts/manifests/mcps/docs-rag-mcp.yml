@@ -1,0 +1,31 @@
+apiVersion: brain/v1
+kind: mcp
+id: docs-rag-mcp
+displayName: Docs Rag Mcp
+description: MCP package artifact for Docs Rag Mcp.
+scope: workspace
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/mcps/docs-rag-mcp
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: restricted
+content:
+  entrypoint: artifacts/mcps/docs-rag-mcp/README.md
+  files:
+    - artifacts/mcps/docs-rag-mcp/README.md
+mcp:
+  transport: stdio
+  profiles:
+    - full
+  requiredEnv: []

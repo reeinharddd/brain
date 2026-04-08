@@ -1,0 +1,30 @@
+apiVersion: brain/v1
+kind: adapter
+id: post-tool-use
+displayName: Post Tool Use
+description: Operational artifact set for Post Tool Use.
+scope: platform
+owner: user:brain
+visibility: private
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/hooks/post-tool-use
+sync:
+  mode: local
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/hooks/post-tool-use/README.md
+  files:
+    - artifacts/hooks/post-tool-use/README.md
+adapter:
+  target: post-tool-use
+  format: markdown
+  projection:
+    kind: operational

@@ -1,0 +1,31 @@
+apiVersion: brain/v1
+kind: command
+id: handover
+displayName: Handover
+description: Brain command artifact for Handover.
+scope: workspace
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/commands/handover.md
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/commands/handover.md
+  files:
+    - artifacts/commands/handover.md
+command:
+  trigger: /handover
+  autoInvokePolicy: suggest
+  outputContract:
+    format: markdown

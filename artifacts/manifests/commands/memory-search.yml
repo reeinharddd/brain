@@ -1,0 +1,31 @@
+apiVersion: brain/v1
+kind: command
+id: memory-search
+displayName: Memory Search
+description: Brain command artifact for Memory Search.
+scope: workspace
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/commands/memory-search.md
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/commands/memory-search.md
+  files:
+    - artifacts/commands/memory-search.md
+command:
+  trigger: /memory-search
+  autoInvokePolicy: suggest
+  outputContract:
+    format: markdown

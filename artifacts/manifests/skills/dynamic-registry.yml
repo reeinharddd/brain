@@ -1,0 +1,30 @@
+apiVersion: brain/v1
+kind: skill
+id: dynamic-registry
+displayName: Dynamic Registry
+description: Skills catalog artifact for Dynamic Registry.
+scope: organization
+owner: user:brain
+visibility: private
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/skills/dynamic-registry.tsv
+sync:
+  mode: local
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/skills/dynamic-registry.tsv
+  files:
+    - artifacts/skills/dynamic-registry.tsv
+skill:
+  category: registry
+  compatibility:
+    minCapabilityTier: standard
+    preferredCapabilityTier: powerful

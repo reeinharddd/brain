@@ -1,0 +1,44 @@
+apiVersion: brain/v1
+kind: mcp
+id: registry
+displayName: Registry
+description: MCP support artifact for Registry.
+scope: workspace
+owner: user:brain
+visibility: private
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/mcps/registry.yml
+sync:
+  mode: local
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: mcps/registry.yml
+  files:
+    - artifacts/mcps/brain-mcp-server/README.md
+    - artifacts/mcps/docker_registry.yml
+    - artifacts/mcps/docs-rag-mcp/README.md
+    - artifacts/mcps/gateway/mcp-registry.json
+    - artifacts/mcps/global-config-stdio.json
+    - artifacts/mcps/global-config.json
+    - artifacts/mcps/internal/README.md
+    - artifacts/mcps/internal/troubleshooting.md
+    - artifacts/mcps/ports.yml
+    - artifacts/mcps/profiles/full.json
+    - artifacts/mcps/profiles/minimal.json
+    - artifacts/mcps/profiles/standard.json
+    - artifacts/mcps/registry.yml
+mcp:
+  transport: remote
+  profiles:
+    - minimal
+    - standard
+    - full
+  requiredEnv: []

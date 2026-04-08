@@ -1,0 +1,30 @@
+apiVersion: brain/v1
+kind: rule
+id: protocol
+displayName: Protocol
+description: Brain rule artifact for Protocol.
+scope: organization
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/rules/memory/protocol.md
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/rules/memory/protocol.md
+  files:
+    - artifacts/rules/memory/protocol.md
+rule:
+  priority: 40
+  enforcement: required
+  mergeStrategy: compose

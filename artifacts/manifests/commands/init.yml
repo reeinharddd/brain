@@ -1,0 +1,31 @@
+apiVersion: brain/v1
+kind: command
+id: init
+displayName: Init
+description: Brain command artifact for Init.
+scope: workspace
+owner: user:brain
+visibility: workspace
+lifecycle:
+  state: active
+source:
+  type: local
+  uri: local://artifacts/commands/init.md
+sync:
+  mode: hybrid
+  cloudEnabled: true
+security:
+  trust: verified
+  permissions:
+    fs: read
+    net: none
+    exec: none
+content:
+  entrypoint: artifacts/commands/init.md
+  files:
+    - artifacts/commands/init.md
+command:
+  trigger: /init
+  autoInvokePolicy: manual
+  outputContract:
+    format: markdown
