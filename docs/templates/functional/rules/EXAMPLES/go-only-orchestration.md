@@ -24,14 +24,14 @@ enforced_by:
 ## Definition
 
 **All daemon, CLI, and automation logic MUST be written in Go.**
-No bash scripts (.sh), no Python scripts (.py) in `~/.brain/`.
+No bash scripts (.sh), no Python scripts (.py) in production repository paths.
 
-- ❌ `scripts/validate-skills.sh` (shell script)
-- ❌ `daemon/setup.py` (Python automation)
-- ✅ `daemon/cmd/braind/main.go` (Go daemon)
-- ✅ `scripts/validate/main.go` (Go executable)
+- ❌ `utils/scripts/validate-skills.sh` (shell script)
+- ❌ `apps/daemon/setup.py` (Python automation)
+- ✅ `apps/daemon/cmd/braind/main.go` (Go daemon)
+- ✅ `apps/cli/cmd/brain/main.go` (Go CLI executable)
 
-**Exception**: User projects outside ~/.brain can use any language. This rule applies ONLY to Brain repo itself.
+**Exception**: User projects outside Brain can use any language. This rule applies ONLY to Brain repo itself.
 
 ## Why It Exists
 
@@ -59,7 +59,7 @@ No bash scripts (.sh), no Python scripts (.py) in `~/.brain/`.
 # File: scripts/validate-skills.sh
 # This script is FORBIDDEN
 
-for skill in skills/*; do
+for skill in artifacts/skills/*; do
   if [ ! -f "$skill/SKILL.md" ]; then
     echo "ERROR: Missing SKILL.md in $skill"
     exit 1
@@ -68,20 +68,20 @@ done
 ```
 
 ```python
-# File: daemon/setup.py
+# File: apps/daemon/setup.py
 # This script is FORBIDDEN
 
 import os
 import json
 
 def validate_registry():
-    with open('skills/registry.yml') as f:
+    with open('artifacts/skills/registry.yml') as f:
         # ... validation logic
 ```
 
 ### ✅ RIGHT (Will be ACCEPTED)
 
-// File: daemon/cmd/validate-skills/main.go
+// File: apps/daemon/cmd/validate-skills/main.go
 // This Go executable is REQUIRED
 
 package main
@@ -93,7 +93,7 @@ import (
 )
 
 func validateSkillsRegistry(brainRoot string) error {
-skills := filepath.Join(brainRoot, "skills")
+skills := filepath.Join(brainRoot, "artifacts", "skills")
 if err != nil {
 
 <!-- markdownlint-disable-file -->
@@ -130,7 +130,7 @@ fmt.Println("✅ Skills registry valid")
 # This wrapper is ALLOWED (minimal, calls Go binary)
 
 #!/usr/bin/env bash
-exec "$HOME/.brain/daemon/build/braind" "$@"
+exec "$HOME/.brain/apps/daemon/build/braind" "$@"
 ````
 
 ## Enforcement Mechanisms
@@ -139,13 +139,13 @@ exec "$HOME/.brain/daemon/build/braind" "$@"
 
 ```bash
 # .git/hooks/pre-commit
-# Blocks .sh and .py files in ~/.brain/
+# Blocks .sh and .py files in production paths
 
 for file in $(git diff --cached --name-only); do
   if [[ "$file" == *.sh || "$file" == *.py ]]; then
     if [[ "$file" != tests/* && "$file" != examples/* ]]; then
-      echo "❌ FORBIDDEN: Shell/Python files in ~/.brain/"
-      echo "   Use Go instead: daemon/cmd/, cli/cmd/, scripts/"
+      echo "❌ FORBIDDEN: Shell/Python files in production paths"
+      echo "   Use Go instead: apps/daemon/cmd/, apps/cli/cmd/, core/, internal/"
       exit 1
     fi
   fi
@@ -184,7 +184,7 @@ done
 
 If found:
 
-1. **Audit**: List all .sh/.py files in ~/.brain/
+1. **Audit**: List all .sh/.py files in production repository paths
 2. **Estimate**: Each typically 30-60 min to rewrite in Go
 3. **Convert**: Rewrite in Go (use existing cmd structure as template)
 4. **Test**: Verify binary works identically
@@ -233,7 +233,7 @@ done
 ### After (Go Binary)
 
 ```go
-// File: daemon/cmd/sync-skills/main.go
+// File: apps/daemon/cmd/sync-skills/main.go
 // Errors caught: at compile time
 
 func syncSkills(ctx context.Context, skillsDir, registryPath string) error {
@@ -274,8 +274,8 @@ func syncSkills(ctx context.Context, skillsDir, registryPath string) error {
 
 | Metric                     | Target | Current         |
 | -------------------------- | ------ | --------------- |
-| .sh files in ~/.brain      | 0      | ✅ 0            |
-| .py files in ~/.brain      | 0      | ✅ 0            |
+| .sh files in production paths | 0   | ✅ 0            |
+| .py files in production paths | 0   | ✅ 0            |
 | Orchestration logic in Go  | 100%   | ✅ 100%         |
 | Script startup time        | <10ms  | ✅ 5ms (binary) |
 | Compile-time errors caught | >95%   | ✅ 99.7%        |

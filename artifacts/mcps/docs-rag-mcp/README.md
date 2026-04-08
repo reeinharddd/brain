@@ -13,7 +13,7 @@ This is a semantic search MCP (Model Context Protocol) server for indexing and s
 
 - **Lazy-Load Indexing**: Index builds on first search (~2-5 seconds), then all subsequent searches run in <200ms
 - **Local Embeddings**: Uses Qdrant's native FastEmbed model (all-MiniLM-L6-v2)
-- **RAG-Optimized**: Respects `docs-manifest.json` structure and RAG priority scoring
+- **RAG-Optimized**: Respects `docs/metadata/docs-manifest.json` structure and RAG priority scoring
 - **Production Grade**: >80% test coverage, comprehensive error handling, 100% English
 
 ---
@@ -21,7 +21,7 @@ This is a semantic search MCP (Model Context Protocol) server for indexing and s
 ## Project Structure
 
 ```
-mcp/docs-rag-mcp/
+artifacts/mcps/docs-rag-mcp/
 ├── main.go                          # MCP server entry point
 ├── go.mod                           # Go module definition
 ├── go.sum                           # Dependency lock file
@@ -155,7 +155,7 @@ Target Coverage: **>85% on indexer/ package**
 
 5. **Type System**
    - ✓ All YAML frontmatter fields represented
-   - ✓ Manifest structure matches docs-manifest.json
+  - ✓ Manifest structure matches docs/metadata/docs-manifest.json
    - ✓ RAG priority and chunk strategy supported
    - ✓ Status enum validation
 
@@ -163,7 +163,7 @@ Target Coverage: **>85% on indexer/ package**
 
 ```bash
 # Run tests with coverage report:
-cd mcp/docs-rag-mcp
+cd artifacts/mcps/docs-rag-mcp
 go test ./internal/indexer -cover -v
 ```
 
@@ -264,7 +264,7 @@ chunk_strategy: section|sentence (optional)
 ---
 ```
 
-### Manifest Schema (docs-manifest.json)
+### Manifest Schema (docs/metadata/docs-manifest.json)
 
 ```json
 {

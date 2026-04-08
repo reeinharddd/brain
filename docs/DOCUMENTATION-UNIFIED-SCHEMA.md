@@ -648,7 +648,7 @@ For next phase owner, see: `docs/handovers/HANDOVER-cache-design.md`
 
 ### 4. Agent Definition
 
-**File**: `docs/agents/{agent-id}.md`  
+**File**: `artifacts/agents/{agent-id}.md`  
 **Purpose**: Define agent role, protocol, constraints for coordinated LLM behavior
 
 ```yaml
@@ -734,9 +734,9 @@ When facing implementation choices not covered by spec/design:
 
 1. Check the spec & design documents FIRST
 2. If silent, apply rules in this order:
-   - `rules/modules/security.md` (security always first)
-   - `rules/modules/code-style.md` (consistency)
-   - `rules/modules/performance.md` (if design specifies performance goals)
+  - `artifacts/rules/modules/security.md` (security always first)
+  - `artifacts/rules/modules/code-style.md` (consistency)
+  - `artifacts/rules/modules/performance.md` (if design specifies performance goals)
 3. If still ambiguous, ask the delegator
 4. If you must guess, document it as a comment
 
@@ -849,7 +849,7 @@ When done, return:
 
 ### 5. Skill Definition
 
-**File**: `docs/skills/{skill-id}/SKILL.md`  
+**File**: `artifacts/skills/{skill-id}/SKILL.md`  
 **Purpose**: Define a reusable capability for LLM agents with input/output contracts
 
 ```yaml

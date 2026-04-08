@@ -321,6 +321,6 @@ If primary model unavailable:
 
 ---
 
-**Location**: `agents/planner.md`  
+**Location**: `artifacts/agents/planner.md`  
 **Used By**: Brain CLI (`brain plan`), GitHub Copilot, SDD DAG engine  
 **Last Updated**: 2026-04-03

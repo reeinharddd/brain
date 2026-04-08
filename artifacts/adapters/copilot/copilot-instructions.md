@@ -16,29 +16,27 @@ Brain is a portable AI development environment compiled to 8 IDEs + 1 CLI + 1 De
 
 ```
 Brain Repository (~/brain/)
-├── daemon/              Go orchestrator (braind @ 9090)
-│   ├── cmd/braind/      HTTP API + WebSocket server
-│   └── internal/        Business logic (Docker, Qdrant, MCP, Skills, Providers)
-├── cli/                 Thin client (HTTP to daemon)
-│   └── cmd/brain/       CLI commands
-├── desktop/             Tauri + React control panel
-│   └── src/             React components + WebSocket client
-├── rules/               Global development principles
-│   ├── canonical.md     Single source of truth for all adaptation
-│   └── modules/         Code style, security, memory, workflow
+├── apps/                Executable surfaces
+│   ├── daemon/          Go orchestrator (braind @ 9090)
+│   │   ├── cmd/braind/  HTTP API + WebSocket server
+│   │   └── internal/    Business logic (Docker, Qdrant, MCP, Skills, Providers)
+│   ├── cli/             Thin client (HTTP to daemon)
+│   │   └── cmd/brain/   CLI commands
+│   └── desktop/         Tauri + React control panel
+│       └── src/         React components + WebSocket client
+├── artifacts/           Canonical managed artifacts
+│   ├── rules/           Global development principles
+│   │   ├── canonical.md Single source of truth for all adaptation
+│   │   └── modules/     Code style, security, memory, workflow
+│   ├── skills/          Portable skill packages
+│   ├── agents/          Agent prompt definitions
+│   └── mcps/            MCP server configurations
 ├── config/              Control plane definitions
 │   ├── agents.json      12 AI agents
 │   ├── mcps.json        11 MCP servers
 │   └── providers.yml    LLM routing + fallback
 ├── docker/              Persistent services
 │   └── compose.yml      Qdrant + optional Ollama
-├── skills/              Portable skill packages
-│   ├── registry.yml     Metadata-only discovery index
-│   ├── contexts/        Reusable stack guidance
-│   ├── dynamic-registry.tsv  Context packs index
-│   └── <id>/SKILL.md    Individual skill definitions
-├── agents/              Agent prompt definitions
-├── mcp/                 MCP server configurations
 └── docs/                Architecture decisions (ADRs)
 ```
 
@@ -49,18 +47,19 @@ Brain Repository (~/brain/)
 ### 1. Language Rules (STRICT)
 
 - **Go ONLY** for daemon, CLI, and automation
-  - daemon/ : braind service, managers, API handlers
-  - cli/cmd/brain/ : user-facing commands
-  - scripts/ : Go executables, NOT bash/Python
+  - apps/daemon/ : braind service, managers, API handlers
+  - apps/cli/cmd/brain/ : user-facing commands
+  - utils/scripts/ : helper scripts only (no orchestration logic)
   
 - **TypeScript/React** for desktop UI (Tauri + React)
-  - desktop/src/ : React components
+  - apps/desktop/src/ : React components
   - Strict mode enforced (noUnusedLocals, noUnusedParameters, noImplicitAny)
 
 - **YAML/JSON** for configuration
-  - providers.yml, agents.json, config/, artifacts/skills/registry.yml
+  - artifacts/providers/providers.yml, agents.json, config/, artifacts/skills/registry.yml
 
-- **Forbidden**: Bash scripts (.sh), Python scripts (.py) in ~/.brain
+- **Forbidden**: Bash scripts (.sh), Python scripts (.py) in production repository paths
+  - No shell/Python orchestration in production paths under `apps/`, `core/`, `internal/`, `artifacts/`
   - Previous cleanup removed all shell/Python orchestration
   - Exception: Project-specific scripts in local projects are OK
 
@@ -102,11 +101,11 @@ NO EXCEPTIONS for partial features. If feature exists on daemon but not UI, it's
 
 **File Locations**
 ```
-daemon/internal/manager/skills.go        -> Business logic
-daemon/internal/api/handlers.go          -> HTTP endpoints
-daemon/cmd/braind/main.go                -> Service initialization
-cli/cmd/brain/registry.go                -> CLI commands
-desktop/src/components/SkillsList.tsx    -> UI components
+apps/daemon/internal/manager/skills.go        -> Business logic
+apps/daemon/internal/api/handlers.go          -> HTTP endpoints
+apps/daemon/cmd/braind/main.go                -> Service initialization
+apps/cli/cmd/brain/registry.go                -> CLI commands
+apps/desktop/src/components/SkillsList.tsx    -> UI components
 ```
 
 **Go File Structure** (daemon + CLI)
@@ -221,7 +220,7 @@ Closes #123
 
 **Brain Repo Specific**
 - Always use prefix: `brain: <message>` (e.g., `brain: update copilot instructions`)
-- After editing rules/: Always run `adapters/generate.sh` before committing
+- After editing artifact adapters: regenerate/sync with project-defined adapter tooling before committing
 - Never commit environment-specific state (no hardcoded paths, no secrets)
 
 ---
@@ -504,9 +503,9 @@ QDRANT_API_KEY=xxx...                        # Qdrant auth (if using cloud)
 ## File Organization and Locations
 
 **Key Config Files**
-- `rules/canonical.md` - Source of truth for all principles
-- `rules/modules/` - Code style, security, memory, workflow modules
-- `providers.yml` - LLM routing config (SINGLE source of truth for providers)
+- `artifacts/rules/canonical.md` - Source of truth for all principles
+- `artifacts/rules/modules/` - Code style, security, memory, workflow modules
+- `artifacts/providers/providers.yml` - LLM routing config (SINGLE source of truth for providers)
 - `config/agents.json` - Agent definitions
 - `config/mcps.json` - MCP server configurations
 - `artifacts/skills/registry.yml` - Skills metadata index
@@ -515,13 +514,13 @@ QDRANT_API_KEY=xxx...                        # Qdrant auth (if using cloud)
 
 **Important Paths**
 ```
-~/.brain/daemon/cmd/braind/main.go       Main daemon entry point
-~/.brain/daemon/internal/manager/        Business logic modules
-~/.brain/cli/cmd/brain/main.go            CLI entry point
-~/.brain/desktop/src/                    React components
+~/.brain/apps/daemon/cmd/braind/main.go       Main daemon entry point
+~/.brain/apps/daemon/internal/manager/        Business logic modules
+~/.brain/apps/cli/cmd/brain/main.go           CLI entry point
+~/.brain/apps/desktop/src/                    React components
 ~/.brain/docs/adr/                       Architecture Decision Records
-~/.brain/artifacts/skills/registry.yml             Skills discovery index
-~/.brain/rules/canonical.md              Development principles
+~/.brain/artifacts/skills/registry.yml   Skills discovery index
+~/.brain/artifacts/rules/canonical.md    Development principles
 ```
 
 ---
@@ -567,7 +566,7 @@ Warning: Function too complex
 
 ### Adding a New Skill
 
-1. **Create folder**: `skills/<skill-id>/`
+1. **Create folder**: `artifacts/skills/<skill-id>/`
 2. **Create SKILL.md**: Define skill interface, metadata
 3. **Update registry.yml**: Add entry with id, name, type, path
 4. **Wire daemon**: Add to SkillsRegistry.Load()
@@ -610,11 +609,11 @@ Warning: Function too complex
 ## Where to Find More Info
 
 - **Architecture**: See docs/adr/ for Architecture Decision Records
-- **Code Standards**: See rules/modules/code-style.md
-- **Security**: See rules/modules/security.md and guardian/
-- **Workflow**: See rules/modules/workflow.md
-- **Memory Protocol**: See rules/modules/memory.md
-- **Agents**: See agents/ folder for prompt definitions
+- **Code Standards**: See artifacts/rules/modules/code-style.md
+- **Security**: See artifacts/rules/modules/security.md
+- **Workflow**: See artifacts/rules/modules/workflow.md
+- **Memory Protocol**: See artifacts/rules/modules/memory.md
+- **Agents**: See artifacts/agents/ for prompt definitions
 - **Skills**: See artifacts/skills/registry.yml for available skills
 
 ---

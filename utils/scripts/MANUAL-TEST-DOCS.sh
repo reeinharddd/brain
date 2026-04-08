@@ -22,7 +22,7 @@ NC='\033[0m' # No Color
 # Step 1: Kill existing daemons
 echo -e "${BLUE}[Step 1]${NC} Killing old daemon processes..."
 pkill -9 -f "go run main.go" 2>/dev/null || true
-pkill -9 -f "daemon/cmd/braind/main.go" 2>/dev/null || true
+pkill -9 -f "apps/daemon/cmd/braind/main.go" 2>/dev/null || true
 pkill -9 braind 2>/dev/null || true
 sleep 2
 echo -e "${GREEN}✅ Old processes killed${NC}"
@@ -41,7 +41,7 @@ echo ""
 
 # Step 3: Start Daemon
 echo -e "${BLUE}[Step 3]${NC} Starting Daemon..."
-cd "$BASE_DIR/daemon/cmd/braind"
+cd "$BASE_DIR/apps/daemon/cmd/braind"
 
 # Run in background
 go run main.go > /tmp/braind.log 2>&1 &

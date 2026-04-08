@@ -15,8 +15,8 @@ created: 2026-04-03
 2. **Setup**:
    ```bash
    cd ~/.brain
-   go build ./cmd/braind      # Build daemon
-   go build ./cmd/brain       # Build CLI
+   go build ./apps/daemon/cmd/braind      # Build daemon
+   go build ./apps/cli/cmd/brain          # Build CLI
    ```
 3. **Verify**:
    ```bash
@@ -76,12 +76,10 @@ All orchestration in Go. No bash/Python scripts in ~/.brain/.
 
 ```
 ~/.brain/
-├── daemon/          Go orchestrator service
-├── cli/             Go command-line client
-├── desktop/         React/Tauri UI
+├── apps/            Executable surfaces (daemon, cli, desktop)
+├── artifacts/       Canonical managed artifacts
+├── core/            Shared product subsystems
 ├── docs/            Documentation + ADRs + SDDs
-├── skills/          Portable methodologies
-├── agents/          Prompt definitions
 ├── config/          global configurations
 └── tests/           Test suites
 ```
@@ -100,7 +98,7 @@ All orchestration in Go. No bash/Python scripts in ~/.brain/.
 - **Architecture**: [README.md](../templates/README.md)
 - **Templates**: [docs/templates/INDEX.md](../templates/INDEX.md)
 - **Debugging**: [Debugging Skill](../templates/functional/skills/EXAMPLES/debugging-methodology.md)
-- **API Docs**: [daemon/cmd/braind/README.md](../../daemon/cmd/braind/README.md)
+- **API Docs**: [apps/daemon/cmd/braind/README.md](../../../../apps/daemon/cmd/braind/README.md)
 
 ## Getting Help
 

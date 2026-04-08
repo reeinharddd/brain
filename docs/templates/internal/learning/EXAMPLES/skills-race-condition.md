@@ -99,7 +99,7 @@ func TestSkillsValidationAfterWrite(t *testing.T) {
 ## Related
 
 - Skill: [Debugging Methodology](../../docs/templates/functional/skills/EXAMPLES/debugging-methodology.md)
-- Rule: [Go Concurrency](../../rules/go-concurrency-safety.md)
+- Rule: [Go Concurrency](../../functional/rules/EXAMPLES/go-only-orchestration.md)
 - Decision: [Async Validation Architecture](../../docs/decisions/async-validation.md)
 
 ## Metrics for Prevention

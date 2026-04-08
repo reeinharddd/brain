@@ -60,7 +60,7 @@ The current repository mixes executable applications, canonical artifacts, devel
 
 - `apps/`
   - all user-facing executable surfaces
-  - `cli/`, `daemon/`, `desktop/`, future `tui/`
+  - `apps/cli/`, `apps/daemon/`, `apps/desktop/`, future `apps/tui/`
 
 - `core/`
   - shared product subsystems
@@ -97,26 +97,12 @@ artifacts/
 └── templates/
 ```
 
-### Transitional Mapping from Current Structure
-
-- `cli/` -> `apps/cli/`
-- `daemon/` -> `apps/daemon/`
-- `desktop/` -> `apps/desktop/`
-- `rules/` -> `artifacts/rules/`
-- `skills/` -> `artifacts/skills/`
-- `agents/` -> `artifacts/agents/`
-- `commands/` -> `artifacts/commands/`
-- `mcp/` -> `artifacts/mcps/`
-- `providers/` -> `artifacts/providers/`
-
 ## Implementation Strategy
 
 ### Phase 1: Introduce New Structure in Parallel
 
 - Create new directories.
-- Add compatibility reads from old and new paths.
 - Move canonical operational Markdown into `artifacts/`.
-- Keep legacy directories as symlink-based shims only.
 
 ### Phase 2: Move Canonical Sources
 
@@ -131,6 +117,7 @@ artifacts/
 ### Phase 4: Remove Transitional Shims
 
 - Drop old path support after validation.
+- Completed: transitional root shims (`cli`, `daemon`, `desktop`, and old artifact-root aliases) have been removed.
 
 ## Trade-Offs
 

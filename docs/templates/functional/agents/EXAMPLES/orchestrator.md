@@ -142,7 +142,7 @@ Response time: 3-5 minutes (structured plan, not implementation).
 **GitHub Copilot**:
 
 - Trigging: "Build feature for X" → Routes to orchestration workflow
-- Uses: SDD DAG from rules/canonical.md
+- Uses: SDD DAG from artifacts/rules/canonical.md
 - Delegates: To implementer, architect, researcher per phase
 
 **Brain CLI**:
@@ -184,6 +184,6 @@ If primary model (gpt-5-pro) unavailable:
 
 ---
 
-**Location**: `agents/orchestrator.md`  
+**Location**: `artifacts/agents/orchestrator.md`  
 **Used By**: Brain CLI, GitHub Copilot, Brain Daemon  
 **Last Updated**: 2026-04-03

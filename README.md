@@ -4,7 +4,7 @@ Brain is a daemon-centered control plane for AI engineering environments.
 
 It is being aligned around five permanent ideas:
 
-- multiple client surfaces such as `cli`, `desktop`, and future `tui`
+- multiple client surfaces such as `apps/cli`, `apps/desktop`, and future `apps/tui`
 - one daemon as the runtime and orchestration source of truth
 - one unified artifact system for rules, skills, agents, commands, MCPs, providers, and AI runtimes
 - one hierarchical policy and security model across organization, user, workspace, and project scopes

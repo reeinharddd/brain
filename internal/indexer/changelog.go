@@ -18,7 +18,7 @@ type ChangelogEntry struct {
 	Checksum   string   `json:"checksum"`
 }
 
-// ChangelogWatcher monitors docs-changelog.jsonl for changes
+// ChangelogWatcher monitors docs/metadata/docs-changelog.jsonl for changes
 type ChangelogWatcher struct {
 	changelogPath string
 	lastPos       int64
@@ -27,7 +27,7 @@ type ChangelogWatcher struct {
 // NewChangelogWatcher creates a changelog watcher
 func NewChangelogWatcher(brainRoot string) *ChangelogWatcher {
 	return &ChangelogWatcher{
-		changelogPath: filepath.Join(brainRoot, "docs-changelog.jsonl"),
+		changelogPath: filepath.Join(brainRoot, "docs", "metadata", "docs-changelog.jsonl"),
 		lastPos:       0,
 	}
 }

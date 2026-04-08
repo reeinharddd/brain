@@ -111,7 +111,7 @@ Don't use for:
 
 ```bash
 # Daemon launches via
-go run daemon/cmd/braind/main.go
+go run apps/daemon/cmd/braind/main.go
 
 # Agents call via
 http://localhost:9090/api/tools

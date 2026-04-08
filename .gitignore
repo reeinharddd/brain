@@ -45,8 +45,8 @@ logs/
 *.tmp
 tmp/
 bin/
-desktop/dist/
-desktop/src-tauri/target/
+apps/desktop/dist/
+apps/desktop/src-tauri/target/
 
 # Local Brain state and generated scratch files
 .brain/

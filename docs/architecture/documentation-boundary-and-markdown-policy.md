@@ -55,9 +55,7 @@ These files are not treated as documentation pages. They are operational source 
 The long-term target is:
 
 - documentation Markdown only in `docs/`
-- operational artifacts migrated into the unified `artifacts/` system
-
-Until that migration is complete, legacy paths such as `agents/`, `commands/`, `rules/`, `adapters/`, `mcp/`, `guardian/`, and `hooks/` may still exist only as compatibility shims.
+- operational artifacts in the unified `artifacts/` system
 
 Legacy locations must not host canonical Markdown content directly.
 
@@ -95,4 +93,4 @@ The repository now enforces this boundary with:
 
 ## Decision
 
-Brain will treat `docs/` as the only canonical documentation root, while allowing operational Markdown under `artifacts/` and temporary legacy symlink shims during migration.
+Brain treats `docs/` as the only canonical documentation root and allows operational Markdown only under `artifacts/`.

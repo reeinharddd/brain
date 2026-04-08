@@ -42,8 +42,10 @@ Documentation in Brain is validated automatically before commit. The goal is to 
 
 - `docs/README.md`
 - `docs/STRUCTURE.md`
-- `docs-manifest.json`
-- `scripts/validate-docs-incremental.sh`
+- `docs/metadata/docs-manifest.json`
+- `docs/metadata/docs-changelog.jsonl`
+- `utils/scripts/validate-markdown-boundary.sh`
+- `utils/scripts/validate-artifact-manifests.py`
 
 ## Outcome
 

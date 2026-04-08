@@ -87,8 +87,8 @@ echo ""
 
 # Step 6: Verify structure
 echo "[Step 6] Code structure verification:"
-echo "  - Handler file: $([ -f ~/.brain/daemon/internal/api/handlers/docs.go ] && echo '✅' || echo '❌') docs.go"
-echo "  - Stub indexer: $([ -f ~/.brain/daemon/cmd/braind/stub_indexer.go ] && echo '✅' || echo '❌') stub_indexer.go"
+echo "  - Handler file: $([ -f ~/.brain/apps/daemon/internal/api/handlers/docs.go ] && echo '✅' || echo '❌') docs.go"
+echo "  - Stub indexer: $([ -f ~/.brain/apps/daemon/cmd/braind/stub_indexer.go ] && echo '✅' || echo '❌') stub_indexer.go"
 echo "  - Daemon binary: $([ -f ~/.brain/bin/braind ] && echo '✅' || echo '❌') braind"
 echo ""
 
