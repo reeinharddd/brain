@@ -10,7 +10,19 @@ echo "[markdown-boundary] validating markdown placement"
 
 invalid_files=()
 
+list_markdown_files() {
+  if command -v rg >/dev/null 2>&1; then
+    rg --files -g '*.md' -g '!docs/archive/**'
+    return
+  fi
+
+  find . -type f -name '*.md' \
+    | sed 's#^\./##' \
+    | grep -v '^docs/archive/' || true
+}
+
 while IFS= read -r path; do
+  [ -z "$path" ] && continue
   case "$path" in
     docs/*)
       ;;
@@ -24,7 +36,7 @@ while IFS= read -r path; do
       invalid_files+=("$path")
       ;;
   esac
-done < <(rg --files -g '*.md' -g '!docs/archive/**')
+done < <(list_markdown_files)
 
 legacy_dirs=(agents commands rules adapters mcp guardian hooks)
 

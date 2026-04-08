@@ -30,7 +30,7 @@ func TestSkillsFromYAML(t *testing.T) {
     tags:
       - testing
       - demo
-    file: skills/test-skill-1/SKILL.md
+    file: artifacts/skills/test-skill-1/SKILL.md
     sync-to:
       - cli
     maintained: true
@@ -112,8 +112,8 @@ func TestContextPacksFromTSV(t *testing.T) {
 
 	// Create a test TSV
 	tsvContent := `# skill_id	title	detect_tags	context_path	summary
-bash-platform	Bash Platform	bash,shell	skills/contexts/bash.md	Bash automation guidance
-go-service	Go Service	go	skills/contexts/go.md	Go service best practices
+bash-platform	Bash Platform	bash,shell	artifacts/skills/contexts/bash.md	Bash automation guidance
+go-service	Go Service	go	artifacts/skills/contexts/go.md	Go service best practices
 `
 	if err := os.WriteFile(filepath.Join(skillsDir, "dynamic-registry.tsv"), []byte(tsvContent), 0644); err != nil {
 		t.Fatalf("Failed to write dynamic-registry.tsv: %v", err)
@@ -146,8 +146,8 @@ go-service	Go Service	go	skills/contexts/go.md	Go service best practices
 	if pack.Source != "dynamic-registry.tsv" {
 		t.Errorf("Expected source 'dynamic-registry.tsv', got '%s'", pack.Source)
 	}
-	if pack.Path != "skills/contexts/bash.md" {
-		t.Errorf("Expected path 'skills/contexts/bash.md', got '%s'", pack.Path)
+	if pack.Path != "artifacts/skills/contexts/bash.md" {
+		t.Errorf("Expected path 'artifacts/skills/contexts/bash.md', got '%s'", pack.Path)
 	}
 	if len(pack.Tags) != 2 {
 		t.Errorf("Expected 2 tags, got %d: %v", len(pack.Tags), pack.Tags)
@@ -181,7 +181,7 @@ func TestDuplicateIDDetection(t *testing.T) {
 
 	// Create TSV with same ID
 	tsvContent := `# skill_id	title	detect_tags	context_path	summary
-duplicate-id	From TSV	test	skills/contexts/test.md	This is from TSV
+duplicate-id	From TSV	test	artifacts/skills/contexts/test.md	This is from TSV
 `
 	if err := os.WriteFile(filepath.Join(skillsDir, "dynamic-registry.tsv"), []byte(tsvContent), 0644); err != nil {
 		t.Fatalf("Failed to write dynamic-registry.tsv: %v", err)
@@ -229,7 +229,7 @@ func TestBackwardCompatibility(t *testing.T) {
     version: 1.0.0
     type: internal
     description: Test legacy compatibility
-    file: skills/legacy-skill/SKILL.md
+    file: artifacts/skills/legacy-skill/SKILL.md
     category: testing
     tags:
       - test
@@ -264,10 +264,10 @@ func TestBackwardCompatibility(t *testing.T) {
 	if item.Type != "internal" {
 		t.Errorf("Expected Type='internal', got '%s'", item.Type)
 	}
-	if item.File != "skills/legacy-skill/SKILL.md" {
+	if item.File != "artifacts/skills/legacy-skill/SKILL.md" {
 		t.Errorf("Expected File, got '%s'", item.File)
 	}
-	if item.Path != "skills/legacy-skill/SKILL.md" {
+	if item.Path != "artifacts/skills/legacy-skill/SKILL.md" {
 		t.Errorf("Expected Path, got '%s'", item.Path)
 	}
 	if item.Category != "testing" {
@@ -310,8 +310,8 @@ func TestMergedCatalog(t *testing.T) {
 
 	// Create TSV with 2 context-packs
 	tsvContent := `# skill_id	title	detect_tags	context_path	summary
-pack-1	Pack 1	test	skills/contexts/pack1.md	First pack
-pack-2	Pack 2	test	skills/contexts/pack2.md	Second pack
+pack-1	Pack 1	test	artifacts/skills/contexts/pack1.md	First pack
+pack-2	Pack 2	test	artifacts/skills/contexts/pack2.md	Second pack
 `
 	if err := os.WriteFile(filepath.Join(skillsDir, "dynamic-registry.tsv"), []byte(tsvContent), 0644); err != nil {
 		t.Fatalf("Failed to write dynamic-registry.tsv: %v", err)
@@ -375,7 +375,7 @@ func TestSearchFunctionality(t *testing.T) {
 
 	// Create TSV with tagged context-pack
 	tsvContent := `# skill_id	title	detect_tags	context_path	summary
-testing-pack	Testing Pack	testing,quality	skills/contexts/test.md	Testing-focused pack
+testing-pack	Testing Pack	testing,quality	artifacts/skills/contexts/test.md	Testing-focused pack
 `
 	if err := os.WriteFile(filepath.Join(skillsDir, "dynamic-registry.tsv"), []byte(tsvContent), 0644); err != nil {
 		t.Fatalf("Failed to write dynamic-registry.tsv: %v", err)
@@ -453,7 +453,7 @@ func TestTSVWithComments(t *testing.T) {
 # skill_id	title	detect_tags	context_path	summary
 # Another comment
 
-valid-pack	Valid Pack	test	skills/contexts/pack.md	Valid entry
+valid-pack	Valid Pack	test	artifacts/skills/contexts/pack.md	Valid entry
 
 # Another comment in middle
 `
@@ -567,7 +567,7 @@ func TestStatus(t *testing.T) {
 	}
 
 	tsvContent := `# skill_id	title	detect_tags	context_path	summary
-pack-1	Pack 1	test	skills/contexts/pack1.md	First pack
+pack-1	Pack 1	test	artifacts/skills/contexts/pack1.md	First pack
 `
 	if err := os.WriteFile(filepath.Join(skillsDir, "dynamic-registry.tsv"), []byte(tsvContent), 0644); err != nil {
 		t.Fatalf("Failed to write dynamic-registry.tsv: %v", err)
@@ -625,7 +625,7 @@ func TestCreateSkill(t *testing.T) {
 		Description: "A newly created skill",
 		Version:     "1.0.0",
 		Type:        "internal",
-		File:        "skills/new-test-skill/SKILL.md",
+		File:        "artifacts/skills/new-test-skill/SKILL.md",
 		Tags:        []string{"test"},
 		Maintained:  true,
 	}
@@ -806,7 +806,7 @@ func TestCreateContextPack(t *testing.T) {
 		Kind:        "context-pack",
 		Scope:       "global",
 		Description: "A newly created context pack",
-		Path:        "skills/contexts/new-context.md",
+		Path:        "artifacts/skills/contexts/new-context.md",
 		Tags:        []string{"test", "context"},
 		Maintained:  true,
 	}
