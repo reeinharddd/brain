@@ -12,13 +12,13 @@ settings:
 
 domains:
   skills:
-    source: "skills/registry.yml"
+    source: "artifacts/skills/registry.yml"
     enabled: true
   mcp:
-    source: "mcp/registry.yml"
+    source: "artifacts/mcps/registry.yml"
     enabled: true
   providers:
-    source: "providers/providers.yml"
+    source: "artifacts/providers/providers.yml"
     enabled: true
   rules:
     source: "artifacts/rules/canonical.md"

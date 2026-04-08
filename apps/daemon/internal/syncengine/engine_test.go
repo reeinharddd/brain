@@ -21,7 +21,7 @@ func TestRunSyncWritesCanonicalArtifacts(t *testing.T) {
 	mustMkdir(t, filepath.Join(brainRoot, "artifacts", "agents"))
 	mustMkdir(t, filepath.Join(tempHome, "out"))
 
-	writeFile(t, filepath.Join(brainRoot, "skills", "registry.yml"), []byte(`skills:
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "skills", "registry.yml"), []byte(`skills:
   alpha:
     type: internal
     path: ~/.brain/skills/alpha/
@@ -30,7 +30,7 @@ func TestRunSyncWritesCanonicalArtifacts(t *testing.T) {
     capabilities: [inspect, report]
 `))
 
-	writeFile(t, filepath.Join(brainRoot, "mcp", "registry.yml"), []byte(`mcps:
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "mcps", "registry.yml"), []byte(`mcps:
   memory:
     package: "@modelcontextprotocol/server-memory"
     profile: [standard, full]
@@ -67,10 +67,10 @@ settings:
   dry_run_by_default: false
 domains:
   skills:
-    source: "skills/registry.yml"
+    source: "artifacts/skills/registry.yml"
     enabled: true
   mcp:
-    source: "mcp/registry.yml"
+    source: "artifacts/mcps/registry.yml"
     enabled: true
   rules:
     source: "artifacts/rules/canonical.md"
@@ -122,13 +122,13 @@ func TestRunSyncDryRunDoesNotWriteArtifacts(t *testing.T) {
 	mustMkdir(t, filepath.Join(brainRoot, "artifacts", "rules"))
 	mustMkdir(t, filepath.Join(brainRoot, "artifacts", "agents"))
 
-	writeFile(t, filepath.Join(brainRoot, "skills", "registry.yml"), []byte(`skills:
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "skills", "registry.yml"), []byte(`skills:
   alpha:
     type: internal
     path: ~/.brain/skills/alpha/
     purpose: Alpha skill
 `))
-	writeFile(t, filepath.Join(brainRoot, "mcp", "registry.yml"), []byte(`mcps:
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "mcps", "registry.yml"), []byte(`mcps:
   memory:
     package: "@modelcontextprotocol/server-memory"
     profile: [standard, full]
@@ -148,10 +148,10 @@ settings:
   dry_run_by_default: false
 domains:
   skills:
-    source: "skills/registry.yml"
+    source: "artifacts/skills/registry.yml"
     enabled: true
   mcp:
-    source: "mcp/registry.yml"
+    source: "artifacts/mcps/registry.yml"
     enabled: true
   rules:
     source: "artifacts/rules/canonical.md"

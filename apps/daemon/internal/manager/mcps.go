@@ -22,7 +22,7 @@ type MCP struct {
 	Command     string   `yaml:"command" json:"command"`
 	Description string   `yaml:"description" json:"description"`
 	Required    bool     `yaml:"required" json:"required"`
-	Visibility   string   `yaml:"visibility" json:"visibility"`
+	Visibility  string   `yaml:"visibility" json:"visibility"`
 	Profiles    []string `yaml:"profile" json:"profiles"` // which profiles include this MCP
 	Features    []string `yaml:"features" json:"features"`
 	EnvRequired []string `yaml:"env_required" json:"env_required"`
@@ -33,21 +33,34 @@ type MCP struct {
 
 // MCPsManager manages all MCPs
 type MCPsManager struct {
-	mu        sync.RWMutex
-	mcps      map[string]*MCP
-	brainRoot string
+	mu          sync.RWMutex
+	mcps        map[string]*MCP
+	brainRoot   string
 	environment string
-	logCh     chan string
+	logCh       chan string
 }
 
 // NewMCPsManager creates a new MCPs manager
 func NewMCPsManager(brainRoot string, environment string, logCh chan string) *MCPsManager {
 	return &MCPsManager{
-		mcps:      make(map[string]*MCP),
-		brainRoot: brainRoot,
+		mcps:        make(map[string]*MCP),
+		brainRoot:   brainRoot,
 		environment: environment,
-		logCh:     logCh,
+		logCh:       logCh,
 	}
+}
+
+func (r *MCPsManager) registryPath() string {
+	candidates := []string{
+		filepath.Join(r.brainRoot, "artifacts", "mcps", "registry.yml"),
+		filepath.Join(r.brainRoot, "mcp", "registry.yml"),
+	}
+	for _, candidate := range candidates {
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
+		}
+	}
+	return candidates[0]
 }
 
 // Load reads MCPs from registry.yml
@@ -55,7 +68,7 @@ func (r *MCPsManager) Load(ctx context.Context) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	registryPath := filepath.Join(r.brainRoot, "mcp", "registry.yml")
+	registryPath := r.registryPath()
 	r.log(fmt.Sprintf("Loading MCPs from %s", registryPath))
 
 	data, err := os.ReadFile(registryPath)
@@ -246,9 +259,9 @@ func (r *MCPsManager) GetStatus(ctx context.Context) map[string]interface{} {
 	defer r.mu.RUnlock()
 
 	return map[string]interface{}{
-		"count":        len(r.mcps),
-		"environment":  r.environment,
-		"last_synced":  "",
+		"count":       len(r.mcps),
+		"environment": r.environment,
+		"last_synced": "",
 	}
 }
 

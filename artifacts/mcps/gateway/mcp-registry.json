@@ -1,0 +1,51 @@
+{
+  "mcps": {
+    "memory": {
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-memory", "/home/reeinharrrd/.brain/memory"],
+      "type": "command"
+    },
+    "filesystem": {
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-filesystem", "/home/reeinharrrd"],
+      "type": "command"
+    },
+    "sequential-thinking": {
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-sequential-thinking"],
+      "type": "command"
+    },
+    "context7": {
+      "command": "bunx",
+      "args": ["@upstash/context7-mcp@latest"],
+      "type": "command"
+    },
+    "github": {
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "type": "command"
+    },
+    "brain-rules": {
+      "command": "brain",
+      "args": ["mcp", "serve"],
+      "type": "command"
+    },
+    "skill-ninja": {
+      "args": [
+        "-y",
+        "skill-ninja-mcp-server"
+      ],
+      "type": "command",
+      "command": "npx"
+    },
+    "duckduckgo": {
+      "args": [],
+      "type": "docker",
+      "image": "mcp/duckduckgo:latest"
+    },
+    "context-awesome": {
+      "type": "http",
+      "url": "https://www.context-awesome.com/api/mcp"
+    }
+  }
+}

@@ -12,11 +12,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/reeinharrrd/brain/daemon/internal/api/handlers"
 	brainenv "github.com/reeinharrrd/brain/daemon/internal/environment"
 	"github.com/reeinharrrd/brain/daemon/internal/manager"
 	"github.com/reeinharrrd/brain/daemon/internal/manifest"
 	"github.com/reeinharrrd/brain/daemon/internal/syncengine"
-	"github.com/reeinharrrd/brain/daemon/internal/api/handlers"
 
 	"github.com/gorilla/websocket"
 )
@@ -120,7 +120,7 @@ func NewBrainDaemon() *BrainDaemon {
 		brainRoot:   root,
 	}
 	logCh <- fmt.Sprintf("[Daemon] Initialized with 8 managers in %s environment", environment)
-	
+
 	// Load registries asynchronously
 	go func() {
 		ctx := context.Background()
@@ -128,7 +128,7 @@ func NewBrainDaemon() *BrainDaemon {
 			logCh <- fmt.Sprintf("⚠️ Failed to load skills registry: %v", err)
 		} else {
 			logCh <- "[Skills] Registry loaded"
-			
+
 			// VALIDATE SYNC STATUS AFTER LOADING
 			synced, orphans, missing := d.skills.ValidateSyncStatus(ctx)
 			if !synced {
@@ -145,7 +145,7 @@ func NewBrainDaemon() *BrainDaemon {
 						logCh <- fmt.Sprintf("   - %s (in registry but not on filesystem)", missing_skill)
 					}
 				}
-				
+
 				// Only FAIL if there are orphans
 				if len(orphans) > 0 {
 					logCh <- "[Skills] ❌ Refusing to start with orphan skills. Please delete them or add them to registry."
@@ -155,11 +155,11 @@ func NewBrainDaemon() *BrainDaemon {
 				logCh <- "[Skills] ✅ Registry and filesystem perfectly synchronized"
 			}
 		}
-		
+
 		// Start validation ticker (every 5 minutes)
 		d.startSkillsValidationTicker()
 	}()
-	
+
 	go func() {
 		ctx := context.Background()
 		if err := d.mcps.Load(ctx); err != nil {
@@ -168,7 +168,7 @@ func NewBrainDaemon() *BrainDaemon {
 			logCh <- "[MCPs] Registry loaded"
 		}
 	}()
-	
+
 	go func() {
 		ctx := context.Background()
 		if err := d.agents.Load(ctx); err != nil {
@@ -177,14 +177,14 @@ func NewBrainDaemon() *BrainDaemon {
 			logCh <- "[Agents] Registry loaded"
 		}
 	}()
-	
+
 	// Initialize Docs-RAG handler with stub indexer
 	d.docsHandler = handlers.NewDocsHandler(&StubIndexer{}, environment)
 	logCh <- "[Docs-RAG] Handler initialized"
-	
+
 	go d.processLogs()
-	go d.startSyncSubsystem()  // Start sync subsystem asynchronously
-	go d.healthCheckLoop()  // Start background health check loop
+	go d.startSyncSubsystem() // Start sync subsystem asynchronously
+	go d.healthCheckLoop()    // Start background health check loop
 	return d
 }
 
@@ -195,7 +195,7 @@ func (d *BrainDaemon) startSkillsValidationTicker() {
 		for range ticker.C {
 			ctx := context.Background()
 			synced, orphans, missing := d.skills.ValidateSyncStatus(ctx)
-			
+
 			if !synced {
 				if len(orphans) > 0 {
 					d.logChannel <- fmt.Sprintf("⚠️ Skills validation: Found %d orphans: %v", len(orphans), orphans)
@@ -214,7 +214,7 @@ func (d *BrainDaemon) processLogs() {
 	for msg := range d.logChannel {
 		// print to terminal daemon stdout as well
 		fmt.Println(msg)
-		
+
 		payload, _ := json.Marshal(map[string]interface{}{
 			"event": "log",
 			"data":  msg,
@@ -227,24 +227,24 @@ func (d *BrainDaemon) processLogs() {
 func (d *BrainDaemon) healthCheckLoop() {
 	ticker := time.NewTicker(30 * time.Second)
 	defer ticker.Stop()
-	
+
 	for range ticker.C {
 		d.mu.Lock()
 		status := d.status
 		d.mu.Unlock()
-		
+
 		// Fetch real manager status
 		dockerOk := true
 		qdrantOk := true
 		ollamaOk := d.ollama.IsAvailable(context.Background())
 		mcpOk := true
-		
+
 		// Quick health checkpoint
 		_, dockerErr := d.docker.GetServiceStatus(context.Background(), "all")
 		if dockerErr != nil {
 			dockerOk = false
 		}
-		
+
 		qdrantHealth, _ := d.qdrant.HealthCheck(context.Background())
 		if !qdrantHealth {
 			qdrantOk = false
@@ -261,7 +261,7 @@ func (d *BrainDaemon) healthCheckLoop() {
 				"timestamp":     time.Now().String(),
 			},
 		}
-		
+
 		payload, _ := json.Marshal(statusMsg)
 		d.broadcast(payload)
 	}
@@ -329,7 +329,7 @@ func (d *BrainDaemon) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		d.handleProvidersAvailable(w, r)
 		return
 	}
-	
+
 	// Registry endpoints
 	if strings.HasPrefix(r.URL.Path, "/api/skills") {
 		d.handleSkills(w, r)
@@ -343,13 +343,13 @@ func (d *BrainDaemon) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		d.handleAgents(w, r)
 		return
 	}
-	
+
 	// Docs-RAG endpoints
 	if strings.HasPrefix(r.URL.Path, "/api/docs") {
 		d.handleDocs(w, r)
 		return
 	}
-	
+
 	http.NotFound(w, r)
 }
 
@@ -386,7 +386,7 @@ func (d *BrainDaemon) handleStatus(w http.ResponseWriter, r *http.Request) {
 	d.mu.Lock()
 	status := d.status
 	d.mu.Unlock()
-	
+
 	statuses := d.procManager.GetAllStatuses()
 	d.syncMu.Lock()
 	syncStatus := d.syncStatus
@@ -394,17 +394,17 @@ func (d *BrainDaemon) handleStatus(w http.ResponseWriter, r *http.Request) {
 	syncLastRun := d.syncLastRun
 	syncError := d.syncError
 	d.syncMu.Unlock()
-	
+
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"status":       status,
-		"time":         time.Now().String(),
-		"processes":    len(statuses),
-		"uptime":       time.Now().Unix(),
-		"environment":  d.environment,
-		"sync_status":  syncStatus,
-		"sync_running": syncRunning,
+		"status":        status,
+		"time":          time.Now().String(),
+		"processes":     len(statuses),
+		"uptime":        time.Now().Unix(),
+		"environment":   d.environment,
+		"sync_status":   syncStatus,
+		"sync_running":  syncRunning,
 		"sync_last_run": syncLastRun,
-		"sync_error":   syncError,
+		"sync_error":    syncError,
 	})
 }
 
@@ -426,12 +426,12 @@ func (d *BrainDaemon) handleStartProcess(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), 400)
 		return
 	}
-	
+
 	if err := d.procManager.StartProcess(req.ID, req.Command, req.Args); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	
+
 	d.broadcast([]byte(fmt.Sprintf(`{"event":"status","data":"started process %s"}`, req.ID)))
 	w.WriteHeader(200)
 }
@@ -446,12 +446,12 @@ func (d *BrainDaemon) handleStopProcess(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, err.Error(), 400)
 		return
 	}
-	
+
 	if err := d.procManager.StopProcess(req.ID); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	
+
 	d.broadcast([]byte(fmt.Sprintf(`{"event":"status","data":"stopped process %s"}`, req.ID)))
 	w.WriteHeader(200)
 }
@@ -670,7 +670,7 @@ func (d *BrainDaemon) handleSync(w http.ResponseWriter, r *http.Request) {
 func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	w.Header().Set("Content-Type", "application/json")
-	
+
 	// GET /api/skills - list all
 	if r.URL.Path == "/api/skills" && r.Method == "GET" {
 		skills := d.skills.GetAll(ctx)
@@ -678,7 +678,7 @@ func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{"skills": skills})
 		return
 	}
-	
+
 	// POST /api/skills - create new skill or context-pack
 	if r.URL.Path == "/api/skills" && r.Method == "POST" {
 		var item manager.CatalogItem
@@ -701,7 +701,7 @@ func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{"status": "created", "item": &item})
 		return
 	}
-	
+
 	// GET /api/skills/validate - check synchronization status (MUST be before generic GET)
 	if r.URL.Path == "/api/skills/validate" && r.Method == "GET" {
 		synced, orphans, missing := d.skills.ValidateSyncStatus(ctx)
@@ -713,7 +713,7 @@ func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	
+
 	// POST /api/skills/search (MUST be before generic GET)
 	if r.URL.Path == "/api/skills/search" && r.Method == "POST" {
 		query := r.URL.Query().Get("q")
@@ -727,7 +727,7 @@ func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{"results": results})
 		return
 	}
-	
+
 	// POST /api/skills/sync (MUST be before generic PUT/DELETE)
 	if r.URL.Path == "/api/skills/sync" && r.Method == "POST" {
 		err := d.skills.Sync(ctx)
@@ -740,7 +740,7 @@ func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"status": "skills synced"})
 		return
 	}
-	
+
 	// GET /api/skills/{id}
 	if r.Method == "GET" {
 		parts := strings.Split(r.URL.Path, "/")
@@ -757,7 +757,7 @@ func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	// PUT /api/skills/{id} - update skill or context-pack
 	if r.Method == "PUT" {
 		parts := strings.Split(r.URL.Path, "/")
@@ -784,7 +784,7 @@ func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	// DELETE /api/skills/{id} - delete skill or context-pack
 	if r.Method == "DELETE" {
 		parts := strings.Split(r.URL.Path, "/")
@@ -805,17 +805,16 @@ func (d *BrainDaemon) handleSkills(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	w.WriteHeader(http.StatusNotFound)
 	json.NewEncoder(w).Encode(map[string]string{"error": "endpoint not found"})
 }
-
 
 // MCPs Handlers
 func (d *BrainDaemon) handleMCPs(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	w.Header().Set("Content-Type", "application/json")
-	
+
 	// GET /api/mcps - list all
 	if r.URL.Path == "/api/mcps" && r.Method == "GET" {
 		mcps := d.mcps.GetAll(ctx)
@@ -823,7 +822,7 @@ func (d *BrainDaemon) handleMCPs(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{"mcps": mcps})
 		return
 	}
-	
+
 	// GET /api/mcps/{id}
 	if r.Method == "GET" {
 		parts := strings.Split(r.URL.Path, "/")
@@ -840,7 +839,7 @@ func (d *BrainDaemon) handleMCPs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	// POST /api/mcps/search
 	if r.URL.Path == "/api/mcps/search" && r.Method == "POST" {
 		query := r.URL.Query().Get("q")
@@ -854,7 +853,7 @@ func (d *BrainDaemon) handleMCPs(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{"results": results})
 		return
 	}
-	
+
 	// POST /api/mcps/sync
 	if r.URL.Path == "/api/mcps/sync" && r.Method == "POST" {
 		err := d.mcps.Sync(ctx)
@@ -867,7 +866,7 @@ func (d *BrainDaemon) handleMCPs(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"status": "mcps synced"})
 		return
 	}
-	
+
 	w.WriteHeader(http.StatusNotFound)
 	json.NewEncoder(w).Encode(map[string]string{"error": "endpoint not found"})
 }
@@ -876,7 +875,7 @@ func (d *BrainDaemon) handleMCPs(w http.ResponseWriter, r *http.Request) {
 func (d *BrainDaemon) handleAgents(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	w.Header().Set("Content-Type", "application/json")
-	
+
 	// GET /api/agents - list all
 	if r.URL.Path == "/api/agents" && r.Method == "GET" {
 		agents := d.agents.GetAll(ctx)
@@ -884,7 +883,7 @@ func (d *BrainDaemon) handleAgents(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{"agents": agents})
 		return
 	}
-	
+
 	// GET /api/agents/{id}
 	if r.Method == "GET" {
 		parts := strings.Split(r.URL.Path, "/")
@@ -901,7 +900,7 @@ func (d *BrainDaemon) handleAgents(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	// POST /api/agents/search
 	if r.URL.Path == "/api/agents/search" && r.Method == "POST" {
 		query := r.URL.Query().Get("q")
@@ -915,7 +914,7 @@ func (d *BrainDaemon) handleAgents(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{"results": results})
 		return
 	}
-	
+
 	// POST /api/agents/sync
 	if r.URL.Path == "/api/agents/sync" && r.Method == "POST" {
 		err := d.agents.Sync(ctx)
@@ -928,7 +927,7 @@ func (d *BrainDaemon) handleAgents(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"status": "agents synced"})
 		return
 	}
-	
+
 	w.WriteHeader(http.StatusNotFound)
 	json.NewEncoder(w).Encode(map[string]string{"error": "endpoint not found"})
 }
@@ -941,23 +940,23 @@ func (d *BrainDaemon) handleDocs(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "docs handler not initialized"})
 		return
 	}
-	
+
 	// Route to appropriate handler
 	if strings.HasPrefix(r.URL.Path, "/api/docs/search") && r.Method == "GET" {
 		d.docsHandler.Search(w, r)
 		return
 	}
-	
+
 	if strings.HasPrefix(r.URL.Path, "/api/docs/status") && r.Method == "GET" {
 		d.docsHandler.Status(w, r)
 		return
 	}
-	
+
 	if strings.HasPrefix(r.URL.Path, "/api/docs/rebuild") && r.Method == "POST" {
 		d.docsHandler.Rebuild(w, r)
 		return
 	}
-	
+
 	http.NotFound(w, r)
 }
 
@@ -988,11 +987,17 @@ func (d *BrainDaemon) startSyncSubsystem() {
 
 	paths := []string{
 		filepath.Join(d.brainRoot, "manifest.yml"),
+		filepath.Join(d.brainRoot, "artifacts", "skills", "registry.yml"),
+		filepath.Join(d.brainRoot, "artifacts", "skills", "dynamic-registry.tsv"),
 		filepath.Join(d.brainRoot, "skills", "registry.yml"),
 		filepath.Join(d.brainRoot, "skills", "dynamic-registry.tsv"),
+		filepath.Join(d.brainRoot, "artifacts", "mcps", "registry.yml"),
 		filepath.Join(d.brainRoot, "mcp", "registry.yml"),
+		filepath.Join(d.brainRoot, "artifacts", "providers", "providers.yml"),
 		filepath.Join(d.brainRoot, "providers", "providers.yml"),
+		filepath.Join(d.brainRoot, "artifacts", "rules", "canonical.md"),
 		filepath.Join(d.brainRoot, "rules", "canonical.md"),
+		filepath.Join(d.brainRoot, "artifacts", "agents"),
 		filepath.Join(d.brainRoot, "agents"),
 	}
 

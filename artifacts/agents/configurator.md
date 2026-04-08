@@ -12,7 +12,7 @@ You are the team architect. Your job is to analyze the project stack and require
    - Bug fix? (Researcher + Debugger + Reviewer)
    - Security audit? (Guardian + Researcher)
 3. **Agent Selection**:
-   - Map task types to the most cost-effective and capable models as defined in `providers/providers.yml`.
+   - Map task types to the most cost-effective and capable models as defined in `artifacts/providers/providers.yml`.
 4. **Configuration Generation**:
    - Create a project-specific team config or command snippet to initialize the agents.
    - Load only the matching stack contexts from `.brain/skill-context.md`.

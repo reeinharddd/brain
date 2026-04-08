@@ -31,23 +31,23 @@ type CatalogItem struct {
 	// Canonical fields
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
-	Kind        string   `json:"kind"` // "skill" or "context-pack"
+	Kind        string   `json:"kind"`  // "skill" or "context-pack"
 	Scope       string   `json:"scope"` // "global" or "workspace"
 	Description string   `json:"description"`
 	Tags        []string `json:"tags"`
 	Path        string   `json:"path"` // file or context path
-	
+
 	// Metadata
-	Version     string   `json:"version,omitempty"`
-	Maintained  bool     `json:"maintained"`
-	Source      string   `json:"source"` // "registry.yml" or "dynamic-registry.tsv"
-	
+	Version    string `json:"version,omitempty"`
+	Maintained bool   `json:"maintained"`
+	Source     string `json:"source"` // "registry.yml" or "dynamic-registry.tsv"
+
 	// Legacy aliases for backward compatibility with CLI and existing consumers
-	Type        string   `json:"type,omitempty"` // alias for Kind in legacy YAML (internal/external or context-pack)
-	File        string   `json:"file,omitempty"` // alias for Path
-	SyncTo      []string `json:"sync_to,omitempty"` // targets
-	Requires    []string `json:"requires,omitempty"`
-	Category    string   `json:"category,omitempty"`
+	Type     string   `json:"type,omitempty"`    // alias for Kind in legacy YAML (internal/external or context-pack)
+	File     string   `json:"file,omitempty"`    // alias for Path
+	SyncTo   []string `json:"sync_to,omitempty"` // targets
+	Requires []string `json:"requires,omitempty"`
+	Category string   `json:"category,omitempty"`
 }
 
 // SkillsRegistry manages all skills and context-packs
@@ -65,6 +65,45 @@ func NewSkillsRegistry(brainRoot string, logCh chan string) *SkillsRegistry {
 		brainRoot: brainRoot,
 		logCh:     logCh,
 	}
+}
+
+func (r *SkillsRegistry) registryPath() string {
+	candidates := []string{
+		filepath.Join(r.brainRoot, "artifacts", "skills", "registry.yml"),
+		filepath.Join(r.brainRoot, "skills", "registry.yml"),
+	}
+	for _, candidate := range candidates {
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
+		}
+	}
+	return candidates[0]
+}
+
+func (r *SkillsRegistry) contextPacksPath() string {
+	candidates := []string{
+		filepath.Join(r.brainRoot, "artifacts", "skills", "dynamic-registry.tsv"),
+		filepath.Join(r.brainRoot, "skills", "dynamic-registry.tsv"),
+	}
+	for _, candidate := range candidates {
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
+		}
+	}
+	return candidates[0]
+}
+
+func (r *SkillsRegistry) skillsDir() string {
+	candidates := []string{
+		filepath.Join(r.brainRoot, "artifacts", "skills"),
+		filepath.Join(r.brainRoot, "skills"),
+	}
+	for _, candidate := range candidates {
+		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+			return candidate
+		}
+	}
+	return candidates[0]
 }
 
 // Load reads skills from registry.yml and context-packs from dynamic-registry.tsv
@@ -92,7 +131,7 @@ func (r *SkillsRegistry) Load(ctx context.Context) error {
 
 // loadSkillsFromYAML loads skills from the YAML registry
 func (r *SkillsRegistry) loadSkillsFromYAML() error {
-	registryPath := filepath.Join(r.brainRoot, "skills", "registry.yml")
+	registryPath := r.registryPath()
 	r.log(fmt.Sprintf("Loading skills from %s", registryPath))
 
 	data, err := os.ReadFile(registryPath)
@@ -198,7 +237,7 @@ func (r *SkillsRegistry) loadSkillsFromYAML() error {
 
 // loadContextPacksFromTSV loads context-packs from the TSV registry
 func (r *SkillsRegistry) loadContextPacksFromTSV() error {
-	tsvPath := filepath.Join(r.brainRoot, "skills", "dynamic-registry.tsv")
+	tsvPath := r.contextPacksPath()
 	r.log(fmt.Sprintf("Loading context-packs from %s", tsvPath))
 
 	data, err := os.ReadFile(tsvPath)
@@ -410,7 +449,7 @@ func (r *SkillsRegistry) DeleteItem(ctx context.Context, id string) error {
 
 // createSkillLocked adds a new skill to registry.yml (must hold lock)
 func (r *SkillsRegistry) createSkillLocked(item *CatalogItem) error {
-	registryPath := filepath.Join(r.brainRoot, "skills", "registry.yml")
+	registryPath := r.registryPath()
 
 	// Read current YAML
 	data, err := os.ReadFile(registryPath)
@@ -460,7 +499,7 @@ func (r *SkillsRegistry) createSkillLocked(item *CatalogItem) error {
 
 // updateSkillLocked modifies an existing skill in registry.yml (must hold lock)
 func (r *SkillsRegistry) updateSkillLocked(id string, item *CatalogItem) error {
-	registryPath := filepath.Join(r.brainRoot, "skills", "registry.yml")
+	registryPath := r.registryPath()
 
 	// Read current YAML
 	data, err := os.ReadFile(registryPath)
@@ -508,7 +547,7 @@ func (r *SkillsRegistry) updateSkillLocked(id string, item *CatalogItem) error {
 
 // deleteSkillLocked removes a skill from registry.yml (must hold lock)
 func (r *SkillsRegistry) deleteSkillLocked(id string) error {
-	registryPath := filepath.Join(r.brainRoot, "skills", "registry.yml")
+	registryPath := r.registryPath()
 
 	// Read current YAML
 	data, err := os.ReadFile(registryPath)
@@ -555,7 +594,7 @@ func (r *SkillsRegistry) deleteSkillLocked(id string) error {
 
 // createContextPackLocked adds a new context-pack to dynamic-registry.tsv (must hold lock)
 func (r *SkillsRegistry) createContextPackLocked(item *CatalogItem) error {
-	tsvPath := filepath.Join(r.brainRoot, "skills", "dynamic-registry.tsv")
+	tsvPath := r.contextPacksPath()
 
 	// Read current TSV
 	data, err := os.ReadFile(tsvPath)
@@ -609,7 +648,7 @@ func (r *SkillsRegistry) createContextPackLocked(item *CatalogItem) error {
 
 // updateContextPackLocked modifies an existing context-pack in dynamic-registry.tsv (must hold lock)
 func (r *SkillsRegistry) updateContextPackLocked(id string, item *CatalogItem) error {
-	tsvPath := filepath.Join(r.brainRoot, "skills", "dynamic-registry.tsv")
+	tsvPath := r.contextPacksPath()
 
 	// Read current TSV
 	data, err := os.ReadFile(tsvPath)
@@ -670,7 +709,7 @@ func (r *SkillsRegistry) updateContextPackLocked(id string, item *CatalogItem) e
 
 // deleteContextPackLocked removes a context-pack from dynamic-registry.tsv (must hold lock)
 func (r *SkillsRegistry) deleteContextPackLocked(id string) error {
-	tsvPath := filepath.Join(r.brainRoot, "skills", "dynamic-registry.tsv")
+	tsvPath := r.contextPacksPath()
 
 	// Read current TSV
 	data, err := os.ReadFile(tsvPath)
@@ -777,10 +816,9 @@ func (r *SkillsRegistry) ValidateSyncStatus(ctx context.Context) (bool, []string
 	return synced, orphans, missing
 }
 
-
 // getOrphansLocked finds filesystem directories not in registry (must hold read lock)
 func (r *SkillsRegistry) getOrphansLocked() []string {
-	skillsPath := filepath.Join(r.brainRoot, "skills")
+	skillsPath := r.skillsDir()
 
 	entries, err := os.ReadDir(skillsPath)
 	if err != nil {
@@ -795,9 +833,9 @@ func (r *SkillsRegistry) getOrphansLocked() []string {
 
 		dirName := entry.Name()
 		// Skip special directories
-		if dirName == "." || dirName == ".." || dirName == ".git" || 
-		   dirName == ".gitignore" || dirName == "__pycache__" ||
-		   strings.HasPrefix(dirName, ".") {
+		if dirName == "." || dirName == ".." || dirName == ".git" ||
+			dirName == ".gitignore" || dirName == "__pycache__" ||
+			strings.HasPrefix(dirName, ".") {
 			continue
 		}
 
@@ -815,7 +853,7 @@ func (r *SkillsRegistry) getMissingLocked() []string {
 	var missing []string
 
 	for id := range r.catalog {
-		skillPath := filepath.Join(r.brainRoot, "skills", id)
+		skillPath := filepath.Join(r.skillsDir(), id)
 		if _, err := os.Stat(skillPath); os.IsNotExist(err) {
 			missing = append(missing, id)
 		}

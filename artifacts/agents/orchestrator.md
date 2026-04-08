@@ -2,7 +2,7 @@
 name: orchestrator
 version: 3.0.0
 description: >
-  Coordinador central del brain repo. Lee providers.yml y mcp/registry.yml
+  Coordinador central del brain repo. Lee providers.yml y artifacts/mcps/registry.yml
   dinamicamente. Delega TODO el trabajo a subagentes especializados.
   Nunca escribe codigo ni edita archivos directamente.
 ---
@@ -62,7 +62,7 @@ Si no disponible, inferir el stack desde los archivos visibles.
 
 ### Paso 4: Leer routing de providers
 
-Leer ~/.brain/providers/providers.yml para el mapping actual de modelos.
+Leer ~/.brain/artifacts/providers/providers.yml para el mapping actual de modelos.
 NUNCA hardcodear nombres de modelo. El routing puede haber cambiado.
 
 ### Paso 5: Presentar orientacion

@@ -58,7 +58,7 @@ Brain Repository (~/brain/)
   - Strict mode enforced (noUnusedLocals, noUnusedParameters, noImplicitAny)
 
 - **YAML/JSON** for configuration
-  - providers.yml, agents.json, config/, skills/registry.yml
+  - providers.yml, agents.json, config/, artifacts/skills/registry.yml
 
 - **Forbidden**: Bash scripts (.sh), Python scripts (.py) in ~/.brain
   - Previous cleanup removed all shell/Python orchestration
@@ -92,7 +92,7 @@ Every feature MUST be implemented 100% across ALL three surfaces:
 NO EXCEPTIONS for partial features. If feature exists on daemon but not UI, it's incomplete.
 
 **Master Registry Principle**
-- skills/registry.yml is source of truth for executable skills
+- artifacts/skills/registry.yml is source of truth for executable skills
 - CLI writes to registry first, then filesystem second
 - Daemon validates sync every 5 minutes (logs orphans if found)
 - No orphan skills allowed (hardcoded rule, enforced by daemon ticker)
@@ -509,8 +509,8 @@ QDRANT_API_KEY=xxx...                        # Qdrant auth (if using cloud)
 - `providers.yml` - LLM routing config (SINGLE source of truth for providers)
 - `config/agents.json` - Agent definitions
 - `config/mcps.json` - MCP server configurations
-- `skills/registry.yml` - Skills metadata index
-- `skills/dynamic-registry.tsv` - Context packs index
+- `artifacts/skills/registry.yml` - Skills metadata index
+- `artifacts/skills/dynamic-registry.tsv` - Context packs index
 - `docker/docker-compose.yml` - Infrastructure (Qdrant + Ollama)
 
 **Important Paths**
@@ -520,7 +520,7 @@ QDRANT_API_KEY=xxx...                        # Qdrant auth (if using cloud)
 ~/.brain/cli/cmd/brain/main.go            CLI entry point
 ~/.brain/desktop/src/                    React components
 ~/.brain/docs/adr/                       Architecture Decision Records
-~/.brain/skills/registry.yml             Skills discovery index
+~/.brain/artifacts/skills/registry.yml             Skills discovery index
 ~/.brain/rules/canonical.md              Development principles
 ```
 
@@ -615,7 +615,7 @@ Warning: Function too complex
 - **Workflow**: See rules/modules/workflow.md
 - **Memory Protocol**: See rules/modules/memory.md
 - **Agents**: See agents/ folder for prompt definitions
-- **Skills**: See skills/registry.yml for available skills
+- **Skills**: See artifacts/skills/registry.yml for available skills
 
 ---
 

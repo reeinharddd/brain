@@ -1,0 +1,120 @@
+docker_mcps:
+
+  duckduckgo:
+    image: mcp/duckduckgo
+    tag: latest
+    purpose: Privacy-preserving free web search
+    when_to_use: Researching real-time data without API keys
+    docker_command: |
+      docker run -i --rm mcp/duckduckgo:latest
+
+  git:
+    image: mcp/git
+    tag: latest
+    purpose: Local repository inspection and manipulation
+    when_to_use: Managing local git history, branches, and diffs
+    docker_command: |
+      docker run -i --rm -v $(pwd):/repo mcp/git:latest
+
+  sqlite:
+    image: mcp/sqlite
+    tag: latest
+    purpose: Persistent structured data storage
+    when_to_use: Managing relational data in a lightweight local DB
+    docker_command: |
+      docker run -i --rm -v $(pwd)/data:/data mcp/sqlite:latest
+
+  github:
+    image: mcp/github
+    tag: latest
+    env_required: [GITHUB_TOKEN]
+    purpose: Issues, Pull Requests, and Repository Management
+    when_to_use: Automating repo tasks, multi-file edits via PR
+    docker_command: |
+      docker run -i --rm \
+        -e GITHUB_TOKEN=$GITHUB_TOKEN \
+        mcp/github:latest
+
+  postgres:
+    image: mcp/postgres
+    tag: latest
+    env_required: [DATABASE_URL]
+    purpose: Secure DB exploration and safe read-only querying
+    when_to_use: Database-aware debugging and schema inspection
+    docker_command: |
+      docker run -i --rm \
+        -e DATABASE_URL=$DATABASE_URL \
+        mcp/postgres:latest
+
+  figma:
+    image: mcp/figma
+    tag: latest
+    env_required: [FIGMA_ACCESS_TOKEN]
+    purpose: Structural and design context from UI files
+    when_to_use: Designer agent generating pixel-perfect UI
+    docker_command: |
+      docker run -i --rm \
+        -e FIGMA_ACCESS_TOKEN=$FIGMA_ACCESS_TOKEN \
+        mcp/figma:latest
+
+  context7:
+    image: mcp/context7
+    tag: latest
+    purpose: Semantic search for up-to-date technical documentation
+    when_to_use: Researching new library versions (avoids hallucinations)
+    docker_command: |
+      docker run -i --rm \
+        mcp/context7:latest
+
+  puppeteer:
+    image: mcp/puppeteer
+    tag: latest
+    purpose: Real-time browser automation and screenshots
+    when_to_use: Visual verification of UI and complex web scraping
+    docker_command: |
+      docker run -i --rm \
+        mcp/puppeteer:latest
+
+  n8n:
+    image: n8n/mcp-server
+    tag: latest
+    env_required: [N8N_API_KEY, N8N_URL]
+    purpose: Trigger multi-step low-code workflow automations
+    when_to_use: Long-running or complex integration logic
+    docker_command: |
+      docker run -i --rm \
+        -e N8N_API_KEY=$N8N_API_KEY \
+        -e N8N_URL=$N8N_URL \
+        n8n/mcp-server:latest
+
+  crawl4ai:
+    image: unclecode/crawl4ai
+    tag: latest
+    purpose: Multi-page AI-friendly crawling and markdown extraction
+    when_to_use: Depth-first research of entire domains or repositories
+    docker_command: |
+      docker run -i --rm unclecode/crawl4ai:latest
+
+  sequentialthinking:
+    image: mcp/sequentialthinking
+    tag: latest
+    purpose: Dynamic and reflective problem-solving through thought sequences
+    when_to_use: Before acting on complex multi-step tasks to ensure logical consistency
+    docker_command: |
+      docker run -i --rm mcp/sequentialthinking:latest
+
+  skill-ninja:
+    image: aktsmm/skill-ninja-mcp-server
+    tag: latest
+    purpose: Automated discovery and installation of agent skills (SKILL.md)
+    when_to_use: Expanding the brain's capabilities with community-contributed skills
+    docker_command: |
+      docker run -i --rm aktsmm/skill-ninja-mcp-server:latest
+
+  context-awesome:
+    image: bh-rat/context-awesome
+    tag: latest
+    purpose: MCP interface for 8,500+ curated awesome lists and resource discovery
+    when_to_use: Researching high-quality tools, libraries, or patterns across any domain
+    docker_command: |
+      docker run -i --rm bh-rat/context-awesome:latest
