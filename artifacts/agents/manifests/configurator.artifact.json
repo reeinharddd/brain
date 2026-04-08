@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "agent",
+  "id": "configurator",
+  "displayName": "Configurator",
+  "description": "Agent artifact for configurator.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/agents/configurator.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "configurator.md",
+    "files": [
+      "configurator.md"
+    ]
+  },
+  "agent": {
+    "role": "configurator",
+    "modelPolicy": {
+      "preferredTier": "powerful",
+      "minimumTier": "standard"
+    }
+  }
+}

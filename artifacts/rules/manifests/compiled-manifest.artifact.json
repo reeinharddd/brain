@@ -1,0 +1,41 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "rule",
+  "id": "compiled-manifest",
+  "displayName": "Compiled Manifest",
+  "description": "Rule artifact for compiled/manifest.md.",
+  "scope": "organization",
+  "owner": "brain:system",
+  "visibility": "organization",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/rules/compiled/manifest.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "compiled/manifest.md",
+    "files": [
+      "compiled/manifest.md"
+    ]
+  },
+  "rule": {
+    "priority": 100,
+    "enforcement": "advisory",
+    "mergeStrategy": "compose"
+  }
+}

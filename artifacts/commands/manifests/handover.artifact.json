@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "command",
+  "id": "handover",
+  "displayName": "Handover",
+  "description": "Command artifact for /handover.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/commands/handover.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "handover.md",
+    "files": [
+      "handover.md"
+    ]
+  },
+  "command": {
+    "trigger": "/handover",
+    "autoInvokePolicy": "manual",
+    "outputContract": {
+      "format": "markdown"
+    }
+  }
+}

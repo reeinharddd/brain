@@ -1,0 +1,41 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "adapter",
+  "id": "providers",
+  "displayName": "Providers",
+  "description": "Provider configuration artifact for Providers.",
+  "scope": "platform",
+  "owner": "user:brain",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/providers/providers.yml"
+  },
+  "sync": {
+    "mode": "local"
+  },
+  "security": {
+    "trust": "verified",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "artifacts/providers/providers.yml",
+    "files": [
+      "artifacts/providers/providers.yml"
+    ]
+  },
+  "adapter": {
+    "target": "providers",
+    "format": "yaml",
+    "projection": {
+      "kind": "operational"
+    }
+  }
+}

@@ -102,6 +102,23 @@ artifacts/skills/<id>/
 
 Simple artifacts may be manifest-only if no extra payload is required.
 
+During the current migration phase, generated artifact manifests live alongside their domains, for example:
+
+```text
+artifacts/agents/manifests/orchestrator.artifact.json
+artifacts/commands/manifests/plan.artifact.json
+artifacts/rules/manifests/canonical.artifact.json
+```
+
+During migration, file-based artifacts may keep payload files in place while storing artifact manifests in domain-level `manifests/` folders, for example:
+
+```text
+artifacts/agents/
+├── architect.md
+└── manifests/
+    └── architect.artifact.json
+```
+
 ### Supported Acquisition Flows
 
 - `create`
@@ -177,6 +194,11 @@ The initial schema set now lives under:
 - `artifacts/schemas/skill-artifact.schema.json`
 - `artifacts/schemas/rule-artifact.schema.json`
 - `artifacts/schemas/mcp-artifact.schema.json`
+
+The repository now validates generated manifests with:
+
+- `utils/scripts/validate-artifact-manifests.py`
+- `.github/workflows/artifact-manifests.yml`
 
 ### Phase 2: Registry Normalization
 

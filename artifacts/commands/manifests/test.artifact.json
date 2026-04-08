@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "command",
+  "id": "test",
+  "displayName": "Test",
+  "description": "Command artifact for /test.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/commands/test.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "test.md",
+    "files": [
+      "test.md"
+    ]
+  },
+  "command": {
+    "trigger": "/test",
+    "autoInvokePolicy": "manual",
+    "outputContract": {
+      "format": "markdown"
+    }
+  }
+}

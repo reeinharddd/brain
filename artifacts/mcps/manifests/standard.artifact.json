@@ -1,0 +1,45 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "mcp",
+  "id": "standard",
+  "displayName": "Standard",
+  "description": "MCP support artifact for Standard.",
+  "scope": "workspace",
+  "owner": "user:brain",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/mcps/profiles/standard.json"
+  },
+  "sync": {
+    "mode": "local"
+  },
+  "security": {
+    "trust": "verified",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "mcps/profiles/standard.json",
+    "files": [
+      "artifacts/mcps/profiles/full.json",
+      "artifacts/mcps/profiles/minimal.json",
+      "artifacts/mcps/profiles/standard.json"
+    ]
+  },
+  "mcp": {
+    "transport": "remote",
+    "profiles": [
+      "minimal",
+      "standard",
+      "full"
+    ],
+    "requiredEnv": []
+  }
+}

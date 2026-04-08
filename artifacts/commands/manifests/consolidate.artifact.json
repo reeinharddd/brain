@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "command",
+  "id": "consolidate",
+  "displayName": "Consolidate",
+  "description": "Command artifact for /consolidate.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/commands/consolidate.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "consolidate.md",
+    "files": [
+      "consolidate.md"
+    ]
+  },
+  "command": {
+    "trigger": "/consolidate",
+    "autoInvokePolicy": "manual",
+    "outputContract": {
+      "format": "markdown"
+    }
+  }
+}

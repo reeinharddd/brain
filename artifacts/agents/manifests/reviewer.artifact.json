@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "agent",
+  "id": "reviewer",
+  "displayName": "Reviewer",
+  "description": "Agent artifact for reviewer.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/agents/reviewer.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "reviewer.md",
+    "files": [
+      "reviewer.md"
+    ]
+  },
+  "agent": {
+    "role": "reviewer",
+    "modelPolicy": {
+      "preferredTier": "powerful",
+      "minimumTier": "standard"
+    }
+  }
+}

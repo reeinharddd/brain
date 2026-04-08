@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "command",
+  "id": "research",
+  "displayName": "Research",
+  "description": "Command artifact for /research.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/commands/research.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "research.md",
+    "files": [
+      "research.md"
+    ]
+  },
+  "command": {
+    "trigger": "/research",
+    "autoInvokePolicy": "manual",
+    "outputContract": {
+      "format": "markdown"
+    }
+  }
+}

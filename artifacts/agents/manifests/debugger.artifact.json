@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "agent",
+  "id": "debugger",
+  "displayName": "Debugger",
+  "description": "Agent artifact for debugger.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/agents/debugger.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "debugger.md",
+    "files": [
+      "debugger.md"
+    ]
+  },
+  "agent": {
+    "role": "debugger",
+    "modelPolicy": {
+      "preferredTier": "powerful",
+      "minimumTier": "standard"
+    }
+  }
+}

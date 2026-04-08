@@ -1,0 +1,41 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "rule",
+  "id": "handover-protocol",
+  "displayName": "Handover Protocol",
+  "description": "Rule artifact for handover-protocol.md.",
+  "scope": "organization",
+  "owner": "brain:system",
+  "visibility": "organization",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/rules/handover-protocol.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "handover-protocol.md",
+    "files": [
+      "handover-protocol.md"
+    ]
+  },
+  "rule": {
+    "priority": 100,
+    "enforcement": "required",
+    "mergeStrategy": "compose"
+  }
+}

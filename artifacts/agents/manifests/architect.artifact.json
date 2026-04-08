@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "agent",
+  "id": "architect",
+  "displayName": "Architect",
+  "description": "Agent artifact for architect.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/agents/architect.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "architect.md",
+    "files": [
+      "architect.md"
+    ]
+  },
+  "agent": {
+    "role": "architect",
+    "modelPolicy": {
+      "preferredTier": "powerful",
+      "minimumTier": "standard"
+    }
+  }
+}

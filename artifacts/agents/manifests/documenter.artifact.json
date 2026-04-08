@@ -1,0 +1,43 @@
+{
+  "apiVersion": "brain/v1",
+  "kind": "agent",
+  "id": "documenter",
+  "displayName": "Documenter",
+  "description": "Agent artifact for documenter.",
+  "scope": "user",
+  "owner": "brain:system",
+  "visibility": "private",
+  "lifecycle": {
+    "state": "active"
+  },
+  "source": {
+    "type": "local",
+    "uri": "local://artifacts/agents/documenter.md"
+  },
+  "sync": {
+    "mode": "hybrid",
+    "cloudEnabled": true
+  },
+  "security": {
+    "trust": "verified",
+    "reviewStatus": "approved",
+    "permissions": {
+      "fs": "read",
+      "net": "none",
+      "exec": "none"
+    }
+  },
+  "content": {
+    "entrypoint": "documenter.md",
+    "files": [
+      "documenter.md"
+    ]
+  },
+  "agent": {
+    "role": "documenter",
+    "modelPolicy": {
+      "preferredTier": "powerful",
+      "minimumTier": "standard"
+    }
+  }
+}
