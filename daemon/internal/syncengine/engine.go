@@ -42,6 +42,60 @@ func (s *SyncEngine) expandHome(path string) string {
 	return path
 }
 
+func (s *SyncEngine) brainRoot() string {
+	if s.manifest != nil && strings.TrimSpace(s.manifest.RootDir) != "" {
+		return s.manifest.RootDir
+	}
+	return s.expandHome("~/.brain")
+}
+
+func (s *SyncEngine) resolveDomainSource(domainName string) string {
+	if s.manifest == nil {
+		return ""
+	}
+
+	domConfig, exists := s.manifest.Domains[domainName]
+	if !exists || !domConfig.Enabled {
+		return ""
+	}
+
+	candidates := []string{filepath.Join(s.brainRoot(), domConfig.Source)}
+
+	switch domainName {
+	case "rules":
+		candidates = append(candidates,
+			filepath.Join(s.brainRoot(), "artifacts", "rules", "canonical.md"),
+			filepath.Join(s.brainRoot(), "rules", "canonical.md"),
+		)
+	case "agents":
+		candidates = append(candidates,
+			filepath.Join(s.brainRoot(), "artifacts", "agents"),
+			filepath.Join(s.brainRoot(), "agents"),
+		)
+	case "mcp":
+		candidates = append(candidates,
+			filepath.Join(s.brainRoot(), "artifacts", "mcps", "registry.yml"),
+			filepath.Join(s.brainRoot(), "mcp", "registry.yml"),
+		)
+	case "skills":
+		candidates = append(candidates,
+			filepath.Join(s.brainRoot(), "artifacts", "skills", "registry.yml"),
+			filepath.Join(s.brainRoot(), "skills", "registry.yml"),
+		)
+	}
+
+	for _, candidate := range candidates {
+		if candidate == "" {
+			continue
+		}
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate
+		}
+	}
+
+	return candidates[0]
+}
+
 func (s *SyncEngine) RunSync() error {
 	return s.RunSyncWithOptions(SyncOptions{})
 }
@@ -66,7 +120,7 @@ func (s *SyncEngine) RunSyncWithOptions(opts SyncOptions) error {
 	skillsWorker := &workers.SkillsWorker{}
 	agentsWorker := &workers.AgentsWorker{}
 
-	brainDir := s.expandHome("~/.brain")
+	brainDir := s.brainRoot()
 
 	// Map output config keys to workers based on known configurations
 	for name, target := range s.manifest.Targets {
@@ -89,14 +143,14 @@ func (s *SyncEngine) RunSyncWithOptions(opts SyncOptions) error {
 			switch key {
 			case "rules", "instructions":
 				if domConfig, exists := s.manifest.Domains["rules"]; exists && domConfig.Enabled {
-					source := filepath.Join(brainDir, domConfig.Source)
+					source := s.resolveDomainSource("rules")
 					if err := rulesWorker.Sync(source, outDir, s.logger); err != nil {
 						return fmt.Errorf("rules sync failed for target %s: %w", name, err)
 					}
 				}
 			case "mcp":
 				if domConfig, exists := s.manifest.Domains["mcp"]; exists && domConfig.Enabled {
-					source := filepath.Join(brainDir, domConfig.Source)
+					source := s.resolveDomainSource("mcp")
 					if err := mcpWorker.Sync(source, outDir, s.logger); err != nil {
 						return fmt.Errorf("mcp sync failed for target %s: %w", name, err)
 					}
@@ -129,14 +183,14 @@ func (s *SyncEngine) RunSyncWithOptions(opts SyncOptions) error {
 						}
 						return result
 					}
-					
+
 					if err := skillsWorker.Sync(brainDir, outDir, s.logger, getCatalogFunc); err != nil {
 						return fmt.Errorf("skills sync failed for target %s: %w", name, err)
 					}
 				}
 			case "agents":
 				if domConfig, exists := s.manifest.Domains["agents"]; exists && domConfig.Enabled {
-					source := filepath.Join(brainDir, domConfig.Source)
+					source := s.resolveDomainSource("agents")
 					if err := agentsWorker.Sync(source, outDir, s.logger); err != nil {
 						return fmt.Errorf("agents sync failed for target %s: %w", name, err)
 					}

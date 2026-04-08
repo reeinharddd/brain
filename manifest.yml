@@ -21,10 +21,10 @@ domains:
     source: "providers/providers.yml"
     enabled: true
   rules:
-    source: "rules/canonical.md"
+    source: "artifacts/rules/canonical.md"
     enabled: true
   agents:
-    source: "agents/"
+    source: "artifacts/agents/"
     enabled: true
 
 targets:

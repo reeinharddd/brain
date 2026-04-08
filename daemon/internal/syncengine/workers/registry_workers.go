@@ -15,23 +15,23 @@ type CatalogItem struct {
 	// Canonical fields
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
-	Kind        string   `json:"kind"` // "skill" or "context-pack"
+	Kind        string   `json:"kind"`  // "skill" or "context-pack"
 	Scope       string   `json:"scope"` // "global" or "workspace"
 	Description string   `json:"description"`
 	Tags        []string `json:"tags"`
 	Path        string   `json:"path"` // file or context path
-	
+
 	// Metadata
-	Version     string   `json:"version,omitempty"`
-	Maintained  bool     `json:"maintained"`
-	Source      string   `json:"source"` // "registry.yml" or "dynamic-registry.tsv"
-	
+	Version    string `json:"version,omitempty"`
+	Maintained bool   `json:"maintained"`
+	Source     string `json:"source"` // "registry.yml" or "dynamic-registry.tsv"
+
 	// Legacy aliases for backward compatibility with CLI and existing consumers
-	Type        string   `json:"type,omitempty"` // alias for Kind in legacy YAML (internal/external or context-pack)
-	File        string   `json:"file,omitempty"` // alias for Path
-	SyncTo      []string `json:"sync_to,omitempty"` // targets
-	Requires    []string `json:"requires,omitempty"`
-	Category    string   `json:"category,omitempty"`
+	Type     string   `json:"type,omitempty"`    // alias for Kind in legacy YAML (internal/external or context-pack)
+	File     string   `json:"file,omitempty"`    // alias for Path
+	SyncTo   []string `json:"sync_to,omitempty"` // targets
+	Requires []string `json:"requires,omitempty"`
+	Category string   `json:"category,omitempty"`
 }
 
 // SkillsWorker synchronizes skills to various targets
@@ -207,6 +207,17 @@ func (w *MCPsWorker) Sync(registryPath string, targetDir string, logger chan<- s
 type AgentsWorker struct {
 }
 
+func canonicalAgentPromptPath(agentPath string) string {
+	cleanPath := filepath.ToSlash(filepath.Clean(agentPath))
+	if idx := strings.Index(cleanPath, "/artifacts/agents/"); idx >= 0 {
+		return cleanPath[idx+1:]
+	}
+	if idx := strings.Index(cleanPath, "/agents/"); idx >= 0 {
+		return "artifacts/agents/" + cleanPath[idx+len("/agents/"):]
+	}
+	return cleanPath
+}
+
 // Agent represents an agent
 type Agent struct {
 	ID          string   `json:"id" yaml:"id"`
@@ -214,7 +225,7 @@ type Agent struct {
 	Description string   `json:"description" yaml:"description"`
 	Version     string   `json:"version" yaml:"version"`
 	Model       string   `json:"model" yaml:"model"`
-	Temperature float64 `json:"temperature" yaml:"temperature"`
+	Temperature float64  `json:"temperature" yaml:"temperature"`
 	PromptFile  string   `json:"prompt_file" yaml:"prompt_file"`
 	Content     string   `json:"content" yaml:"content"`
 	Tags        []string `json:"tags" yaml:"tags"`
@@ -288,7 +299,13 @@ func parseAgentMarkdown(agentPath string) (Agent, error) {
 	}
 
 	content := string(data)
-	agent := Agent{PromptFile: agentPath, Maintained: true, Version: "1.0.0", Model: "claude-opus", Temperature: 0.5}
+	agent := Agent{
+		PromptFile:  canonicalAgentPromptPath(agentPath),
+		Maintained:  true,
+		Version:     "1.0.0",
+		Model:       "claude-opus",
+		Temperature: 0.5,
+	}
 	agent.ID = strings.TrimSuffix(filepath.Base(agentPath), filepath.Ext(agentPath))
 	agent.Name = strings.Title(agent.ID)
 

@@ -17,8 +17,8 @@ func TestRunSyncWritesCanonicalArtifacts(t *testing.T) {
 	brainRoot := filepath.Join(tempHome, ".brain")
 	mustMkdir(t, filepath.Join(brainRoot, "skills"))
 	mustMkdir(t, filepath.Join(brainRoot, "mcp"))
-	mustMkdir(t, filepath.Join(brainRoot, "rules", "modules"))
-	mustMkdir(t, filepath.Join(brainRoot, "agents"))
+	mustMkdir(t, filepath.Join(brainRoot, "artifacts", "rules", "modules"))
+	mustMkdir(t, filepath.Join(brainRoot, "artifacts", "agents"))
 	mustMkdir(t, filepath.Join(tempHome, "out"))
 
 	writeFile(t, filepath.Join(brainRoot, "skills", "registry.yml"), []byte(`skills:
@@ -39,9 +39,9 @@ func TestRunSyncWritesCanonicalArtifacts(t *testing.T) {
     setup: "npx -y @modelcontextprotocol/server-memory"
 `))
 
-	writeFile(t, filepath.Join(brainRoot, "rules", "canonical.md"), []byte("# Canonical Rules\n\nBase rules body.\n"))
-	writeFile(t, filepath.Join(brainRoot, "rules", "modules", "testing.md"), []byte("## Testing\n\nWrite tests first.\n"))
-	writeFile(t, filepath.Join(brainRoot, "agents", "architect.md"), []byte(`---
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "rules", "canonical.md"), []byte("# Canonical Rules\n\nBase rules body.\n"))
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "rules", "modules", "testing.md"), []byte("## Testing\n\nWrite tests first.\n"))
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "agents", "architect.md"), []byte(`---
 name: architect
 description: Designs technical solutions and trade-offs
 version: 2.1.0
@@ -73,10 +73,10 @@ domains:
     source: "mcp/registry.yml"
     enabled: true
   rules:
-    source: "rules/canonical.md"
+    source: "artifacts/rules/canonical.md"
     enabled: true
   agents:
-    source: "agents/"
+    source: "artifacts/agents/"
     enabled: true
 targets:
   cli:
@@ -119,8 +119,8 @@ func TestRunSyncDryRunDoesNotWriteArtifacts(t *testing.T) {
 	brainRoot := filepath.Join(tempHome, ".brain")
 	mustMkdir(t, filepath.Join(brainRoot, "skills"))
 	mustMkdir(t, filepath.Join(brainRoot, "mcp"))
-	mustMkdir(t, filepath.Join(brainRoot, "rules"))
-	mustMkdir(t, filepath.Join(brainRoot, "agents"))
+	mustMkdir(t, filepath.Join(brainRoot, "artifacts", "rules"))
+	mustMkdir(t, filepath.Join(brainRoot, "artifacts", "agents"))
 
 	writeFile(t, filepath.Join(brainRoot, "skills", "registry.yml"), []byte(`skills:
   alpha:
@@ -133,8 +133,8 @@ func TestRunSyncDryRunDoesNotWriteArtifacts(t *testing.T) {
     package: "@modelcontextprotocol/server-memory"
     profile: [standard, full]
 `))
-	writeFile(t, filepath.Join(brainRoot, "rules", "canonical.md"), []byte("# Canonical\n"))
-	writeFile(t, filepath.Join(brainRoot, "agents", "architect.md"), []byte(`---
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "rules", "canonical.md"), []byte("# Canonical\n"))
+	writeFile(t, filepath.Join(brainRoot, "artifacts", "agents", "architect.md"), []byte(`---
 name: architect
 description: Designs technical solutions
 ---
@@ -154,10 +154,10 @@ domains:
     source: "mcp/registry.yml"
     enabled: true
   rules:
-    source: "rules/canonical.md"
+    source: "artifacts/rules/canonical.md"
     enabled: true
   agents:
-    source: "agents/"
+    source: "artifacts/agents/"
     enabled: true
 targets:
   cli:

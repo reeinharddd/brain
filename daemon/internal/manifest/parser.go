@@ -2,6 +2,7 @@ package manifest
 
 import (
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -30,6 +31,7 @@ type AppManifest struct {
 	Settings Settings          `yaml:"settings"`
 	Domains  map[string]Domain `yaml:"domains"`
 	Targets  map[string]Target `yaml:"targets"`
+	RootDir  string            `yaml:"-"`
 }
 
 func Parse(path string) (*AppManifest, error) {
@@ -41,5 +43,6 @@ func Parse(path string) (*AppManifest, error) {
 	if err := yaml.Unmarshal(data, &m); err != nil {
 		return nil, err
 	}
+	m.RootDir = filepath.Dir(path)
 	return &m, nil
 }
