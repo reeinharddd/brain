@@ -18,7 +18,7 @@ Examples: Artifact system architecture, async validation approach, Go-only orche
 
 ---
 
-## ✅ DO's
+## DO's
 
 1. **Document the problem** — What constraint or problem forced this decision?
 2. **Show options considered** — Pro/con for EACH alternative (not just winner)
@@ -29,7 +29,7 @@ Examples: Artifact system architecture, async validation approach, Go-only orche
 
 ---
 
-## ❌ DON'Ts
+## DON'Ts
 
 1. **Don't hide bad options** — Show all serious alternatives, even rejected ones
 2. **Don't lack rationale** — "We chose Go because it's cool" = not acceptable

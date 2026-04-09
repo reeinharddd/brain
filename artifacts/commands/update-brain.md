@@ -68,13 +68,14 @@ Present the proposal and ask:
 ### Step 4: Apply (if confirmed)
 
 1. Apply the change to the appropriate file in `~/.brain/`
-2. If it modified `rules/canonical.md` or a module: run `adapters/generate.sh`
+2. If it modified `rules/canonical.md` or a module: sync the generated adapter artifacts using the repository's adapter-generation workflow
 3. Commit: `git -C ~/.brain commit -am "brain: [summary]"`
 4. Optionally push: `git -C ~/.brain push`
 
 ### Step 5: If declined
 
 If the user says no:
+
 - Ask: should I save this as a deferred idea?
 - If yes: save to Engram with tag `brain-improvement-deferred`
 

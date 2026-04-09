@@ -1,6 +1,6 @@
-## Module: Spec-Driven Development
+# Module: Spec-Driven Development
 
-### Batch 1 foundation rules
+## Batch 1 foundation rules
 
 The brain repo uses a two-layer context model:
 
@@ -10,7 +10,7 @@ The brain repo uses a two-layer context model:
 Do not hardcode project-specific framework guidance inside global adapters.
 Project-specific guidance must be generated on demand from the active repo.
 
-### Dynamic skill injection protocol
+## Dynamic skill injection protocol
 
 Before planning or implementation in any project:
 
@@ -19,9 +19,11 @@ Before planning or implementation in any project:
 3. Load only the generated skill context for the current project
 4. State which stack tags were detected when they materially affect decisions
 
+If the helper scripts are not available, infer the stack from the repository files and load only the matching project guidance.
+
 If no stack-specific skill matches, continue with the global rules only.
 
-### SDD DAG
+## SDD DAG
 
 For substantial work, follow this DAG in order:
 
@@ -37,7 +39,7 @@ For substantial work, follow this DAG in order:
 Each phase must produce an artifact or explicit handoff note.
 Do not skip directly from vague intent to implementation.
 
-### Phase contracts
+## Phase contracts
 
 - Explore -> inputs: user goal, repo state; outputs: constraints, assumptions, detected stack
 - Propose -> inputs: exploration notes; outputs: candidate approaches and tradeoffs
@@ -48,7 +50,7 @@ Do not skip directly from vague intent to implementation.
 - Verify -> inputs: implementation; outputs: test and validation evidence
 - Archive -> inputs: verification results; outputs: docs, handover, memory summary
 
-### Delegate-first behavior
+## Delegate-first behavior
 
 The orchestrator coordinates the DAG and specialist routing.
 Specialists should receive:

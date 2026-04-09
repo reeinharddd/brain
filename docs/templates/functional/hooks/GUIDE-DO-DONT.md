@@ -17,7 +17,7 @@ Examples: pre-commit validation, pre-push testing, post-merge cleanup
 
 ---
 
-## ✅ DO's
+## DO's
 
 1. **Hook is fast** — Complete in <1s (pre-commit), <5s (pre-push). Slow hooks block workflow.
 2. **Document trigger** — What event launches this hook? (pre-commit, post-merge, etc)
@@ -28,7 +28,7 @@ Examples: pre-commit validation, pre-push testing, post-merge cleanup
 
 ---
 
-## ❌ DON'Ts
+## DON'Ts
 
 1. **Don't run slow operations** — Pre-commit hooks <1s, or developers ignore them
 2. **Don't hide the error** — Don't just fail silently, tell user what went wrong

@@ -272,13 +272,13 @@ func syncSkills(ctx context.Context, skillsDir, registryPath string) error {
 
 ## Success Metrics
 
-| Metric                     | Target | Current         |
-| -------------------------- | ------ | --------------- |
-| .sh files in production paths | 0   | ✅ 0            |
-| .py files in production paths | 0   | ✅ 0            |
-| Orchestration logic in Go  | 100%   | ✅ 100%         |
-| Script startup time        | <10ms  | ✅ 5ms (binary) |
-| Compile-time errors caught | >95%   | ✅ 99.7%        |
+| Metric                        | Target | Current         |
+| ----------------------------- | ------ | --------------- |
+| .sh files in production paths | 0      | ✅ 0            |
+| .py files in production paths | 0      | ✅ 0            |
+| Orchestration logic in Go     | 100%   | ✅ 100%         |
+| Script startup time           | <10ms  | ✅ 5ms (binary) |
+| Compile-time errors caught    | >95%   | ✅ 99.7%        |
 
 ---
 

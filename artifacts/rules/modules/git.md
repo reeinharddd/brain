@@ -1,25 +1,28 @@
-## Module: Git
+# Module: Git
 
-### Commit messages
+## Commit messages
 
 Use Conventional Commits format:
+
 ```text
 <type>(<scope>): <short description>
 
 [optional body]
 
 [optional footer]
-```text
+```
 
 **Types**: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
 
 **Rules**:
+
 - Subject line: max 72 characters, imperative mood ("add feature" not "added feature")
 - Body when needed: explain WHY, not WHAT (the diff shows what changed)
 - Break lines at 80 characters in the body
 - Reference issues: `Closes #123`, `Fixes #456`
 
 **Good examples**:
+
 ```text
 feat(auth): add JWT refresh token rotation
 
@@ -68,6 +71,6 @@ When updating `~/.brain/`:
 
 
 - Commit prefix: `brain: ` (e.g., `brain: add debugging agent`)
-- Always run `adapters/generate.sh` after modifying `rules/`
+- Always sync the generated adapter artifacts after modifying `rules/`
 - Commit the generated artifacts alongside the source change
 - Never commit environment-specific state (no hardcoded paths, no secrets)

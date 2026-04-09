@@ -155,9 +155,10 @@ Target Coverage: **>85% on indexer/ package**
 
 5. **Type System**
    - ✓ All YAML frontmatter fields represented
-  - ✓ Manifest structure matches docs/metadata/docs-manifest.json
-   - ✓ RAG priority and chunk strategy supported
-   - ✓ Status enum validation
+
+- ✓ Manifest structure matches docs/metadata/docs-manifest.json
+- ✓ RAG priority and chunk strategy supported
+- ✓ Status enum validation
 
 ### ✓ Test Coverage
 

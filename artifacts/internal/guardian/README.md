@@ -9,8 +9,8 @@ The Guardian follows a git-native Prowler-style split:
 
 ## Execution modes
 
-- Local shift-left: `bash /path/to/repo/guardian/run.sh --staged --threshold critical`
-- CI PR mode: `bash /path/to/repo/guardian/run.sh --diff-range <base...head> --pr-mode`
+- Local shift-left: run the repository security checks on the staged diff.
+- CI PR mode: run the same security checks on the pull request diff range.
 - Guardian resolves the repo root from its own location, so it works both in `~/.brain` and in a normal checkout
 - Local fallback: when `--staged` has no staged files, Guardian falls back to `HEAD` unless `--no-fallback-head` is passed
 

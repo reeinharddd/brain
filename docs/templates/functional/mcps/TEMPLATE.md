@@ -41,7 +41,7 @@ tools:
 # RAG
 
 keywords: ["[domain]", "[use-case]"]
-applies_to: "_.go, _.ts"
+applies*to: "*.go, \_.ts"
 
 ---
 

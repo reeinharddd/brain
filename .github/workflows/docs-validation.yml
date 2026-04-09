@@ -1,0 +1,27 @@
+name: Docs Validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  docs-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate markdown boundary
+        shell: bash
+        run: |
+          bash ./utils/scripts/validate-markdown-boundary.sh
+
+      - name: Validate docs manifest and content
+        shell: bash
+        run: |
+          bash ./utils/scripts/validate-docs-incremental.sh --all

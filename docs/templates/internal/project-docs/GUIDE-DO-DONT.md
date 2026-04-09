@@ -18,7 +18,7 @@ Examples: Onboarding guide, Development workflow, Troubleshooting runbook
 
 ---
 
-## ✅ DO's
+## DO's
 
 1. **Audience is clear** — "For new developers", "For operations", "For security audit"
 2. **Structure is scannable** — Headers, bullet points, tables (not walls of prose)
@@ -29,7 +29,7 @@ Examples: Onboarding guide, Development workflow, Troubleshooting runbook
 
 ---
 
-## ❌ DON'Ts
+## DON'Ts
 
 1. **Don't repeat documentation** — Link to existing docs instead of copying
 2. **Don't assume prior knowledge** — New dev reads this; explain concepts from first principles

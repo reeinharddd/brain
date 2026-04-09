@@ -40,15 +40,17 @@
       "required": true,
       "subdirs": [],
       "files": [
-        "ADR-0001-combined-prompt-alignment.md",
         "ADR-0002-centralized-brain-cli.md",
         "ADR-0003-central-daemon-orchestration.md",
-        "ADR-0004-skill-system-contract.md",
         "ADR-0005-strict-development-and-production-boundary.md",
-        "ADR-0006-docs-rag-mcp.md",
         "ADR-0007-unified-capability-control-plane.md",
+        "ADR-0008-unified-artifact-packaging-and-lifecycle.md",
+        "ADR-0009-clean-repository-structure-and-domain-boundaries.md",
+        "ADR-0010-hierarchical-identity-policy-and-security-model.md",
+        "ADR-0011-ai-runtime-and-curator-subsystem.md",
         "README.md"
       ],
+      "navigation_files": ["README.md"],
       "template": "adr-template.md",
       "template_location": "docs/templates/adr-template.md",
       "validation_level": "strict",
@@ -82,16 +84,40 @@
       "subdirs": [],
       "files": [
         "README.md",
-        "documentation-enforcement-system.md",
-        "agent-contracts.md",
-        "cli-integration.md",
-        "daemon-orchestration.md",
-        "github-operating-model.md",
+        "ai-runtime-and-context-optimization.md",
+        "artifact-migration-and-compatibility-plan.md",
+        "artifact-system-contract.md",
+        "brain-v2-target-architecture.md",
+        "capability-control-plane-roadmap.md",
+        "context-agent-systems-and-cost-optimization.md",
+        "control-plane-domain-map.md",
         "development-methodology.md",
+        "documentation-boundary-and-markdown-policy.md",
+        "documentation-enforcement-system.md",
         "environment-configuration.md",
-        "mcp-ide-integration.md",
-        "skill-system-contract.md",
-        "capability-control-plane-roadmap.md"
+        "identity-policy-security.md",
+        "llm-and-ide-operating-model.md",
+        "memory-and-knowledge-architecture.md",
+        "model-compatibility-and-capability-layering.md",
+        "repository-structure-v2.md",
+        "research-foundations.md",
+        "stack-and-implementation-baseline.md"
+      ],
+      "navigation_files": ["README.md"],
+      "reference_files": [
+        "README.md",
+        "artifact-migration-and-compatibility-plan.md",
+        "context-agent-systems-and-cost-optimization.md",
+        "control-plane-domain-map.md",
+        "development-methodology.md",
+        "documentation-boundary-and-markdown-policy.md",
+        "documentation-enforcement-system.md",
+        "environment-configuration.md",
+        "llm-and-ide-operating-model.md",
+        "memory-and-knowledge-architecture.md",
+        "model-compatibility-and-capability-layering.md",
+        "research-foundations.md",
+        "stack-and-implementation-baseline.md"
       ],
       "template": "design-doc-template.md",
       "template_location": "docs/templates/design-doc-template.md",
@@ -126,17 +152,14 @@
       "subdirs": [],
       "files": [
         "README.md",
-        "SKILLS-ARCHITECTURE-GO-FIRST.md",
-        "SKILLS-COMPATIBILITY-MATRIX.md",
-        "SKILLS-DIRECTORY-GUIDE.md",
-        "SKILLS-ENFORCEMENT-STRATEGY.md",
-        "SKILLS-MANAGEMENT-UI.md",
-        "SKILLS-ORCHESTRATION-RULES.md",
-        "SKILLS-QUICK-REFERENCE.md"
+        "advanced-skill-design-and-composition.md",
+        "prompt-engineering-for-brain-artifacts.md",
+        "skill-artifact-authoring.md"
       ],
+      "navigation_files": ["README.md"],
       "template": "skill-template.md",
       "template_location": "docs/templates/skill-template.md",
-      "validation_level": "strict",
+      "validation_level": "reference",
       "rules": {
         "naming": "Existing SKILLS-* filenames plus README.md",
         "frontmatter_required": true,
@@ -151,13 +174,7 @@
           "category"
         ],
         "language": "en",
-        "min_sections": [
-          "What It Does",
-          "Input Contract",
-          "Output Contract",
-          "Error Cases & Handling",
-          "Examples"
-        ],
+        "min_sections": [],
         "max_file_size_kb": 120
       }
     },
@@ -166,12 +183,11 @@
       "required": true,
       "subdirs": [],
       "files": [
-        "TESTING-ARCHITECTURE-PROPOSAL.md",
-        "TESTING-IMPLEMENTATION-GUIDE.md",
-        "TESTING-INDUSTRY-VALIDATION.md",
-        "TESTING-QUICK-REFERENCE.md",
-        "UI-TESTING-GUIDE.md"
+        "README.md",
+        "testing-strategy.md"
       ],
+      "navigation_files": ["README.md"],
+      "reference_files": ["README.md"],
       "template": "guidance-template.md",
       "template_location": "docs/templates/guidance-template.md",
       "validation_level": "strict",
@@ -193,48 +209,13 @@
         "max_file_size_kb": 120
       }
     },
-    "archive": {
-      "purpose": "Historical reference material and implementation handovers kept out of the active root.",
-      "required": false,
-      "subdirs": [],
-      "files": ["HANDOVER-DOCS-VALIDATION-SYSTEM.md"],
-      "template": "",
-      "template_location": "",
-      "validation_level": "reference",
-      "rules": {
-        "naming": "Historical reference files kept for traceability",
-        "frontmatter_required": true,
-        "required_frontmatter_fields": [
-          "type",
-          "id",
-          "title",
-          "version",
-          "status",
-          "date_created",
-          "language",
-          "category"
-        ],
-        "language": "en",
-        "min_sections": ["Summary", "Current References"],
-        "max_file_size_kb": 120
-      }
-    },
     "templates": {
       "purpose": "Copy-paste ready reference files for functional and internal documentation artifacts.",
       "required": true,
       "subdirs": ["functional", "internal"],
       "files": [
-        "CHECKLIST.md",
-        "COMPLETION-REPORT.md",
-        "EXECUTIVE-SUMMARY.md",
         "INDEX.md",
-        "QUICK-START.txt",
-        "README-OLD.md",
         "README.md",
-        "adr-template.md",
-        "agent-template.md",
-        "design-doc-template.md",
-        "example-template.md",
         "functional/agents/EXAMPLES/orchestrator.md",
         "functional/agents/EXAMPLES/planner.md",
         "functional/agents/GUIDE-DO-DONT.md",
@@ -259,8 +240,6 @@
         "functional/skills/EXAMPLES/debugging-methodology.md",
         "functional/skills/GUIDE-DO-DONT.md",
         "functional/skills/TEMPLATE.md",
-        "guidance-template.md",
-        "internal/decisions/EXAMPLES/skill-system-contract.md",
         "internal/decisions/GUIDE-DO-DONT.md",
         "internal/decisions/TEMPLATE.md",
         "internal/learning/EXAMPLES/skills-race-condition.md",
@@ -268,12 +247,7 @@
         "internal/learning/TEMPLATE.md",
         "internal/project-docs/EXAMPLES/onboarding.md",
         "internal/project-docs/GUIDE-DO-DONT.md",
-        "internal/project-docs/TEMPLATE.md",
-        "mcp-template.md",
-        "project-status-template.md",
-        "skill-template.md",
-        "state-template.md",
-        "tool-template.md"
+        "internal/project-docs/TEMPLATE.md"
       ],
       "template": "README.md",
       "template_location": "docs/templates/README.md",
@@ -306,28 +280,28 @@
     "validation_mode": "incremental"
   },
   "file_count_target": {
-    "current": 87,
-    "target": 100,
+    "current": 73,
+    "target": 73,
     "per_domain": {
       "adr": {
-        "current": 8,
-        "target": 8
+        "current": 9,
+        "target": 9
       },
       "architecture": {
-        "current": 11,
-        "target": 11
+        "current": 19,
+        "target": 19
       },
       "skills": {
-        "current": 8,
-        "target": 12
+        "current": 4,
+        "target": 4
       },
       "testing": {
-        "current": 5,
-        "target": 8
+        "current": 2,
+        "target": 2
       },
       "templates": {
-        "current": 49,
-        "target": 64
+        "current": 34,
+        "target": 34
       }
     }
   }

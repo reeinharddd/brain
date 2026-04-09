@@ -38,7 +38,7 @@ The skill system is validated automatically by the Brain daemon and exposed thro
 
 1. **Use template**: `docs/templates/functional/skills/TEMPLATE.md`
 2. **Name it**: `skill-[descriptive-name].md`
-3. **Define contracts**: Input schema → Output schema
+3. **Define contracts**: Input schema -> Output schema
 4. **Document errors**: Error codes with handling procedures
 5. **Provide examples**: Minimum 2-3 usage scenarios
 6. **Add anti-patterns**: What NOT to do
@@ -60,14 +60,14 @@ Cost/Performance: Metrics
 
 ## Best Practices
 
-✅ **DO**:
+DO:
 
 - Document all error codes
 - Provide examples for every skill feature
 - Update compatibility when models change
 - Include performance expectations
 
-❌ **DON'T**:
+DON'T:
 
 - Leave examples out (few-shot learning essential for LLMs)
 - Ignore error cases (LLMs hallucinate without them)

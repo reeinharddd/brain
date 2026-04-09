@@ -26,13 +26,14 @@ Start here for the official direction of the project:
 - Need the target state: read [brain-v2-target-architecture.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/brain-v2-target-architecture.md)
 - Need the decision trail: read [ADR Index](/home/reeinharrrd/Work/Personal/brain/docs/adr/README.md)
 - Need the docs layout: read [STRUCTURE.md](/home/reeinharrrd/Work/Personal/brain/docs/STRUCTURE.md)
+- Need testing guidance: read [Testing README](/home/reeinharrrd/Work/Personal/brain/docs/testing/README.md)
 
 ## Core Domains
 
 - `adr/` for architecture decisions and rationale
 - `architecture/` for design documents and target contracts
 - `skills/` for skill-specific rules inside the artifact model
-- `testing/` for the future-facing quality baseline
+- `testing/` for the future-facing quality baseline and validation guidance
 - `templates/` for approved templates
 
 ## Standards Reference
@@ -51,6 +52,7 @@ Start here for the official direction of the project:
 - [memory-and-knowledge-architecture.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/memory-and-knowledge-architecture.md)
 - [model-compatibility-and-capability-layering.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/model-compatibility-and-capability-layering.md)
 - [testing-strategy.md](/home/reeinharrrd/Work/Personal/brain/docs/testing/testing-strategy.md)
+- [Testing README](/home/reeinharrrd/Work/Personal/brain/docs/testing/README.md)
 
 ## Quality Principles
 
@@ -65,3 +67,4 @@ Start here for the official direction of the project:
 2. Put system contracts in `docs/architecture/`.
 3. Update [INDEX.md](/home/reeinharrrd/Work/Personal/brain/docs/INDEX.md) when adding a new canonical entry point.
 4. Keep documentation in English and aligned with the unified schema.
+5. Treat domain `README.md` files as navigation hubs, not strict design docs.

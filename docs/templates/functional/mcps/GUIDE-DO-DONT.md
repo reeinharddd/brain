@@ -17,7 +17,7 @@ Examples: code-execution, web-fetch, file-system-read
 
 ---
 
-## ✅ DO's
+## DO's
 
 1. **Define clear input schema** — JSON Schema with descriptions of every field
 2. **Document output format** — Show what the tool returns (success + error cases)
@@ -28,7 +28,7 @@ Examples: code-execution, web-fetch, file-system-read
 
 ---
 
-## ❌ DON'Ts
+## DON'Ts
 
 1. **Don't expose secrets** — No API keys, tokens in MCP outputs
 2. **Don't make tools too permissive** — Sandbox/limit what agents can do

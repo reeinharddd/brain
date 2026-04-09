@@ -23,8 +23,9 @@ description: >
   documentation across the Brain repository. All documents MUST use this schema.
   Covers 10 document types: ADRs, design docs, project status, agents, skills,
   tools, MCPs, hooks, state documentation, and examples.
-
 ---
+
+<!-- markdownlint-disable-file -->
 
 # Brain Repository: Unified Documentation Schema
 
@@ -56,14 +57,14 @@ All documents start with **structured YAML frontmatter**. Metadata must not appe
 
 ```yaml
 ---
-type: {document-type}
-id: {unique-identifier}
-title: {Human-readable title}
-version: {semver}
+type: { document-type }
+id: { unique-identifier }
+title: { Human-readable title }
+version: { semver }
 status: active|draft|review|deprecated|archived
-date_created: {YYYY-MM-DD}
+date_created: { YYYY-MM-DD }
 language: en
-category: {domain}
+category: { domain }
 ---
 ```
 
@@ -77,6 +78,7 @@ category: {domain}
 ### 3. RAG-Optimized Chunking
 
 Documents must be splittable into LLM context windows:
+
 - Clear section boundaries (H2 headers)
 - Self-contained sections (can be read independently)
 - Explicit relationships between sections
@@ -92,7 +94,7 @@ All documentation in English. No Spanish, no mixed languages.
 
 ### 6. Status Fields Enable Evolution
 
-Track document lifecycle: draft → review → active → deprecated → archived
+Track document lifecycle: draft -> review -> active -> deprecated -> archived
 
 ---
 
@@ -104,12 +106,15 @@ Track document lifecycle: draft → review → active → deprecated → archive
 
 ```yaml
 ---
-type: {agent|skill|adr|design-doc|project-status|tool|mcp-server|hook|state|example}
-id: {unique-identifier}
-title: {Human-readable title, 5-10 words}
-version: {semver}
+type:
+  {
+    agent|skill|adr|design-doc|project-status|tool|mcp-server|hook|state|example,
+  }
+id: { unique-identifier }
+title: { Human-readable title, 5-10 words }
+version: { semver }
 status: active|draft|review|deprecated|archived
-date_created: {YYYY-MM-DD}
+date_created: { YYYY-MM-DD }
 language: en
 ---
 ```
@@ -117,9 +122,10 @@ language: en
 ### Tier 2: Classification (Recommended)
 
 ```yaml
-category: {documentation|architecture|execution|data|integration|operations|security}
-tags: [tag1, tag2, tag3]  # 2-5 tags for discovery
-maintainer: {name or team}
+category:
+  { documentation|architecture|execution|data|integration|operations|security }
+tags: [tag1, tag2, tag3] # 2-5 tags for discovery
+maintainer: { name or team }
 visibility: internal|team|public
 ```
 
@@ -138,7 +144,7 @@ related:
 ### Tier 4: Versioning & Evolution
 
 ```yaml
-version: 1.0.0              # semver: major.minor.patch
+version: 1.0.0 # semver: major.minor.patch
 previous_version: 0.9.0
 next_review_date: 2026-07-03
 deprecated_date: null
@@ -148,15 +154,15 @@ deprecation_notice: null
 ### Tier 5: RAG Optimization
 
 ```yaml
-keywords: [auth, oauth2, security]              # 3-5 terms for semantic search
-rag_priority: critical|high|medium|low           # Ranking in search results
+keywords: [auth, oauth2, security] # 3-5 terms for semantic search
+rag_priority: critical|high|medium|low # Ranking in search results
 chunk_strategy: section|sequential|example-first # How to split for LLM
-chunk_boundaries:                                # Explicit section boundaries
+chunk_boundaries: # Explicit section boundaries
   - "## Context"
   - "## Options Considered"
   - "## Decision"
 estimated_reading_time: "8 minutes"
-estimated_implementation_time: "4 hours"        # If design/task doc
+estimated_implementation_time: "4 hours" # If design/task doc
 ```
 
 ### Tier 6: Metadata (Context-Specific)
@@ -175,12 +181,10 @@ requires_migration: true|false
 
 # For Skills/Tools
 input_schema: ./schema/input.json
-output_schema: ./schema/output.json
 compatibility: ["claude-3-opus", "claude-3-sonnet"]
 timeout_seconds: 30
 
 # For Projects
-team: engineering
 member_count: 4
 timeline_start: 2026-03-15
 timeline_end: 2026-05-30
@@ -195,7 +199,7 @@ timeline_end: 2026-05-30
 **File**: `docs/adr/ADR-{NNN}-{slug}.md`  
 **Purpose**: Record significant architectural choices and their rationale
 
-```yaml
+````yaml
 ---
 type: adr
 id: ADR-015
@@ -250,28 +254,24 @@ chunk_strategy: section
 **Pros**:
 - Lightweight, stateless
 - Simple to implement
-
 **Cons**:
 - No standard revocation mechanism
 - Vulnerable to key compromise
 - Not suitable for public APIs
 
 **Trade-offs**:
-- Complexity cost: Low
 - Security benefit: Low
 - Operational overhead: High (key rotation)
 
 ### Option 3: Session-Based (Cookies)
 **Pros**:
 - Traditional, well-understood by teams
-- Built-in CSRF protection in frameworks
 
 **Cons**:
 - State management required
 - Doesn't scale to multiple services
 - Poor for mobile clients
 
-## Decision
 
 **Chosen**: OAuth 2.0 with PKCE flows for all user-facing APIs.
 
@@ -300,7 +300,7 @@ chunk_strategy: section
 ## Implementation Notes
 
 - **PR**: #2845 (Implemented auth server)
-- **Deployment**: Staged rollout (shadow → 10% → GA)
+- **Deployment**: Staged rollout (shadow -> 10% -> GA)
 - **Migration**: Existing session tokens migrated via temporary dual-auth
 
 ## Monitoring
@@ -319,7 +319,7 @@ chunk_strategy: section
 
 ### 2. Design Document
 
-**File**: `docs/architecture/DESIGN-{slug}.md`  
+**File**: `docs/architecture/DESIGN-{slug}.md`
 **Purpose**: Detailed technical proposal for a feature, system, or subsystem
 
 ```yaml
@@ -386,7 +386,7 @@ Target: <100ms p99 across 99th percentile load.
 
 ### Architecture
 
-[Diagram showing layers: clients → CDN → Redis cluster → DB]
+[Diagram showing layers: clients -> CDN -> Redis cluster -> DB]
 
 ```mermaid
 graph TB
@@ -400,21 +400,21 @@ graph TB
     Redis -->|Cache hit| CDN
     Redis -->|Cache miss| DB
     DB -->|Write invalidation| Redis
-    
+
     style Redis fill:#ffcccc
-```
+````
 
 ### Data Model
 
 ```yaml
 cache_entries:
-  key: string                    # User-defined key
-  value: blob (max 1MB)         # Serialized value (JSON)  
-  ttl: integer (seconds)        # Auto-expire time
-  version: integer              # For invalidation
+  key: string # User-defined key
+  value: blob (max 1MB) # Serialized value (JSON)
+  ttl: integer (seconds) # Auto-expire time
+  version: integer # For invalidation
   created_at: timestamp
   last_accessed: timestamp
-  fingerprint: hash             # For consistency checking
+  fingerprint: hash # For consistency checking
 ```
 
 ### API & Interfaces
@@ -462,48 +462,52 @@ Response 204: (no content)
 
 ### Deployment Strategy
 
-| Phase | Timeline | Actions |
-|-------|----------|---------|
-| 1. Setup | Week 1 | Provision Redis cluster (4 nodes) in staging |
-| 2. Shadow | Week 2-3 | Run parallel (redirect 5% read traffic) |
-| 3. Canary | Week 4 | Increase to 25% of production reads |
-| 4. GA | Week 5 | Full production traffic; deprecate old cache |
+| Phase     | Timeline | Actions                                      |
+| --------- | -------- | -------------------------------------------- |
+| 1. Setup  | Week 1   | Provision Redis cluster (4 nodes) in staging |
+| 2. Shadow | Week 2-3 | Run parallel (redirect 5% read traffic)      |
+| 3. Canary | Week 4   | Increase to 25% of production reads          |
+| 4. GA     | Week 5   | Full production traffic; deprecate old cache |
 
 ### Trade-offs
 
-| Aspect | Chosen | Alternative | Why |
-|--------|--------|-------------|-----|
-| Consistency | Eventual (TTL) | Strong (locks) | Latency (locks add 50ms) |
-| Storage | Redis in-memory | RocksDB (disk) | Latency (disk slow) |
-| Replication | Sentinel failover | Multi-region | Complexity vs latency gains |
+| Aspect      | Chosen            | Alternative    | Why                         |
+| ----------- | ----------------- | -------------- | --------------------------- |
+| Consistency | Eventual (TTL)    | Strong (locks) | Latency (locks add 50ms)    |
+| Storage     | Redis in-memory   | RocksDB (disk) | Latency (disk slow)         |
+| Replication | Sentinel failover | Multi-region   | Complexity vs latency gains |
 
 ## Alternative Approaches
 
 ### Approach 1: Local In-Memory Cache + Distributed Tier
+
 - Faster local hits (1-2ms)
 - Problem: Invalidation nightmare, stale data across servers
 
 ### Approach 2: GraphQL DataLoader Pattern
+
 - Batches multiple requests
 - Problem: Doesn't help single-request latency
 
 ### Approach 3: HTTP/2 Server Push
+
 - Preemptively send cached data
 - Problem: Doesn't work for unpredictable access patterns
 
 **Why chosen solution**:
+
 - Simplest to operate
 - Lowest latency variance
 - Clear failure modes
 
 ## Risks & Mitigation
 
-| Risk | Severity | Mitigation |
-|------|----------|-----------|
-| Redis cluster partition → stale data | High | Use Redis Sentinel + TTL-based staleness |
-| Hot keys cause uneven load | Medium | Monitor per-key access; shard hot keys |
-| Large values (>1MB) block others | Medium | Reject >1MB; suggest compression |
-| Thundering herd on cache miss | Medium | Implement probabilistic early expiry |
+| Risk                                 | Severity | Mitigation                               |
+| ------------------------------------ | -------- | ---------------------------------------- |
+| Redis cluster partition -> stale data | High    | Use Redis Sentinel + TTL-based staleness |
+| Hot keys cause uneven load           | Medium   | Monitor per-key access; shard hot keys   |
+| Large values (>1MB) block others     | Medium   | Reject >1MB; suggest compression         |
+| Thundering herd on cache miss        | Medium   | Implement probabilistic early expiry     |
 
 ## Success Metrics
 
@@ -519,11 +523,11 @@ metrics:
   - name: cache_hit_ratio
     alert: < 90%
     dashboard: true
-  
+
   - name: cache_latency_p99
     alert: > 150ms
     dashboard: true
-  
+
   - name: redis_cluster_health
     alert: < 4 nodes healthy
     dashboard: true
@@ -559,7 +563,7 @@ dashboards:
 **File**: `docs/status/PROJECT-{code}-{phase}.md`  
 **Purpose**: Lightweight tracking of active projects, phases, and blockers
 
-```yaml
+````yaml
 ---
 type: project-status
 id: project-cache-redesign
@@ -592,8 +596,8 @@ chunk_strategy: section
 
 ## Current Status
 
-**Phase**: Implementation (Weeks 7-10 of 10)  
-**Progress**: 65% complete  
+**Phase**: Implementation (Weeks 7-10 of 10)
+**Progress**: 65% complete
 **Health**: On track
 
 ## This Week's Work
@@ -615,7 +619,7 @@ chunk_strategy: section
 - [ ] **April 8**: Load tests complete
 - [ ] **April 12**: Integration tests pass
 - [ ] **April 15**: Shadow deployment (non-prod mirror)
-- [ ] **April 22**: GA rollout (canary 10% → GA)
+- [ ] **April 22**: GA rollout (canary 10% -> GA)
 
 ## Risks (Next 2 Weeks)
 
@@ -648,7 +652,7 @@ For next phase owner, see: `docs/handovers/HANDOVER-cache-design.md`
 
 ### 4. Agent Definition
 
-**File**: `artifacts/agents/{agent-id}.md`  
+**File**: `artifacts/agents/{agent-id}.md`
 **Purpose**: Define agent role, protocol, constraints for coordinated LLM behavior
 
 ```yaml
@@ -690,12 +694,14 @@ You implement one bounded, well-specified task at a time. You write code, docs, 
 
 ## When You Are Invoked
 
-```
+````
+
 delegator_agent
-  ├─ provides: task (with done condition)
-  ├─ provides: spec artifact (what we're building)
-  ├─ provides: design artifact (how to build it)
-  └─ triggers: implementer.execute(task)
+├─ provides: task (with done condition)
+├─ provides: spec artifact (what we're building)
+├─ provides: design artifact (how to build it)
+└─ triggers: implementer.execute(task)
+
 ```
 
 You receive a task like:
@@ -743,33 +749,35 @@ When facing implementation choices not covered by spec/design:
 ## Protocol: State Machine
 
 ```
+
 START
-  └─ receives: task with done condition
-  └─ → ANALYZING
+└─ receives: task with done condition
+└─ -> ANALYZING
 
 ANALYZING (read design, spec, task)
-  ├─ ambiguity found? → ASKING
-  ├─ contract issues? → ESCALATING
-  └─ ready to code? → IMPLEMENTING
+├─ ambiguity found? -> ASKING
+├─ contract issues? -> ESCALATING
+└─ ready to code? -> IMPLEMENTING
 
 IMPLEMENTING (write code/docs)
-  ├─ blocked or stuck? → ASKING
-  ├─ done? → VALIDATING
-  └─ test failure? → FIXING
+├─ blocked or stuck? -> ASKING
+├─ done? -> VALIDATING
+└─ test failure? -> FIXING
 
 VALIDATING (run tests,lint, check done condition)
-  ├─ pass? → RETURNING
-  └─ fail? → IMPLEMENTING (loop)
+├─ pass? -> RETURNING
+└─ fail? -> IMPLEMENTING (loop)
 
 ASKING (awaiting clarification)
-  └─ receive answer → back to IMPLEMENTING
+└─ receive answer -> back to IMPLEMENTING
 
 ESCALATING (issue with contract)
-  └─ receive updated task → back to ANALYZING
+└─ receive updated task -> back to ANALYZING
 
 RETURNING (task complete)
-  └─ return code/artifact + validation evidence
-```
+└─ return code/artifact + validation evidence
+
+````
 
 ## Output Format
 
@@ -793,16 +801,18 @@ When done, return:
 
 ## Known Limitations
 - [Anything deferred to future task]
-```
+````
 
 ## Examples
 
 ### Example 1: Simple Endpoint Implementation
 
 **Task**:
+
 > "Implement GET /api/users/:id endpoint. Returns user object on 200, 404 if not found. Must use current auth middleware. See DESIGN-api-v2.md and spec in api-spec.md."
 
 **You do**:
+
 1. Read spec.md for request/response format
 2. Read DESIGN-api-v2.md for auth requirements
 3. Implement handler + endpoint
@@ -811,6 +821,7 @@ When done, return:
 6. Return with evidence
 
 **You do NOT**:
+
 - Refactor the auth middleware (out of scope)
 - Add caching (not in spec)
 - Optimize database query (defer to perf task)
@@ -818,14 +829,17 @@ When done, return:
 ### Example 2: Escalating to Delegator
 
 **Task**:
+
 > "Add user role validation to auth middleware per ADR-024"
 
 **You analyze and find**:
-- ADR-024 doesn't specify HOW to validate  (role enum? permission matrix? external service?)
+
+- ADR-024 doesn't specify HOW to validate (role enum? permission matrix? external service?)
 - Spec is silent on validation method
 - Design references ADR-024 but doesn't detail validation approach
 
 **You do**:
+
 - STOP implementation
 - Message delegator: "ADR-024 is incomplete. Need clarification: validation method (enum vs matrix vs external service)?"
 - WAIT for response
@@ -833,17 +847,17 @@ When done, return:
 
 ## Anti-Patterns You MUST NOT Do
 
-❌ **Expand scope** — "While I'm here, I'll refactor the auth module"  
-✅ **Stay focused** — Implement ONE task
+ BAD: **Expand scope** — "While I'm here, I'll refactor the auth module"
+GOOD: **Stay focused** — Implement ONE task
 
-❌ **Guess on ambiguity** — "Usually we do X, so I'll do that"  
-✅ **Ask delegator** — "This is ambiguous, need clarification"
+ BAD: **Guess on ambiguity** — "Usually we do X, so I'll do that"
+GOOD: **Ask delegator** — "This is ambiguous, need clarification"
 
-❌ **Silent contract changes** — Design says use PostgreSQL, you switch to MongoDB  
-✅ **Escalate blockers** — "Design doesn't support this requirement"
+ BAD: **Silent contract changes** — Design says use PostgreSQL, you switch to MongoDB
+GOOD: **Escalate blockers** — "Design doesn't support this requirement"
 
-❌ **Test as afterthought** — Write code, then ask if we need tests  
-✅ **Test-driven** — Write tests alongside code
+ BAD: **Test as afterthought** — Write code, then ask if we need tests
+GOOD: **Test-driven** — Write tests alongside code
 
 ---
 
@@ -852,7 +866,7 @@ When done, return:
 **File**: `artifacts/skills/{skill-id}/SKILL.md`  
 **Purpose**: Define a reusable capability for LLM agents with input/output contracts
 
-```yaml
+````yaml
 ---
 type: skill
 id: codebase-contextualizer
@@ -895,7 +909,7 @@ estimated_cost: "$0.05 per invocation"
 
 Extracts semantic context from a codebase to create RAG-optimized summaries. Returns structured understanding of:
 - Project structure and entry points
-- Key modules and their responsibilities  
+- Key modules and their responsibilities
 - Dependencies (internal and external)
 - Architectural patterns used
 - File-to-concept mapping
@@ -910,17 +924,17 @@ Extracts semantic context from a codebase to create RAG-optimized summaries. Ret
   "include_tests": false,
   "max_files": 100
 }
-```
+````
 
 ### Parameter Details
 
-| Parameter | Type | Required | Default | Notes |
-|-----------|------|----------|---------|-------|
-| `codebase_path` | string | YES | - | Absolute path, must be readable |
-| `depth` | integer | NO | 3 | Range: 1-5. Higher = more files, slower |
-| `filters` | array | NO | ["ts", "js"] | File extensions to include |
-| `include_tests` | boolean | NO | false | Include `*.test.*` and `*.spec.*` files |
-| `max_files` | integer | NO | 100 | Stop after N files (prevent timeout) |
+| Parameter       | Type    | Required | Default      | Notes                                   |
+| --------------- | ------- | -------- | ------------ | --------------------------------------- |
+| `codebase_path` | string  | YES      | -            | Absolute path, must be readable         |
+| `depth`         | integer | NO       | 3            | Range: 1-5. Higher = more files, slower |
+| `filters`       | array   | NO       | ["ts", "js"] | File extensions to include              |
+| `include_tests` | boolean | NO       | false        | Include `*.test.*` and `*.spec.*` files |
+| `max_files`     | integer | NO       | 100          | Stop after N files (prevent timeout)    |
 
 ## Output Contract
 
@@ -954,13 +968,13 @@ Extracts semantic context from a codebase to create RAG-optimized summaries. Ret
 
 ### Error Cases
 
-| Code | Message | Cause |
-|------|---------|-------|
-| `PATH_NOT_FOUND` | Codebase path does not exist | Invalid path provided |
-| `PERMISSION_DENIED` | Cannot read codebase directory | File permissions issue |
-| `DEPTH_TOO_HIGH` | Depth > 5 not supported | User input validation error |
-| `TIMEOUT` | Analysis exceeded 30 seconds | Codebase too large or slow system |
-| `NO_FILES_FOUND` | No files matching filters | Filters too restrictive |
+| Code                | Message                        | Cause                             |
+| ------------------- | ------------------------------ | --------------------------------- |
+| `PATH_NOT_FOUND`    | Codebase path does not exist   | Invalid path provided             |
+| `PERMISSION_DENIED` | Cannot read codebase directory | File permissions issue            |
+| `DEPTH_TOO_HIGH`    | Depth > 5 not supported        | User input validation error       |
+| `TIMEOUT`           | Analysis exceeded 30 seconds   | Codebase too large or slow system |
+| `NO_FILES_FOUND`    | No files matching filters      | Filters too restrictive           |
 
 **Handling**:
 From these errors, return structured error response with code, message, and suggested actions.
@@ -970,6 +984,7 @@ From these errors, return structured error response with code, message, and sugg
 ### Example 1: React Application
 
 **Input**:
+
 ```json
 {
   "codebase_path": "/home/user/react-app",
@@ -980,6 +995,7 @@ From these errors, return structured error response with code, message, and sugg
 ```
 
 **Output**:
+
 ```json
 {
   "status": "ok",
@@ -1014,6 +1030,7 @@ From these errors, return structured error response with code, message, and sugg
 ### Example 2: Go Microservice
 
 **Input**:
+
 ```json
 {
   "codebase_path": "/home/user/auth-service",
@@ -1025,6 +1042,7 @@ From these errors, return structured error response with code, message, and sugg
 ```
 
 **Output**:
+
 ```json
 {
   "status": "ok",
@@ -1039,7 +1057,10 @@ From these errors, return structured error response with code, message, and sugg
     "internal": ["handlers", "models", "auth"]
   },
   "dependencies": {
-    "external": ["github.com/gorilla/mux@v1.8.0", "github.com/dgrijalva/jwt-go@v3.2.0"],
+    "external": [
+      "github.com/gorilla/mux@v1.8.0",
+      "github.com/dgrijalva/jwt-go@v3.2.0"
+    ],
     "internal": []
   }
 }
@@ -1047,25 +1068,25 @@ From these errors, return structured error response with code, message, and sugg
 
 ## Anti-Patterns & Mistakes
 
-❌ **Vague input**: `{path: "/repo"}`  
-→ User doesn't know if path must be absolute or relative, doesn't know about depth parameter
+BAD: **Vague input**: `{path: "/repo"}`
+-> User doesn't know if path must be absolute or relative, doesn't know about depth parameter
 
-✅ **Precise input schema**: Documented required fields, default values, validation rules
+GOOD **Precise input schema**: Documented required fields, default values, validation rules
 
-❌ **Missing error cases**: "Might fail in some edge cases"  
-→ LLM doesn't know how to handle failures
+BAD: **Missing error cases**: "Might fail in some edge cases"
+-> LLM doesn't know how to handle failures
 
-✅ **Enumerated errors**: Each code listed with cause, message, and handling procedure
+GOOD **Enumerated errors**: Each code listed with cause, message, and handling procedure
 
-❌ **No timeouts**: Skill hangs if codebase is huge  
-→ LLM context blocks waiting for response
+BAD: **No timeouts**: Skill hangs if codebase is huge
+-> LLM context blocks waiting for response
 
-✅ **Explicit timeouts**: 30 seconds max; graceful truncation if exceeded
+GOOD **Explicit timeouts**: 30 seconds max; graceful truncation if exceeded
 
-❌ **Ambiguous output**: "Returns information about the project"  
-→ LLM doesn't know what fields to expect
+BAD: **Ambiguous output**: "Returns information about the project"
+-> LLM doesn't know what fields to expect
 
-✅ **Structured output schema**: JSON with typed fields, consistent across invocations
+GOOD: **Structured output schema**: JSON with typed fields, consistent across invocations
 
 ## Compatibility
 
@@ -1088,7 +1109,7 @@ From these errors, return structured error response with code, message, and sugg
 **File**: `docs/tools/{tool-name}.md`  
 **Purpose**: Document a single LLM-callable tool with input/output schemas
 
-```yaml
+````yaml
 ---
 type: tool
 id: validate-email
@@ -1146,7 +1167,7 @@ Validates email addresses with optional DNS MX record checking.
     "additionalProperties": false
   }
 }
-```
+````
 
 ## Response Format
 
@@ -1183,14 +1204,14 @@ Validates email addresses with optional DNS MX record checking.
 
 ## Error Codes
 
-| Code | Message | Cause | Retry? |
-|------|---------|-------|--------|
-| `INVALID_FORMAT` | Format is invalid | Malformed email | No |
-| `INVALID_DOMAIN` | Domain is invalid | Not a valid domain | No |
-| `DNS_LOOKUP_FAILED` | DNS lookup failed | Network issue or invalid MX | Yes |
-| `TIMEOUT` | Validation timed out | DNS lookup too slow | Yes |
+| Code                | Message              | Cause                       | Retry? |
+| ------------------- | -------------------- | --------------------------- | ------ |
+| `INVALID_FORMAT`    | Format is invalid    | Malformed email             | No     |
+| `INVALID_DOMAIN`    | Domain is invalid    | Not a valid domain          | No     |
+| `DNS_LOOKUP_FAILED` | DNS lookup failed    | Network issue or invalid MX | Yes    |
+| `TIMEOUT`           | Validation timed out | DNS lookup too slow         | Yes    |
 
-## Constraints  
+## Constraints
 
 - **Max email length**: 254 characters (RFC 5321)
 - **Timeout**: 5 seconds (DNS), 30 seconds (SMTP)
@@ -1246,23 +1267,23 @@ Structure relationships between documents:
 related:
   - type: adr
     id: ADR-015
-    relationship: depends_on        # This doc depends on ADR-015
-  
+    relationship: depends_on # This doc depends on ADR-015
+
   - type: design-doc
     id: DESIGN-auth
-    relationship: implements        # This doc implements that design
-  
+    relationship: implements # This doc implements that design
+
   - type: agent
     id: implementer
-    relationship: used_by           # That agent uses this skill
-  
+    relationship: used_by # That agent uses this skill
+
   - type: tool
     id: validate-email
-    relationship: complements       # Works alongside this tool
-  
+    relationship: complements # Works alongside this tool
+
   - type: adr
     id: ADR-008
-    relationship: supersedes        # Replaces old decision
+    relationship: supersedes # Replaces old decision
 ```
 
 ---
@@ -1279,6 +1300,7 @@ related:
 ### Lists
 
 **Unordered** (when order doesn't matter):
+
 ```markdown
 - Item 1
 - Item 2
@@ -1288,6 +1310,7 @@ related:
 ```
 
 **Ordered** (when sequence matters):
+
 ```markdown
 1. Step 1
 2. Step 2
@@ -1302,7 +1325,7 @@ Use when comparing 3+ items across 2+ attributes:
 
 ```markdown
 | Header 1 | Header 2 | Header 3 |
-|----------|----------|----------|
+| -------- | -------- | -------- |
 | Value A  | Value B  | Value C  |
 ```
 
@@ -1326,9 +1349,9 @@ def hello():
 ### Emphasis
 
 - **Bold** for UI elements, file names, terms being defined
-- *Italic* for emphasis on important concepts
+- _Italic_ for emphasis on important concepts
 - `Code` for variable names, commands, file paths
-- Never use BOTH bold + code: `**`code`**`  (use one or the other)
+- Never use BOTH bold + code: `**`code`**` (use one or the other)
 
 ---
 
@@ -1339,7 +1362,8 @@ def hello():
 Documents are split at H2 boundaries for LLM context. Each chunk must be **self-contained**:
 
 ```yaml
-chunk_strategy: section      # Default: split at H2
+chunk_strategy: section # Default: split at H2
+
 
 # Example chunking:
 # Chunk 1: [H1 title] + [## Context H2 + content]
@@ -1383,8 +1407,10 @@ rag_priority: low       # Only if nothing else found
 
 **Input**:
 ```
+
 GET /api/users?email=alice@company.com
-```
+
+````
 
 **Output**:
 ```json
@@ -1393,10 +1419,11 @@ GET /api/users?email=alice@company.com
   "email": "alice@company.com",
   "name": "Alice"
 }
-```
+````
 
 **Explanation**: Query parameter filters the user list by email. Returns the user object if found.
-```
+
+````
 
 ### Pattern: Anti-Pattern Example
 
@@ -1409,11 +1436,12 @@ GET /api/users?email=alice@company.com
 @app.route("/api/users/<id>")
 def get_user(id):
     return db.query(f"SELECT * FROM users WHERE id={id}")
-```
+````
 
 **Why wrong**: SQL injection vulnerability. User ID is inserted directly into query.
 
 ### Do Instead
+
 ```python
 # CORRECT - input is parameterized
 @app.route("/api/users/<id>")
@@ -1422,7 +1450,8 @@ def get_user(id):
 ```
 
 **Why correct**: Uses parameterized queries to prevent injection.
-```
+
+````
 
 ---
 
@@ -1430,16 +1459,17 @@ def get_user(id):
 
 ### Anti-Pattern 1: Metadata in Prose
 
-❌ **Wrong**:
+BAD: **Wrong**:
 ```markdown
 # Design Doc: Cache Layer
 
-**Status**: In Review  
-**Author**: alice@company.com  
+**Status**: In Review
+**Author**: alice@company.com
 **Date**: April 3, 2026
-```
+````
 
-✅ **Correct**:
+GOOD: **Correct**:
+
 ```yaml
 ---
 type: design-doc
@@ -1447,22 +1477,25 @@ status: review
 author: alice@company.com
 date_created: 2026-04-03
 ---
-
 # Design Doc: Cache Layer
 ```
 
 ### Anti-Pattern 2: Vague Input/Output Specs
 
-❌ **Wrong**:
+BAD: **Wrong**:
+
 ```markdown
 ## Input
+
 Takes a user object
 
 ## Output
+
 Returns updated user
 ```
 
-✅ **Correct**:
+GOOD: **Correct**:
+
 ```yaml
 inputs:
   user:
@@ -1478,30 +1511,33 @@ inputs:
 
 ### Anti-Pattern 3: Long, Non-Chunked Documents
 
-❌ **Wrong**: Single document with 200+ lines, no section breaks
+BAD: **Wrong**: Single document with 200+ lines, no section breaks
 
-✅ **Correct**: H2 sections at regular intervals (~300 words each); self-contained chunks
+GOOD: **Correct**: H2 sections at regular intervals (~300 words each); self-contained chunks
 
 ### Anti-Pattern 4: Duplicated Content
 
-❌ **Wrong**: Skill definition doc + separate skill usage guide
+BAD: **Wrong**: Skill definition doc + separate skill usage guide
 
-✅ **Correct**: One skill SKILL.md with examples embedded
+GOOD: **Correct**: One skill SKILL.md with examples embedded
 
 ### Anti-Pattern 5: No Examples
 
-❌ **Wrong**:
+BAD: **Wrong**:
+
 ```markdown
 ## How to Use
 
 Call the skill with appropriate parameters.
 ```
 
-✅ **Correct**:
+GOOD: **Correct**:
+
 ```markdown
 ## Examples
 
 ### Example 1: Simple Case
+
 **Input**: {...}
 **Output**: {...}
 **Use Case**: When you need to...
@@ -1560,23 +1596,23 @@ Use this before finalizing any document:
 
 ## Quick Reference: Document Type Selection Matrix
 
-| Need | Type | Location |
-|------|------|----------|
-| Record a major decision | ADR | `docs/adr/ADR-NNN-slug.md` |
-| Propose a feature/design | Design Doc | `docs/architecture/DESIGN-slug.md` |
-| Define architecture direction | Design Doc | `docs/architecture/[name].md` |
-| Explain skill placement and rules | Skill Doc | `docs/skills/[name].md` |
-| Define quality baseline | Testing Doc | `docs/testing/[name].md` |
-| Define reusable authoring pattern | Template | `docs/templates/.../TEMPLATE.md` |
+| Need                              | Type        | Location                           |
+| --------------------------------- | ----------- | ---------------------------------- |
+| Record a major decision           | ADR         | `docs/adr/ADR-NNN-slug.md`         |
+| Propose a feature/design          | Design Doc  | `docs/architecture/DESIGN-slug.md` |
+| Define architecture direction     | Design Doc  | `docs/architecture/[name].md`      |
+| Explain skill placement and rules | Skill Doc   | `docs/skills/[name].md`            |
+| Define quality baseline           | Testing Doc | `docs/testing/[name].md`           |
+| Define reusable authoring pattern | Template    | `docs/templates/.../TEMPLATE.md`   |
 
 ---
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 2.0.0 | 2026-04-03 | Initial unified schema; 10 document types |
-| 1.0.0 | 2026-03-15 | Legacy multi-system docs (deprecated) |
+| Version | Date       | Changes                                   |
+| ------- | ---------- | ----------------------------------------- |
+| 2.0.0   | 2026-04-03 | Initial unified schema; 10 document types |
+| 1.0.0   | 2026-03-15 | Legacy multi-system docs (deprecated)     |
 
 ---
 

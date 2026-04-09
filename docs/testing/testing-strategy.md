@@ -20,6 +20,12 @@ This document defines the future-facing quality baseline for Brain.
 - Deterministic checks in CI
 - Clear separation between required gates and optional deep validation
 
+## Non-Goals
+
+- Replacing all ad hoc developer judgment with automation
+- Turning documentation validation into a full semantic review of prose quality
+- Enforcing release-only policies on local development-only scratch files
+
 ## Required Quality Gates
 
 - formatting
@@ -28,6 +34,18 @@ This document defines the future-facing quality baseline for Brain.
 - integration tests for daemon-centered flows
 - documentation validation
 - security and secret scanning
+
+## How to Test
+
+Local validation:
+
+- Run the docs boundary check before committing changes that touch `docs/` or `artifacts/`
+- Run the docs validator against changed files to confirm manifest alignment and section coverage
+
+CI validation:
+
+- Confirm pull requests fail when docs break the manifest, frontmatter, or structure rules
+- Confirm the merge gate runs the same validation path as the pre-commit hook
 
 ## Execution Model
 

@@ -2,7 +2,7 @@
 
 > Version: 2.0.0 | Last updated: 2026-03-20
 > This is the single source of truth. All agent-specific rule files are generated from here.
-> DO NOT edit adapter files directly. Edit this file, then run: `~/.brain/adapters/generate.sh`
+> DO NOT edit adapter files directly. Edit this file, then sync the generated adapter artifacts using the repository's adapter-generation workflow.
 
 ---
 
@@ -24,8 +24,8 @@ A programming language is a tool. The real craft is in:
 To ensure longevity and compatibility across all tools, agents, and shells, all documentation, rules, and code comments MUST use only plain text (ASCII/UTF-8).
 
 - **NO Emojis**: Never use emojis (e.g., :smile:, :rocket:). Use descriptive words instead.
-- **NO Decorative Symbols**: Avoid checkmarks ((check)), crossmarks ((X)), or arrows (->).
-- **Standard ASCII Symbols**: Use `-`, `*`, `->`, `+`, `|`, and standard brackets.
+- **NO Decorative Symbols**: Avoid decorative Unicode symbols and iconography. Use standard ASCII punctuation instead.
+- **Standard ASCII Symbols**: Use `-`, `*`, `->`, `+`, `|`, and standard brackets when needed.
 
 ---
 
@@ -83,6 +83,7 @@ expected output.
 ### 10. Explicit degradation over silent failure
 
 When a dependency (MCP, model provider, external API) is unavailable:
+
 1. Log the failure with exact error
 2. Notify the user once, clearly
 3. Continue with reduced capability

@@ -39,8 +39,8 @@ docs/
 │   ├── README.md
 │   └── skill-artifact-authoring.md
 ├── testing/
+│   ├── README.md
 │   └── testing-strategy.md
-├── archive/
 └── templates/
 ```
 
@@ -50,7 +50,7 @@ docs/
 - How the system should work: `architecture/`
 - Skill-specific guidance: `skills/`
 - Validation guidance: `testing/`
-- Historical material: `archive/` only if explicitly retained
+- Historical material: keep in git history unless a future archive contract is explicitly restored
 - Reusable templates: `templates/`
 
 ## Current Navigation Rule
@@ -60,6 +60,7 @@ If a document defines active project direction, it must be reachable from:
 - `docs/README.md`
 - `docs/INDEX.md`
 - the relevant domain README
+- the relevant domain README for testing, skills, architecture, or ADRs
 
 ## Current Priority Path
 

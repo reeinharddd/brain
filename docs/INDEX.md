@@ -21,6 +21,7 @@ This is the official navigation entry for Brain documentation.
 4. `docs/adr/ADR-0009-clean-repository-structure-and-domain-boundaries.md`
 5. `docs/adr/ADR-0010-hierarchical-identity-policy-and-security-model.md`
 6. `docs/adr/ADR-0011-ai-runtime-and-curator-subsystem.md`
+7. `docs/testing/README.md`
 
 ## Architecture Set
 
@@ -42,6 +43,8 @@ This is the official navigation entry for Brain documentation.
 - `docs/architecture/documentation-boundary-and-markdown-policy.md`
 - `docs/architecture/stack-and-implementation-baseline.md`
 - `docs/architecture/research-foundations.md`
+- `docs/testing/README.md`
+- `docs/testing/testing-strategy.md`
 
 ## ADR Set
 
@@ -65,3 +68,4 @@ This is the official navigation entry for Brain documentation.
 - Architecture and ADR documents are the canonical source for structural decisions.
 - Historical notes and implementation reports must not override active ADRs.
 - New architectural work must update this index when it introduces a new canonical entry point.
+- Testing guidance is canonical when it affects validation, CI, or merge gates.

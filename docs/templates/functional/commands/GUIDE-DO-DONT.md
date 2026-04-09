@@ -17,7 +17,7 @@ Examples: `/plan`, `/standup`, `/review`
 
 ---
 
-## ✅ DO's
+## DO's
 
 1. **Name is a verb phrase** — Start with action: `/plan`, `/debug`, `/standup`, not `/planner` or `/planning`
 2. **Document input/output** — Show JSON examples of what it accepts and returns
@@ -28,7 +28,7 @@ Examples: `/plan`, `/standup`, `/review`
 
 ---
 
-## ❌ DON'Ts
+## DON'Ts
 
 1. **Don't hardcode agent names** — Use daemon config (agents.json) as source of truth
 2. **Don't block on network** — If daemon response slow (>5s), timeout and retry
