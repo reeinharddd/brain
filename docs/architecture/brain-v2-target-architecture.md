@@ -252,6 +252,7 @@ Brain must expose:
 
 - IDE/CLI Integration Strategy: `docs/architecture/ide-cli-integration-strategy.md`
 - Implementation Gap Roadmap: `docs/architecture/implementation-gap-roadmap.md`
+- Unified Capability Enhancement: `docs/architecture/unified-capability-enhancement-roadmap.md`
 
 ## Related Decisions
 

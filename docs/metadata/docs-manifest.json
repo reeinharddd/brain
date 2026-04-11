@@ -103,7 +103,8 @@
         "model-compatibility-and-capability-layering.md",
         "repository-structure-v2.md",
         "research-foundations.md",
-        "stack-and-implementation-baseline.md"
+        "stack-and-implementation-baseline.md",
+        "unified-capability-enhancement-roadmap.md"
       ],
       "navigation_files": ["README.md"],
       "reference_files": [
