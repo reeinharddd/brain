@@ -5,13 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	coreartifacts "github.com/reeinharrrd/brain/core/artifacts"
+	"github.com/reeinharrrd/brain/core/observability"
 	coreruntime "github.com/reeinharrrd/brain/core/runtime"
 	"github.com/reeinharrrd/brain/daemon/internal/api/handlers"
 	brainenv "github.com/reeinharrrd/brain/daemon/internal/environment"
@@ -20,6 +24,7 @@ import (
 	"github.com/reeinharrrd/brain/daemon/internal/syncengine"
 
 	"github.com/gorilla/websocket"
+	"go.opentelemetry.io/otel/trace"
 )
 
 var upgrader = websocket.Upgrader{
@@ -51,6 +56,14 @@ type BrainDaemon struct {
 	logChannel  chan string
 	brainRoot   string
 	docsHandler *handlers.DocsHandler
+
+	// Observability
+	logger      *slog.Logger
+	tracer      trace.Tracer
+	healthCheck *observability.HealthChecker
+	metrics     *observability.Metrics
+	traceCtx    *observability.TraceContext
+	startTime   time.Time
 }
 
 func configRootFilePath() string {
@@ -76,10 +89,33 @@ func cors(w http.ResponseWriter, r *http.Request) bool {
 	return false
 }
 
+func getEnvOrDefault(key, defaultVal string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return defaultVal
+}
+
 func NewBrainDaemon() *BrainDaemon {
 	logCh := make(chan string, 1000)
 	root := resolveBrainRoot()
 	environment := brainenv.Current()
+
+	// Initialize structured logger
+	logger := observability.NewLogger(&observability.LoggerConfig{
+		Level:       "info",
+		Format:      "json",
+		Output:      os.Stderr,
+		ServiceName: "brain-daemon",
+		Version:     "0.1.0",
+	})
+
+	// Initialize health checker
+	healthCheck := observability.NewHealthChecker("0.1.0")
+
+	// Initialize trace context propagator
+	traceCtx := observability.NewTraceContext()
+
 	d := &BrainDaemon{
 		status:      "Running",
 		clients:     make(map[*websocket.Conn]bool),
@@ -96,6 +132,11 @@ func NewBrainDaemon() *BrainDaemon {
 		syncStatus:  "idle",
 		logChannel:  logCh,
 		brainRoot:   root,
+		logger:      logger,
+		healthCheck: healthCheck,
+		metrics:     observability.DefaultMetrics,
+		traceCtx:    traceCtx,
+		startTime:   time.Now(),
 	}
 	logCh <- fmt.Sprintf("[Daemon] Initialized with 8 managers in %s environment", environment)
 
@@ -245,8 +286,54 @@ func (d *BrainDaemon) healthCheckLoop() {
 	}
 }
 
+// handleTraces returns trace information (placeholder for future OTLP integration).
+func (d *BrainDaemon) handleTraces(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	response := map[string]interface{}{
+		"message": "Trace endpoint active. Configure OTLP collector to export traces.",
+		"config": map[string]interface{}{
+			"otlp_endpoint": getEnvOrDefault("BRAIN_OTLP_ENDPOINT", "localhost:4318"),
+			"otel_enabled":  os.Getenv("BRAIN_OTEL_ENABLED") == "true",
+		},
+	}
+	json.NewEncoder(w).Encode(response)
+}
+
 func (d *BrainDaemon) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if cors(w, r) {
+		return
+	}
+
+	// Apply trace context middleware
+	d.traceCtx.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		d.routeRequest(w, r)
+	})).ServeHTTP(w, r)
+}
+
+// routeRequest handles the actual HTTP routing after observability middleware
+func (d *BrainDaemon) routeRequest(w http.ResponseWriter, r *http.Request) {
+	// Record HTTP metrics
+	start := time.Now()
+	
+	// Observability endpoints
+	if r.URL.Path == "/metrics" {
+		promhttp.Handler().ServeHTTP(w, r)
+		return
+	}
+	if r.URL.Path == "/api/v1/health" && r.Method == "GET" {
+		d.healthCheck.HealthHandler().ServeHTTP(w, r)
+		return
+	}
+	if r.URL.Path == "/health" && r.Method == "GET" {
+		// Simple health endpoint for backward compatibility
+		observability.SimpleHealthHandler("0.1.0").ServeHTTP(w, r)
+		return
+	}
+
+	// Trace endpoint
+	if r.URL.Path == "/api/v1/traces" && r.Method == "GET" {
+		d.handleTraces(w, r)
 		return
 	}
 
@@ -327,6 +414,9 @@ func (d *BrainDaemon) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		d.handleDocs(w, r)
 		return
 	}
+
+	// Record duration metric
+	d.metrics.HTTPDuration.WithLabelValues(r.Method, r.URL.Path).Observe(time.Since(start).Seconds())
 
 	http.NotFound(w, r)
 }
@@ -452,6 +542,47 @@ func (d *BrainDaemon) Start(ctx context.Context) error {
 	d.mu.Unlock()
 
 	d.logChannel <- "[Daemon] Starting orchestration..."
+	d.logger.Info("Starting brain daemon", "version", "0.1.0", "environment", d.environment)
+
+	// Register health checks
+	d.healthCheck.Register("docker", 5*time.Second, func(ctx context.Context) error {
+		_, err := d.docker.GetServiceStatus(ctx, "all")
+		return err
+	})
+	d.healthCheck.Register("qdrant", 5*time.Second, func(ctx context.Context) error {
+		ok, err := d.qdrant.HealthCheck(ctx)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return fmt.Errorf("qdrant health check failed")
+		}
+		return nil
+	})
+	d.healthCheck.Register("ollama", 3*time.Second, func(ctx context.Context) error {
+		if !d.ollama.IsAvailable(ctx) {
+			return fmt.Errorf("ollama not available")
+		}
+		return nil
+	})
+
+	// Initialize tracer
+	tp, shutdown, err := observability.InitTracer(ctx, &observability.TracerConfig{
+		ServiceName:    "brain-daemon",
+		ServiceVersion: "0.1.0",
+		OTLPEndpoint:   getEnvOrDefault("BRAIN_OTLP_ENDPOINT", "localhost:4318"),
+		OTLPInsecure:   true,
+		SampleRate:     1.0,
+		Enabled:        os.Getenv("BRAIN_OTEL_ENABLED") == "true",
+	})
+	if err != nil {
+		d.logger.Warn("Failed to initialize tracer", observability.AttrError, err)
+	} else {
+		defer tp.Shutdown(context.Background())
+		defer shutdown()
+		d.tracer = observability.Tracer("daemon")
+		d.logger.Info("Tracer initialized", "endpoint", getEnvOrDefault("BRAIN_OTLP_ENDPOINT", "localhost:4318"))
+	}
 
 	// Start Docker
 	if err := d.docker.ComposeUp(ctx); err != nil {
