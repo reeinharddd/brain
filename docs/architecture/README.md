@@ -24,6 +24,8 @@ This folder contains the canonical architecture documents for Brain.
 7. [llm-and-ide-operating-model.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/llm-and-ide-operating-model.md)
 8. [context-agent-systems-and-cost-optimization.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/context-agent-systems-and-cost-optimization.md)
 9. [model-compatibility-and-capability-layering.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/model-compatibility-and-capability-layering.md)
+10. [ide-cli-integration-strategy.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/ide-cli-integration-strategy.md)
+11. [implementation-gap-roadmap.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/implementation-gap-roadmap.md)
 
 ## Supporting Documents
 

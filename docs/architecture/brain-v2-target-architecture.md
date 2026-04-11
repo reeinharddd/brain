@@ -248,6 +248,11 @@ Brain must expose:
 - sync success and failure events
 - artifact usage and activation traces
 
+## Related Documents
+
+- IDE/CLI Integration Strategy: `docs/architecture/ide-cli-integration-strategy.md`
+- Implementation Gap Roadmap: `docs/architecture/implementation-gap-roadmap.md`
+
 ## Related Decisions
 
 - `docs/adr/ADR-0002-centralized-brain-cli.md`
@@ -264,3 +269,4 @@ Brain must expose:
 **Status**: Active
 **Reviewed by**: Brain Architecture Team
 **Target completion**: 2026-04-30 for architecture closure, phased implementation after approval
+**Last updated**: 2026-04-11 — Added IDE/CLI integration strategy and implementation gap roadmap
