@@ -4,4 +4,6 @@ use (
 	./core
 	./apps/cli
 	./apps/daemon
+	./apps/tui
+	./apps/acp
 )

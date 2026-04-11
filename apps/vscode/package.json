@@ -1,0 +1,63 @@
+{
+  "name": "brain-vscode",
+  "displayName": "Brain",
+  "description": "Brain daemon integration for VS Code",
+  "version": "0.1.0",
+  "publisher": "brain-team",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["AI", "Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "brain.showArtifacts", "title": "Brain: Show Artifacts" },
+      { "command": "brain.showContext", "title": "Brain: Show Context" },
+      { "command": "brain.showPolicy", "title": "Brain: Show Policy" },
+      { "command": "brain.applySkill", "title": "Brain: Apply Skill" },
+      { "command": "brain.runWorkflow", "title": "Brain: Run Workflow" }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "brain",
+          "title": "Brain",
+          "icon": "$(brain)"
+        }
+      ]
+    },
+    "views": {
+      "brain": [
+        { "id": "brain.artifacts", "name": "Artifacts" },
+        { "id": "brain.context", "name": "Context" },
+        { "id": "brain.policy", "name": "Policy" }
+      ]
+    },
+    "configuration": {
+      "title": "Brain",
+      "properties": {
+        "brain.daemonUrl": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "Brain daemon URL"
+        },
+        "brain.autoEvolveAutoApply": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-apply low-risk AutoEvolve recommendations"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  }
+}

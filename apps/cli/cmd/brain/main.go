@@ -14,7 +14,13 @@ import (
 
 	"github.com/gorilla/websocket"
 	coreruntime "github.com/reeinharrrd/brain/core/runtime"
+	"github.com/spf13/cobra"
 )
+
+var rootCmd = &cobra.Command{
+	Use:   "brain",
+	Short: "Brain CLI",
+}
 
 const DAEMON_URL = "http://localhost:9090"
 const DAEMON_WS = "ws://localhost:9090/ws"
@@ -180,25 +186,13 @@ func main() {
 		startUI()
 
 	case "status":
-		resp, err := http.Get(DAEMON_URL + "/api/status")
-		if err != nil {
-			fmt.Println("❌ Daemon is not running or unreachable:", err)
-			return
+		if err := runStatus(nil, os.Args[2:]); err != nil {
+			fmt.Println("Error:", err)
 		}
-		defer resp.Body.Close()
-		var res map[string]interface{}
-		json.NewDecoder(resp.Body).Decode(&res)
-		fmt.Printf("🧠 Brain Daemon Status: %v (Time: %v)\n", res["status"], res["time"])
-		if env, ok := res["environment"].(string); ok && env != "" {
-			fmt.Printf("Environment: %v\n", env)
-		}
-		fmt.Printf("Active Managed Processes: %v\n", res["processes"])
-		fmt.Printf("Sync Status: %v (running=%v)\n", res["sync_status"], res["sync_running"])
-		if lastRun, ok := res["sync_last_run"]; ok {
-			fmt.Printf("Last Sync: %v\n", lastRun)
-		}
-		if syncErr, ok := res["sync_error"].(string); ok && syncErr != "" {
-			fmt.Printf("Sync Error: %v\n", syncErr)
+
+	case "review":
+		if err := runReview(os.Args[2:]); err != nil {
+			fmt.Println("Error:", err)
 		}
 
 	case "ps":
