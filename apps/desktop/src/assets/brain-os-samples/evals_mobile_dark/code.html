@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#3f008e",
+                    "primary-fixed-dim": "#d2bbff",
+                    "outline-variant": "#4a4455",
+                    "tertiary-fixed-dim": "#ffb784",
+                    "inverse-primary": "#732ee4",
+                    "secondary": "#c8c6c5",
+                    "error": "#ffb4ab",
+                    "surface-container-highest": "#353534",
+                    "on-secondary": "#313030",
+                    "on-primary-fixed": "#25005a",
+                    "secondary-container": "#474746",
+                    "on-error": "#690005",
+                    "on-error-container": "#ffdad6",
+                    "primary-container": "#7c3aed",
+                    "surface-bright": "#3a3939",
+                    "on-secondary-fixed-variant": "#474746",
+                    "secondary-fixed": "#e5e2e1",
+                    "on-tertiary": "#4f2500",
+                    "surface-tint": "#d2bbff",
+                    "on-tertiary-container": "#ffe0cd",
+                    "surface-container": "#201f1f",
+                    "primary": "#d2bbff",
+                    "tertiary-fixed": "#ffdcc6",
+                    "surface-dim": "#131313",
+                    "outline": "#958da1",
+                    "inverse-on-surface": "#313030",
+                    "on-primary-container": "#ede0ff",
+                    "surface-container-low": "#1c1b1b",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "tertiary-container": "#a15100",
+                    "on-primary-fixed-variant": "#5a00c6",
+                    "surface-variant": "#353534",
+                    "tertiary": "#ffb784",
+                    "inverse-surface": "#e5e2e1",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "background": "#131313",
+                    "surface-container-lowest": "#0e0e0e",
+                    "primary-fixed": "#eaddff",
+                    "on-background": "#e5e2e1",
+                    "on-surface": "#e5e2e1",
+                    "error-container": "#93000a",
+                    "surface-container-high": "#2a2a2a",
+                    "on-secondary-container": "#b7b4b4",
+                    "on-surface-variant": "#ccc3d8",
+                    "on-tertiary-fixed-variant": "#713700",
+                    "surface": "#131313",
+                    "on-tertiary-fixed": "#301400"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Space Grotesk"],
+                    "label": ["Space Grotesk"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        body {
+            background-color: #0A0A0A;
+            color: #F5F5F3;
+        }
+        .mono-text { font-family: 'JetBrains Mono', monospace; }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased font-body overflow-x-hidden">
+<!-- Top Navigation Anchor -->
+<header class="bg-[#0A0A0A] flex items-center justify-between px-6 fixed top-0 w-full h-12 z-50">
+<div class="flex items-center space-x-3">
+<span class="font-headline uppercase text-xs font-bold tracking-widest text-[#F5F5F3]">System</span>
+<div class="w-1 h-1 bg-[#4A4455] rounded-full"></div>
+<span class="font-headline uppercase text-xs font-bold tracking-widest text-[#A1A1A1]">Nodes</span>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-[#A1A1A1]">cloud_done</span>
+<span class="material-symbols-outlined text-[#A1A1A1]">notifications</span>
+<span class="material-symbols-outlined text-[#7C3AED]">account_circle</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-16 pb-24 px-4 min-h-screen">
+<!-- Page Identity -->
+<section class="mb-8">
+<div class="flex justify-between items-end mb-2">
+<h1 class="font-headline font-bold text-3xl tracking-tighter text-[#F5F5F3]">Evals</h1>
+<span class="mono-text text-[10px] text-[#7C3AED] mb-1">V1.0.4-STABLE</span>
+</div>
+<div class="h-[1px] bg-[#4A4455] w-full"></div>
+</section>
+<!-- Metric Grid: Stacked Performance -->
+<div class="space-y-4">
+<!-- Success Rate Summary Card -->
+<div class="bg-[#111111] p-5 rounded-lg border-l-2 border-[#7C3AED]">
+<div class="flex justify-between items-start mb-6">
+<div>
+<span class="mono-text text-xs text-[#A1A1A1] uppercase tracking-widest">Global Success Rate</span>
+<div class="flex items-baseline space-x-2 mt-1">
+<span class="mono-text text-3xl font-bold text-[#F5F5F3]">94.2%</span>
+<span class="mono-text text-[10px] text-primary">+2.4%</span>
+</div>
+</div>
+<div class="bg-[#171717] p-2 rounded">
+<span class="material-symbols-outlined text-[#7C3AED]">analytics</span>
+</div>
+</div>
+<!-- Simplified Bar Chart for Success -->
+<div class="flex items-end space-x-1.5 h-16 w-full">
+<div class="flex-1 bg-[#171717] h-[60%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#171717] h-[65%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#171717] h-[55%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#171717] h-[80%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#7C3AED] h-[94%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#171717] h-[88%] rounded-t-sm"></div>
+<div class="flex-1 bg-[#171717] h-[91%] rounded-t-sm"></div>
+</div>
+</div>
+<!-- Task Distribution Bento Section -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-[#111111] p-4 rounded-lg">
+<span class="mono-text text-[10px] text-[#A1A1A1] uppercase tracking-widest block mb-2">Total Tasks</span>
+<span class="mono-text text-xl font-bold text-[#F5F5F3]">12,840</span>
+</div>
+<div class="bg-[#111111] p-4 rounded-lg">
+<span class="mono-text text-[10px] text-[#A1A1A1] uppercase tracking-widest block mb-2">Avg. Latency</span>
+<span class="mono-text text-xl font-bold text-[#F5F5F3]">124ms</span>
+</div>
+</div>
+<!-- Specific Agent Evaluation List -->
+<div class="bg-[#111111] rounded-lg overflow-hidden">
+<div class="px-5 py-4 border-b border-[#171717] flex justify-between items-center">
+<span class="mono-text text-[11px] font-bold text-[#F5F5F3] tracking-widest">ACTIVE AGENTS</span>
+<span class="mono-text text-[10px] text-[#A1A1A1]">7 TOTAL</span>
+</div>
+<!-- Agent Entry -->
+<div class="px-5 py-4 flex items-center justify-between border-b border-[#171717]">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-[#A1A1A1]">psychology</span>
+<span class="mono-text text-xs text-[#F5F5F3]">agent_prime</span>
+</div>
+<div class="flex items-center space-x-4">
+<span class="mono-text text-[10px] px-2 py-0.5 bg-[#171717] text-[#7C3AED]">PASS</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-xs">keyboard_arrow_right</span>
+</div>
+</div>
+<!-- Agent Entry -->
+<div class="px-5 py-4 flex items-center justify-between border-b border-[#171717]">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-[#A1A1A1]">terminal</span>
+<span class="mono-text text-xs text-[#F5F5F3]">bash_executor</span>
+</div>
+<div class="flex items-center space-x-4">
+<span class="mono-text text-[10px] px-2 py-0.5 bg-[#171717] text-[#7C3AED]">PASS</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-xs">keyboard_arrow_right</span>
+</div>
+</div>
+<!-- Agent Entry -->
+<div class="px-5 py-4 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-[#A1A1A1]">database</span>
+<span class="mono-text text-xs text-[#F5F5F3]">memory_relay</span>
+</div>
+<div class="flex items-center space-x-4">
+<span class="mono-text text-[10px] px-2 py-0.5 bg-[#171717] text-[#A1A1A1]">IDLE</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-xs">keyboard_arrow_right</span>
+</div>
+</div>
+</div>
+<!-- Technical Logs Preview -->
+<div class="bg-[#171717] rounded-lg p-5">
+<div class="flex justify-between items-center mb-4">
+<h3 class="mono-text text-[11px] font-bold text-[#F5F5F3]">RECENT_EVAL_LOGS</h3>
+<span class="material-symbols-outlined text-xs text-[#7C3AED]">open_in_new</span>
+</div>
+<div class="space-y-3">
+<div class="flex space-x-3">
+<span class="mono-text text-[10px] text-[#A1A1A1] w-12 shrink-0">12:04:12</span>
+<p class="mono-text text-[10px] text-[#F5F5F3] leading-relaxed">Task #8292 completed. Reward: <span class="text-[#7C3AED]">+0.98</span></p>
+</div>
+<div class="flex space-x-3">
+<span class="mono-text text-[10px] text-[#A1A1A1] w-12 shrink-0">12:03:55</span>
+<p class="mono-text text-[10px] text-[#F5F5F3] leading-relaxed">Agent_prime encountered <span class="text-error">TIMEOUT</span> in Node_4</p>
+</div>
+<div class="flex space-x-3">
+<span class="mono-text text-[10px] text-[#A1A1A1] w-12 shrink-0">12:03:41</span>
+<p class="mono-text text-[10px] text-[#F5F5F3] leading-relaxed">Evaluated 400 parameters against Rules/v2</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 w-full h-16 bg-[#111111] border-t border-[#4A4455] z-50 flex items-center justify-around px-2">
+<div class="flex flex-col items-center justify-center space-y-1 text-[#A1A1A1]">
+<span class="material-symbols-outlined">terminal</span>
+<span class="mono-text text-[9px]">RUNTIME</span>
+</div>
+<div class="flex flex-col items-center justify-center space-y-1 text-[#A1A1A1]">
+<span class="material-symbols-outlined">psychology</span>
+<span class="mono-text text-[9px]">AGENTS</span>
+</div>
+<div class="flex flex-col items-center justify-center space-y-1 text-[#A1A1A1]">
+<span class="material-symbols-outlined">database</span>
+<span class="mono-text text-[9px]">MEMORY</span>
+</div>
+<div class="flex flex-col items-center justify-center space-y-1 text-[#7C3AED]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="mono-text text-[9px] font-bold">EVALS</span>
+</div>
+<div class="flex flex-col items-center justify-center space-y-1 text-[#A1A1A1]">
+<span class="material-symbols-outlined">settings</span>
+<span class="mono-text text-[9px]">SETUP</span>
+</div>
+</nav>
+<!-- Status Bar Component (Secondary Shell) -->
+<div class="fixed bottom-16 w-full h-10 bg-[#171717] border-t border-[#4A4455] z-40 flex items-center px-4">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[14px] text-[#7C3AED]">keyboard_arrow_right</span>
+<span class="mono-text text-[11px] text-[#7C3AED] uppercase tracking-tighter">COMMAND_LINE: eval --verbose</span>
+</div>
+</div>
+</body></html>

@@ -1,7 +1,15 @@
 
-import ReactDOM from 'react-dom/client'
-import App from './App'
-const root = document.getElementById('root')
+import ReactDOM from "react-dom/client";
+import App from "./DesktopApp";
+import { installDesktopAuthFetchInterceptor } from "./api/auth";
+import { applyTheme, resolveInitialTheme } from "./design-system";
+import "./design-system/styles.css";
+
+installDesktopAuthFetchInterceptor();
+applyTheme(resolveInitialTheme());
+
+const root = document.getElementById("root");
+
 if (root) {
-  ReactDOM.createRoot(root).render(<App />)
+  ReactDOM.createRoot(root).render(<App />);
 }

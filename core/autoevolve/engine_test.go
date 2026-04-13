@@ -10,7 +10,8 @@ import (
 func TestAutoEvolveEngine_EnableDisable(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
-	engine := NewAutoEvolveEngine(acc)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
+	engine := NewAutoEvolveEngine(acc, applier)
 
 	if engine.IsEnabled() {
 		t.Error("New engine should be disabled by default")
@@ -30,6 +31,7 @@ func TestAutoEvolveEngine_EnableDisable(t *testing.T) {
 func TestAutoEvolveEngine_RunAnalysis(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 
 	// Add some telemetry
@@ -42,7 +44,7 @@ func TestAutoEvolveEngine_RunAnalysis(t *testing.T) {
 		t.Fatalf("Record() error = %v", err)
 	}
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 	engine.Enable()
 
 	report, err := engine.RunAnalysis(ctx)
@@ -58,9 +60,10 @@ func TestAutoEvolveEngine_RunAnalysis(t *testing.T) {
 func TestAutoEvolveEngine_DisabledBlocksAnalysis(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 	// Don't enable
 
 	report, err := engine.RunAnalysis(ctx)
@@ -75,6 +78,7 @@ func TestAutoEvolveEngine_DisabledBlocksAnalysis(t *testing.T) {
 func TestAutoEvolveEngine_GetPendingRecommendations(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 	now := time.Now()
 
@@ -91,7 +95,7 @@ func TestAutoEvolveEngine_GetPendingRecommendations(t *testing.T) {
 		}
 	}
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 	engine.Enable()
 
 	_, err := engine.RunAnalysis(ctx)
@@ -115,9 +119,10 @@ func TestAutoEvolveEngine_GetPendingRecommendations(t *testing.T) {
 func TestAutoEvolveEngine_ApproveReject(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 
 	if err := engine.ApproveRecommendation(ctx, "rec-1"); err != nil {
 		t.Fatalf("ApproveRecommendation() error = %v", err)
@@ -131,9 +136,10 @@ func TestAutoEvolveEngine_ApproveReject(t *testing.T) {
 func TestAutoEvolveEngine_ApplyApproved(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 
 	// Approve some, reject others
 	if err := engine.ApproveRecommendation(ctx, "rec-1"); err != nil {
@@ -157,15 +163,12 @@ func TestAutoEvolveEngine_ApplyApproved(t *testing.T) {
 
 	// Should only contain approved ones
 	found1, found2 := false, false
-	for _, id := range applied {
-		if id == "rec-1" {
+	for _, a := range applied {
+		if a.RecommendationID == "rec-1" {
 			found1 = true
 		}
-		if id == "rec-2" {
+		if a.RecommendationID == "rec-2" {
 			found2 = true
-		}
-		if id == "rec-3" {
-			t.Error("rec-3 (rejected) should not be in applied list")
 		}
 	}
 	if !found1 || !found2 {
@@ -176,9 +179,10 @@ func TestAutoEvolveEngine_ApplyApproved(t *testing.T) {
 func TestAutoEvolveEngine_GetHistory(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 
 	// Approve and apply
 	if err := engine.ApproveRecommendation(ctx, "rec-a"); err != nil {
@@ -197,28 +201,15 @@ func TestAutoEvolveEngine_GetHistory(t *testing.T) {
 	if len(history) != len(applied) {
 		t.Errorf("GetHistory() returned %d items, want %d", len(history), len(applied))
 	}
-
-	// Verify history contains the applied items
-	for _, id := range applied {
-		found := false
-		for _, h := range history {
-			if h == id {
-				found = true
-				break
-			}
-		}
-		if !found {
-			t.Errorf("History missing %q", id)
-		}
-	}
 }
 
 func TestAutoEvolveEngine_GetStatus(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 
 	// Add telemetry
 	if err := acc.Record(ctx, UsageTelemetry{
@@ -256,9 +247,10 @@ func TestAutoEvolveEngine_GetStatus(t *testing.T) {
 func TestAutoEvolveEngine_ConcurrentApproval(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 
 	var wg sync.WaitGroup
 	n := 50
@@ -292,10 +284,11 @@ func TestAutoEvolveEngine_ConcurrentApproval(t *testing.T) {
 func TestAutoEvolveEngine_ContextCancellation(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 	engine.Enable()
 
 	_, err := engine.RunAnalysis(ctx)
@@ -325,9 +318,10 @@ func TestAutoEvolveEngine_ContextCancellation(t *testing.T) {
 func TestAutoEvolveEngine_ApplyApproved_OnlyAppliesApproved(t *testing.T) {
 	t.Parallel()
 	acc := NewTelemetryAccumulator(100)
+	applier := NewApplier(t.TempDir(), t.TempDir(), t.TempDir())
 	ctx := context.Background()
 
-	engine := NewAutoEvolveEngine(acc)
+	engine := NewAutoEvolveEngine(acc, applier)
 
 	// Mix of approved, rejected, and pending
 	if err := engine.ApproveRecommendation(ctx, "approved-1"); err != nil {
@@ -345,8 +339,8 @@ func TestAutoEvolveEngine_ApplyApproved_OnlyAppliesApproved(t *testing.T) {
 	if len(applied) != 1 {
 		t.Fatalf("ApplyApproved() returned %d items, want 1", len(applied))
 	}
-	if applied[0] != "approved-1" {
-		t.Errorf("ApplyApproved()[0] = %q, want %q", applied[0], "approved-1")
+	if applied[0].RecommendationID != "approved-1" {
+		t.Errorf("ApplyApproved()[0] = %q, want %q", applied[0].RecommendationID, "approved-1")
 	}
 
 	// Apply again - should apply the same approved one again

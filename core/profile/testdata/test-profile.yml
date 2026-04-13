@@ -1,0 +1,42 @@
+# test-profile.yml
+#
+# A test fixture that exercises all profile defaults.
+# This file is NOT loaded by the profile package (which uses env vars),
+# but serves as a reference fixture for integration tests or documentation.
+
+profile: local
+
+database:
+  backend: sqlite
+  dsn: "~/.brain/brain.db"
+  max_open_conns: 1
+  max_idle_conns: 1
+
+auth:
+  mode: bootstrap
+  required: false
+  allow_anonymous: true
+  sso_required: false
+  bootstrap_email: "owner@brain.local"
+  bootstrap_role: "owner"
+  session_ttl_hours: 12
+  refresh_ttl_days: 30
+
+session:
+  backend: memory
+  session_ttl_hours: 12
+
+telemetry:
+  enabled: true
+  level: minimal
+  log_format: console
+  log_level: info
+  otlp_enabled: false
+  metrics_enabled: false
+
+server:
+  host: "127.0.0.1"
+  port: 9090
+
+multi_tenant:
+  enabled: false

@@ -23,9 +23,13 @@ type CatalogItem struct {
 	Path        string   `json:"path"` // file or context path
 
 	// Metadata
-	Version    string `json:"version,omitempty"`
-	Maintained bool   `json:"maintained"`
-	Source     string `json:"source"` // "registry.yml" or "dynamic-registry.tsv"
+	Version       string `json:"version,omitempty"`
+	Maintained    bool   `json:"maintained"`
+	Source        string `json:"source"` // "registry.yml" or "dynamic-registry.tsv"
+	SourceType    string `json:"source_type,omitempty"`
+	SourceURI     string `json:"source_uri,omitempty"`
+	SourceVariant string `json:"source_variant,omitempty"`
+	ArtifactPath  string `json:"artifact_path,omitempty"`
 
 	// Legacy aliases for backward compatibility with CLI and existing consumers
 	Type     string   `json:"type,omitempty"`    // alias for Kind in legacy YAML (internal/external or context-pack)
@@ -71,6 +75,18 @@ func (w *SkillsWorker) Sync(brainRoot string, targetDir string, logger chan<- st
 				"description": item.Description,
 				"source":      item.Source,
 				"maintained":  item.Maintained,
+			}
+			if item.SourceType != "" {
+				itemMap["source_type"] = item.SourceType
+			}
+			if item.SourceURI != "" {
+				itemMap["source_uri"] = item.SourceURI
+			}
+			if item.SourceVariant != "" {
+				itemMap["source_variant"] = item.SourceVariant
+			}
+			if item.ArtifactPath != "" {
+				itemMap["artifact_path"] = item.ArtifactPath
 			}
 
 			// Add legacy fields if present

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#3f008e",
+                        "primary-fixed-dim": "#d2bbff",
+                        "outline-variant": "#4a4455",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "inverse-primary": "#732ee4",
+                        "secondary": "#c8c6c5",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#353534",
+                        "on-secondary": "#313030",
+                        "on-primary-fixed": "#25005a",
+                        "secondary-container": "#474746",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#7c3aed",
+                        "surface-bright": "#3a3939",
+                        "on-secondary-fixed-variant": "#474746",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary": "#4f2500",
+                        "surface-tint": "#d2bbff",
+                        "on-tertiary-container": "#ffe0cd",
+                        "surface-container": "#201f1f",
+                        "primary": "#d2bbff",
+                        "tertiary-fixed": "#ffdcc6",
+                        "surface-dim": "#131313",
+                        "outline": "#958da1",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-container": "#ede0ff",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary-container": "#a15100",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "surface-variant": "#353534",
+                        "tertiary": "#ffb784",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "background": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#eaddff",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#b7b4b4",
+                        "on-surface-variant": "#ccc3d8",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "surface": "#131313",
+                        "on-tertiary-fixed": "#301400"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Space Grotesk"],
+                        "label": ["Space Grotesk"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0A0A0A;
+            color: #F5F5F3;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mono-tight {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.025em;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen">
+<header class="bg-[#0A0A0A] flex items-center justify-between px-6 h-12 sticky top-0 z-[60]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#F5F5F3]">menu</span>
+<span class="font-headline font-bold text-lg tracking-tighter text-[#F5F5F3]">brain</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#A1A1A1] text-xl" data-icon="cloud_done">cloud_done</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-xl" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-[#7C3AED] text-xl" data-icon="account_circle" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</div>
+</header>
+<main class="flex-1 px-4 py-6 mb-24">
+<div class="mb-8">
+<div class="flex justify-between items-baseline mb-2">
+<h1 class="font-headline font-bold text-3xl tracking-tight text-[#F5F5F3]">Runtime</h1>
+<span class="font-mono text-[10px] text-[#7C3AED] bg-[#7C3AED]/10 px-2 py-0.5 rounded">ACTIVE_SESSION</span>
+</div>
+<p class="font-mono text-xs text-[#A1A1A1]">V1.0.4-STABLE // LATENCY: 12ms</p>
+</div>
+<div class="space-y-4">
+<div class="bg-[#111111] border border-[#4A4455] p-5 rounded-lg">
+<div class="flex justify-between items-start mb-6">
+<div>
+<span class="font-mono text-[10px] text-[#A1A1A1] uppercase tracking-widest">Process Identifier</span>
+<h2 class="font-mono text-lg font-bold text-[#F5F5F3]">KERNEL_0XFF</h2>
+</div>
+<span class="material-symbols-outlined text-[#7C3AED]" data-icon="terminal">terminal</span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between font-mono text-[11px] mb-1">
+<span class="text-[#A1A1A1]">CPU_LOAD</span>
+<span class="text-[#F5F5F3]">42.8%</span>
+</div>
+<div class="h-1 bg-[#171717] rounded-full overflow-hidden">
+<div class="h-full bg-[#7C3AED] w-[42.8%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-mono text-[11px] mb-1">
+<span class="text-[#A1A1A1]">MEM_ALLOC</span>
+<span class="text-[#F5F5F3]">2.4GB / 8GB</span>
+</div>
+<div class="h-1 bg-[#171717] rounded-full overflow-hidden">
+<div class="h-full bg-[#7C3AED] w-[30%]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-[#111111] border border-[#4A4455] p-4 rounded-lg">
+<span class="material-symbols-outlined text-[#A1A1A1] mb-2 text-xl" data-icon="psychology">psychology</span>
+<div class="font-mono text-[10px] text-[#A1A1A1] uppercase">Agents</div>
+<div class="font-mono text-xl font-bold text-[#F5F5F3]">08</div>
+<div class="font-mono text-[9px] text-[#7C3AED] mt-1">+2 SPAWNING</div>
+</div>
+<div class="bg-[#111111] border border-[#4A4455] p-4 rounded-lg">
+<span class="material-symbols-outlined text-[#A1A1A1] mb-2 text-xl" data-icon="database">database</span>
+<div class="font-mono text-[10px] text-[#A1A1A1] uppercase">Memory</div>
+<div class="font-mono text-xl font-bold text-[#F5F5F3]">94%</div>
+<div class="font-mono text-[9px] text-[#A1A1A1] mt-1">L1_CACHE_HIT</div>
+</div>
+</div>
+<div class="bg-[#111111] border border-[#4A4455] p-5 rounded-lg">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-mono text-xs font-bold text-[#F5F5F3] uppercase tracking-widest">Active Nodes</h3>
+<span class="font-mono text-[10px] text-[#A1A1A1]">REFRESHING...</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-2 bg-[#171717] rounded border-l-2 border-[#7C3AED]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#7C3AED] text-sm" data-icon="hub">hub</span>
+<span class="font-mono text-xs text-[#F5F5F3]">NODE_ALPHA_01</span>
+</div>
+<span class="font-mono text-[10px] text-[#7C3AED]">RUNNING</span>
+</div>
+<div class="flex items-center justify-between p-2 bg-[#171717]/50 rounded">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#A1A1A1] text-sm" data-icon="hub">hub</span>
+<span class="font-mono text-xs text-[#F5F5F3]">NODE_ALPHA_02</span>
+</div>
+<span class="font-mono text-[10px] text-[#A1A1A1]">IDLE</span>
+</div>
+<div class="flex items-center justify-between p-2 bg-[#171717]/50 rounded">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#A1A1A1] text-sm" data-icon="hub">hub</span>
+<span class="font-mono text-xs text-[#F5F5F3]">NODE_BETA_01</span>
+</div>
+<span class="font-mono text-[10px] text-[#A1A1A1]">IDLE</span>
+</div>
+</div>
+</div>
+<div class="bg-[#0A0A0A] border border-[#4A4455] rounded-lg overflow-hidden">
+<div class="bg-[#171717] px-4 py-2 flex items-center justify-between">
+<span class="font-mono text-[10px] font-bold text-[#A1A1A1] uppercase">System Stream</span>
+<span class="w-2 h-2 rounded-full bg-[#7C3AED] animate-pulse"></span>
+</div>
+<div class="p-4 font-mono text-[11px] leading-relaxed space-y-1 overflow-x-auto whitespace-nowrap">
+<div class="text-[#A1A1A1]"><span class="text-[#7C3AED]">[09:24:01]</span> INIT_PROTOCOL_SIGMA</div>
+<div class="text-[#F5F5F3]"><span class="text-[#7C3AED]">[09:24:02]</span> HANDSHAKE_SUCCESSFUL (ADDR: 0x42)</div>
+<div class="text-[#F5F5F3]"><span class="text-[#7C3AED]">[09:24:03]</span> ALLOCATING_VM_SLICE_04...</div>
+<div class="text-[#7C3AED]"><span class="text-[#A1A1A1]">[09:24:05]</span> &gt; AGENT_BRAVO_ONLINE</div>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 w-full z-50">
+<div class="bg-[#171717] border-t border-[#4A4455] h-10 flex items-center px-4 justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#7C3AED] text-sm" data-icon="keyboard_arrow_right">keyboard_arrow_right</span>
+<span class="font-mono text-[11px] uppercase tracking-wider text-[#7C3AED]">COMMAND_LINE</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-mono text-[10px] text-[#A1A1A1]">0.42 TPS</span>
+<div class="w-[1px] h-4 bg-[#4A4455]"></div>
+<span class="material-symbols-outlined text-[#A1A1A1] text-sm" data-icon="terminal">terminal</span>
+</div>
+</div>
+<nav class="bg-[#0A0A0A] border-t border-[#4A4455] h-16 flex items-center justify-around px-2">
+<button class="flex flex-col items-center justify-center gap-1 text-[#7C3AED]">
+<span class="material-symbols-outlined" data-icon="terminal" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="font-mono text-[9px] uppercase font-bold">Runtime</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-[#A1A1A1]">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-mono text-[9px] uppercase">Agents</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-[#A1A1A1]">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-mono text-[9px] uppercase">Memory</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-[#A1A1A1]">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-mono text-[9px] uppercase">Evals</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 text-[#A1A1A1]">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-mono text-[9px] uppercase">Config</span>
+</button>
+</nav>
+</div>
+</body></html>

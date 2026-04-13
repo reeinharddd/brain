@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary": "#3f008e",
+                        "primary-fixed-dim": "#d2bbff",
+                        "outline-variant": "#4a4455",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "inverse-primary": "#732ee4",
+                        "secondary": "#c8c6c5",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#353534",
+                        "on-secondary": "#313030",
+                        "on-primary-fixed": "#25005a",
+                        "secondary-container": "#474746",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#7c3aed",
+                        "surface-bright": "#3a3939",
+                        "on-secondary-fixed-variant": "#474746",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary": "#4f2500",
+                        "surface-tint": "#d2bbff",
+                        "on-tertiary-container": "#ffe0cd",
+                        "surface-container": "#201f1f",
+                        "primary": "#d2bbff",
+                        "tertiary-fixed": "#ffdcc6",
+                        "surface-dim": "#131313",
+                        "outline": "#958da1",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-container": "#ede0ff",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary-container": "#a15100",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "surface-variant": "#353534",
+                        "tertiary": "#ffb784",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "background": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#eaddff",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#b7b4b4",
+                        "on-surface-variant": "#ccc3d8",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "surface": "#131313",
+                        "on-tertiary-fixed": "#301400"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Space Grotesk"],
+                        "label": ["Space Grotesk"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0e0e0e;
+            color: #e5e2e1;
+            margin: 0;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0e0e0e;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4a4455;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col w-[240px] h-screen border-r border-[#4A4455] bg-[#111111] z-50">
+<div class="p-6">
+<h1 class="font-['Space_Grotesk'] font-bold text-2xl tracking-tighter text-[#F5F5F3]">brain</h1>
+<p class="font-mono text-[10px] tracking-tight text-on-surface-variant mt-1">V1.0.4-STABLE</p>
+</div>
+<nav class="flex-1 mt-4">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">terminal</span>
+<span>Runtime</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">psychology</span>
+<span>Agents</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">database</span>
+<span>Memory</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">policy</span>
+<span>Rules</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">extension</span>
+<span>MCP Tools</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">subject</span>
+<span>Logs</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#7C3AED] font-bold border-l-2 border-[#7C3AED] pl-4 bg-[#171717]" href="#">
+<span class="material-symbols-outlined text-lg">analytics</span>
+<span>Evals</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="px-4 mb-4">
+<button class="w-full py-2 bg-primary-container text-on-primary font-mono font-bold text-xs rounded hover:bg-[#D2BBFF] transition-none">
+                NEW_SESSION
+            </button>
+</div>
+<div class="border-t border-outline-variant p-2">
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 h-10 font-mono text-sm tracking-tight text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">description</span>
+<span>Docs</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed left-[240px] top-0 w-[calc(100%-240px)] h-12 bg-[#0A0A0A] flex items-center justify-between px-6 z-40">
+<div class="flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">System</a>
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">Network</a>
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#F5F5F3] border-b border-[#7C3AED] pb-1" href="#">Nodes</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute left-2 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm text-outline">search</span>
+<input class="bg-[#111111] border-none text-[10px] font-mono pl-8 pr-4 py-1 w-48 focus:ring-1 focus:ring-[#7C3AED]" placeholder="QUERY_LOGS..." type="text"/>
+</div>
+<div class="flex gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-on-surface">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-on-surface">cloud_done</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-on-surface">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[240px] pt-12 pb-10 min-h-screen bg-surface-container-lowest overflow-x-hidden">
+<div class="p-8 max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="mb-10 flex justify-between items-end">
+<div>
+<h2 class="font-headline text-4xl font-bold tracking-tighter text-on-surface">Evaluation / Metrics</h2>
+<p class="font-mono text-sm text-on-surface-variant mt-2">LAST_RUN: 2023.10.27_14:22:01_UTC // BATCH_ID: EVAL_772</p>
+</div>
+<div class="flex gap-2">
+<div class="px-3 py-1 bg-surface-container-high font-mono text-[10px] text-on-surface-variant">ENV: PRODUCTION</div>
+<div class="px-3 py-1 bg-surface-container-high font-mono text-[10px] text-on-surface-variant">AGENTS: 12_ACTIVE</div>
+</div>
+</div>
+<!-- Bento Grid - KPIs -->
+<div class="grid grid-cols-12 gap-4 mb-8">
+<!-- Accuracy Card -->
+<div class="col-span-12 md:col-span-4 bg-surface-container-low border border-outline-variant p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">Accuracy</span>
+<span class="material-symbols-outlined text-primary">target</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-5xl font-bold">98.4<span class="text-xl text-primary">%</span></span>
+<span class="text-green-400 font-mono text-xs">↑ 0.2%</span>
+</div>
+</div>
+<div class="mt-8 flex items-end gap-1 h-12">
+<div class="w-full bg-primary/20 h-4 rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-6 rounded-t-sm"></div>
+<div class="w-full bg-primary/30 h-5 rounded-t-sm"></div>
+<div class="w-full bg-primary/60 h-8 rounded-t-sm"></div>
+<div class="w-full bg-primary/50 h-7 rounded-t-sm"></div>
+<div class="w-full bg-primary/80 h-10 rounded-t-sm"></div>
+<div class="w-full bg-primary h-12 rounded-t-sm"></div>
+</div>
+</div>
+<!-- Latency Card -->
+<div class="col-span-12 md:col-span-4 bg-surface-container-low border border-outline-variant p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">Latency</span>
+<span class="material-symbols-outlined text-primary">speed</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-5xl font-bold">142<span class="text-xl text-primary">ms</span></span>
+<span class="text-on-surface-variant font-mono text-xs">AVG_P95</span>
+</div>
+</div>
+<div class="mt-8 relative h-12 w-full flex items-center">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full h-[1px] bg-outline-variant"></div>
+</div>
+<svg class="w-full h-12 relative z-10" viewbox="0 0 200 40">
+<path d="M0 30 Q 20 10, 40 25 T 80 15 T 120 28 T 160 10 T 200 20" fill="none" stroke="#7C3AED" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Cost Card -->
+<div class="col-span-12 md:col-span-4 bg-surface-container-low border border-outline-variant p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">Cost</span>
+<span class="material-symbols-outlined text-primary">payments</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-5xl font-bold">0.042<span class="text-xl text-primary">¢</span></span>
+<span class="text-on-surface-variant font-mono text-xs">/ TOKEN</span>
+</div>
+</div>
+<div class="mt-8 flex gap-1 h-12 items-center">
+<div class="flex-1 h-2 bg-primary"></div>
+<div class="flex-[0.5] h-2 bg-outline-variant"></div>
+<div class="flex-[0.2] h-2 bg-outline-variant"></div>
+</div>
+</div>
+<!-- Distribution Success/Failure -->
+<div class="col-span-12 md:col-span-8 bg-surface-container-low border border-outline-variant p-8 relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="font-headline text-xl font-bold mb-6">Task Success Distribution</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="space-y-1">
+<p class="font-mono text-[10px] text-on-surface-variant">REASONING</p>
+<div class="h-24 w-full bg-surface-container-highest rounded-sm flex flex-col justify-end">
+<div class="h-[92%] bg-primary"></div>
+</div>
+<p class="font-mono text-xs text-right">92%</p>
+</div>
+<div class="space-y-1">
+<p class="font-mono text-[10px] text-on-surface-variant">EXTRACTION</p>
+<div class="h-24 w-full bg-surface-container-highest rounded-sm flex flex-col justify-end">
+<div class="h-[88%] bg-primary"></div>
+</div>
+<p class="font-mono text-xs text-right">88%</p>
+</div>
+<div class="space-y-1">
+<p class="font-mono text-[10px] text-on-surface-variant">CREATIVE</p>
+<div class="h-24 w-full bg-surface-container-highest rounded-sm flex flex-col justify-end">
+<div class="h-[76%] bg-primary-fixed-dim"></div>
+</div>
+<p class="font-mono text-xs text-right">76%</p>
+</div>
+<div class="space-y-1">
+<p class="font-mono text-[10px] text-on-surface-variant">CODE_GEN</p>
+<div class="h-24 w-full bg-surface-container-highest rounded-sm flex flex-col justify-end">
+<div class="h-[99%] bg-primary"></div>
+</div>
+<p class="font-mono text-xs text-right">99%</p>
+</div>
+</div>
+</div>
+<div class="absolute top-0 right-0 p-4">
+<span class="font-mono text-[10px] text-outline opacity-20 rotate-90 inline-block origin-bottom-right">DISTRIBUTION_MODULE_V2</span>
+</div>
+</div>
+<!-- Snapshot Info -->
+<div class="col-span-12 md:col-span-4 bg-primary text-on-primary p-8 flex flex-col justify-between">
+<div>
+<h3 class="font-headline text-xl font-bold mb-2">Stability Delta</h3>
+<p class="font-mono text-sm leading-tight">Current system uptime and node resilience across 48h window.</p>
+</div>
+<div class="text-6xl font-bold tracking-tighter">99.98%</div>
+<div class="font-mono text-xs border-t border-on-primary/20 pt-4 mt-4">
+                        [ SYSTEM_RECOVERY_INSTANT ]
+                    </div>
+</div>
+</div>
+<!-- Recent Sessions Table -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-headline text-2xl font-bold text-on-surface">Recent Sessions</h3>
+<button class="font-mono text-[10px] uppercase text-primary border border-primary px-3 py-1 hover:bg-primary hover:text-on-primary">View Archive</button>
+</div>
+<div class="bg-surface-container-low border border-outline-variant overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
+<th class="p-4 border-b border-outline-variant">Session ID</th>
+<th class="p-4 border-b border-outline-variant">Agent Cluster</th>
+<th class="p-4 border-b border-outline-variant">Timestamp</th>
+<th class="p-4 border-b border-outline-variant">Accuracy</th>
+<th class="p-4 border-b border-outline-variant">Cost</th>
+<th class="p-4 border-b border-outline-variant text-right">Status</th>
+</tr>
+</thead>
+<tbody class="font-mono text-xs divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-highest/30 transition-none">
+<td class="p-4 text-on-surface">EVAL_0892_QA</td>
+<td class="p-4">NEURO_LOGIC_V4</td>
+<td class="p-4 text-on-surface-variant">2023-10-27 14:22</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-12 h-1 bg-outline-variant overflow-hidden">
+<div class="w-4/5 h-full bg-primary"></div>
+</div>
+<span>82%</span>
+</div>
+</td>
+<td class="p-4">$1.22</td>
+<td class="p-4 text-right">
+<span class="text-green-400 bg-green-400/10 px-2 py-0.5">COMPLETED</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/30 transition-none">
+<td class="p-4 text-on-surface">EVAL_0891_STRESS</td>
+<td class="p-4">VECTOR_PRIME</td>
+<td class="p-4 text-on-surface-variant">2023-10-27 12:05</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-12 h-1 bg-outline-variant overflow-hidden">
+<div class="w-full h-full bg-primary"></div>
+</div>
+<span>100%</span>
+</div>
+</td>
+<td class="p-4">$0.45</td>
+<td class="p-4 text-right">
+<span class="text-green-400 bg-green-400/10 px-2 py-0.5">COMPLETED</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/30 transition-none text-on-surface-variant">
+<td class="p-4">EVAL_0890_PROMPT</td>
+<td class="p-4 text-on-surface-variant">GLOBAL_GATEWAY</td>
+<td class="p-4 text-on-surface-variant">2023-10-27 10:11</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-12 h-1 bg-outline-variant overflow-hidden">
+<div class="w-1/3 h-full bg-error"></div>
+</div>
+<span class="text-error">32%</span>
+</div>
+</td>
+<td class="p-4">$0.12</td>
+<td class="p-4 text-right">
+<span class="text-error bg-error/10 px-2 py-0.5">HALTED</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-highest/30 transition-none">
+<td class="p-4 text-on-surface">EVAL_0889_UNIT</td>
+<td class="p-4">NEURO_LOGIC_V4</td>
+<td class="p-4 text-on-surface-variant">2023-10-26 22:50</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="w-12 h-1 bg-outline-variant overflow-hidden">
+<div class="w-11/12 h-full bg-primary"></div>
+</div>
+<span>94%</span>
+</div>
+</td>
+<td class="p-4">$4.10</td>
+<td class="p-4 text-right">
+<span class="text-green-400 bg-green-400/10 px-2 py-0.5">COMPLETED</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 ml-[240px] w-[calc(100%-240px)] border-t border-[#4A4455] h-10 bg-[#171717] flex items-center px-4 z-50">
+<div class="flex items-center gap-4 w-full">
+<div class="flex items-center gap-2 text-[#7C3AED]">
+<span class="material-symbols-outlined text-sm">keyboard_arrow_right</span>
+<span class="font-mono text-[11px] uppercase tracking-tighter">COMMAND_LINE</span>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant ml-2"></div>
+<div class="flex-1 font-mono text-[10px] text-on-surface-variant animate-pulse">
+                _AWAITING_INPUT...
+            </div>
+<div class="flex gap-4 font-mono text-[10px] text-on-surface-variant uppercase">
+<span>Memory: 2.4GB/16GB</span>
+<span>CPU: 12%</span>
+<span class="text-green-400">● Live</span>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,51 @@
+# brain: OS for AI Development - Design Specification
+
+## 1. Core Principle
+**brain = runtime + persistent memory + agent orchestration**
+- Infrastructure-first, editorial console, knowledge OS.
+- Avoid: SaaS generic, decorative futuristic, empty dashboards.
+- Vibe: Precision, control, silence, traceability.
+
+## 2. Visual Direction: Brutalist Editorial
+- 80% Ghost / 20% Signal influence.
+- High contrast, rigid structure, dominant monospace.
+- Zero unnecessary decoration.
+
+## 3. Design Tokens
+### 3.1 Colors (Dark Mode Default)
+- **Backgrounds:** Primary: #0A0A0A, Secondary: #111111, Tertiary: #171717
+- **Borders:** Subtle: #232323, Strong: #2E2E2E
+- **Text:** Primary: #F5F5F3, Secondary: #A1A1A1, Muted: #6B6B6B
+- **Accent:** Primary: #7C3AED (Violet), Hover: #8B5CF6, Active: #6D28D9
+- **Status:** Success: #10B981, Warning: #F59E0B, Error: #EF4444
+
+### 3.2 Typography
+- **Display:** Geometric Sans (Weight 600-700) for Titles only.
+- **System/Monospace:** Main typeface for logs, commands, technical labels, routes, and metadata.
+- **Scale:** h1: 28px, h2: 22px, h3: 18px, body: 14px, small: 12px, micro: 11px.
+- **Line-height:** Titles: 1.2, Body: 1.5, Mono: 1.6.
+
+### 3.3 Spacing (4pt System)
+4, 8, 12, 16, 20, 24, 32, 40, 48 (No arbitrary values).
+
+### 3.4 Borders & Radius
+- **Radius:** Default 6px, Small 4px, Large 8px.
+- **Style:** 1px Solid. No soft shadows or excessive glow.
+
+## 4. Layout
+- **Desktop:** 240px Fixed Sidebar, Fluid Main Content (max 1280px).
+- **Mobile:** Single column, collapsed sidebar (drawer).
+
+## 5. Mandatory Screens
+1. **Runtime:** Global state, active agents, active memory, providers, command bar.
+2. **Agents:** List of agents with roles, status badges, connected tools, and last execution.
+3. **Memory:** Timeline/list view with types, timestamps, tags, and recall action.
+4. **Rules:** Canonical file editor with syntax highlighting, versioning, and validation.
+5. **MCP Tools:** List of tools, status, connection, and usage metrics.
+6. **Logs / Activity:** Monospace event list with timestamps.
+7. **Evals:** Metrics, success/failure indicators.
+
+## 6. UX & Accessibility
+- Single primary action per screen.
+- Clear hierarchy: Title → Status → Action → Content.
+- WCAG AA contrast, keyboard navigation, dark/light mode support.

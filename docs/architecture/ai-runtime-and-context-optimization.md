@@ -64,6 +64,14 @@ The AI subsystem depends on, but does not replace, Brain's memory and knowledge 
 - `remote-self-hosted`
   - organization-managed remote runtimes
 
+## Infrastructure Baseline Reference
+
+The AI subsystem depends on the canonical infrastructure baseline for its deployment context.
+
+- The storage and cache defaults used by runtime routing live in `docs/architecture/infrastructure-baseline-canonical.md`.
+- Qdrant remains the retrieval backend for semantic memory; it is not canonical artifact storage.
+- Concrete provider choices for embeddings and hosted APIs remain runtime decisions, but the profile-level deployment defaults are fixed elsewhere.
+
 ### Curator Subsystem
 
 Brain includes a smaller internal model or model profile for maintenance tasks:
@@ -195,6 +203,7 @@ Track:
 
 - `docs/adr/ADR-0011-ai-runtime-and-curator-subsystem.md`
 - `docs/architecture/brain-v2-target-architecture.md`
+- `docs/architecture/infrastructure-baseline-canonical.md`
 
 ---
 

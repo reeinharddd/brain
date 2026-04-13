@@ -33,6 +33,7 @@ Before expanding features, Brain needs a closed target architecture that defines
 - Keep `cli`, `ui`, and future `tui` as coordinated clients, not peer orchestrators.
 - Standardize all managed assets under a unified artifact model.
 - Support local-only, cloud-synced, and hybrid user flows.
+- Keep local personal installs lightweight without losing self-hosted or hosted enterprise capability.
 - Define hard boundaries for identity, policy, security, runtime, and sync.
 - Keep the repository root readable and stable.
 
@@ -151,6 +152,16 @@ Every component and artifact must declare environment posture:
 
 Development helpers may live in the repository, but they must not be exposed to production profiles simply because they are implemented as artifacts.
 
+### Deployment Profiles
+
+Brain supports the same core product across local personal, self-hosted corporate, and hosted cloud profiles.
+
+- Local personal should be easy to run and keep heavy services optional by default.
+- Self-hosted corporate should retain full governance while letting the operator own storage, auth, and networking.
+- Hosted cloud should enable the scalable and multi-tenant path without changing the product model.
+
+See `docs/architecture/deployment-profiles-and-infrastructure-baseline.md` for the current profile matrix and infrastructure baseline.
+
 ## Canonical Repository Shape
 
 The long-term repository shape is:
@@ -252,6 +263,8 @@ Brain must expose:
 
 - IDE/CLI Integration Strategy: `docs/architecture/ide-cli-integration-strategy.md`
 - Implementation Gap Roadmap: `docs/architecture/implementation-gap-roadmap.md`
+- Canonical Infrastructure Stack Baseline: `docs/architecture/infrastructure-baseline-canonical.md`
+- Deployment Profiles and Infrastructure Baseline: `docs/architecture/deployment-profiles-and-infrastructure-baseline.md`
 - Unified Capability Enhancement: `docs/architecture/unified-capability-enhancement-roadmap.md`
 
 ## Related Decisions

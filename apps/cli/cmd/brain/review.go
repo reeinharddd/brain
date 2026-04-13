@@ -1,128 +1,204 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-
-	"github.com/spf13/cobra"
-	"github.com/reeinharrrd/brain/core/agentpool"
-	"github.com/reeinharrrd/brain/core/autoevolve"
-	"github.com/reeinharrrd/brain/core/context"
-	"github.com/reeinharrrd/brain/core/cost"
-	"github.com/reeinharrrd/brain/core/delegation"
-	"github.com/reeinharrrd/brain/core/efficiency"
-	"github.com/reeinharrrd/brain/core/governance"
-	"github.com/reeinharrrd/brain/core/mcp"
-	"github.com/reeinharrrd/brain/core/runtime"
-	"github.com/reeinharrrd/brain/core/skills"
-	"github.com/reeinharrrd/brain/core/workflow"
-	curatorpkg "github.com/reeinharrrd/brain/core/context/curator"
+	"net/http"
+	"strings"
 )
 
-// ReviewCommand implements the 'review' CLI subcommand
-type ReviewCommand struct {
-	Action string // list, approve, reject, apply
-	ID     string // recommendation ID
-	All    bool   // apply all approved
-	JSON   bool   // output as JSON
-}
-
-// StatusCommand implements the 'status' CLI subcommand -- full system status
-type StatusCommand struct {
-	JSON bool
-}
-
-func init() {
-	rootCmd.AddCommand(reviewCmd)
-	rootCmd.AddCommand(statusCmd)
-}
-
-var reviewCmd = &cobra.Command{
-	Use:   "review [list|approve|reject|apply]",
-	Short: "Review and apply AutoEvolve recommendations",
-	Long: `Review proposes improvements based on usage analysis.
-
-Examples:
-  brain review list              # List pending recommendations
-  brain review approve rec-001   # Approve a specific recommendation
-  brain review reject rec-001    # Reject a recommendation
-  brain review apply             # Apply all approved recommendations
-  brain review apply --all       # Apply all pending (auto-approve)
-`,
-	RunE: runReviewCobra,
-}
-
-var statusCmd = &cobra.Command{
-	Use:   "review-status",
-	Short: "Show full Brain system status",
-	RunE:  runStatusCobra,
-}
-
-func runReviewCobra(cmd *cobra.Command, args []string) error {
-	return runReview(args)
-}
-
-func runStatusCobra(cmd *cobra.Command, args []string) error {
-	return runStatus(cmd, args)
-}
-
-func runReview(args []string) error {
-	if len(args) == 0 {
-		return fmt.Errorf("action required: list, approve, reject, or apply")
+// HandleReviewCommand handles the 'brain review' command
+func HandleReviewCommand(args []string) {
+	if len(args) < 1 {
+		printReviewHelp()
+		return
 	}
 
-	action := args[0]
-	switch action {
+	subcommand := args[0]
+	switch subcommand {
 	case "list":
-		return listRecommendations(args[1:])
+		listRecommendations()
 	case "approve":
-		return approveRecommendation(args[1:])
+		if len(args) < 2 {
+			fmt.Println("Usage: brain review approve <id>")
+			return
+		}
+		approveRecommendation(args[1])
 	case "reject":
-		return rejectRecommendation(args[1:])
+		if len(args) < 2 {
+			fmt.Println("Usage: brain review reject <id>")
+			return
+		}
+		rejectRecommendation(args[1])
 	case "apply":
-		return applyRecommendations(args[1:])
+		applyRecommendations()
+	case "waste":
+		showTokenWaste()
 	default:
-		return fmt.Errorf("unknown action: %s", action)
+		printReviewHelp()
 	}
 }
 
-func listRecommendations(args []string) error {
-	// In a real implementation, this would connect to the daemon
-	// For now, demonstrate the command structure
-	fmt.Println("Pending Recommendations:")
-	fmt.Println("  Use 'brain review list --daemon-url http://localhost:8080' to connect to daemon")
-	return nil
+func printReviewHelp() {
+	fmt.Println("Usage: brain review <subcommand>")
+	fmt.Println("\nSubcommands:")
+	fmt.Println("  list         List pending recommendations")
+	fmt.Println("  approve <id> Approve a recommendation")
+	fmt.Println("  reject <id>  Reject a recommendation")
+	fmt.Println("  apply        Apply all approved recommendations")
+	fmt.Println("  waste        Show token waste analysis")
 }
 
-func approveRecommendation(args []string) error {
-	if len(args) < 1 {
-		return fmt.Errorf("recommendation ID required: brain review approve <id>")
+func listRecommendations() {
+	resp, err := http.Get(DAEMON_URL + "/api/autoevolve/recommendations")
+	if err != nil {
+		fmt.Println("Error connecting to daemon:", err)
+		return
 	}
-	id := args[0]
-	fmt.Printf("Approved recommendation: %s\n", id)
-	return nil
-}
+	defer resp.Body.Close()
 
-func rejectRecommendation(args []string) error {
-	if len(args) < 1 {
-		return fmt.Errorf("recommendation ID required: brain review reject <id>")
+	var res map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&res)
+
+	if recs, ok := res["recommendations"].([]interface{}); ok {
+		fmt.Printf("Recommendations (%d):\n", len(recs))
+		for i, r := range recs {
+			fmt.Printf("  %d. %v\n", i+1, r)
+		}
+	} else {
+		fmt.Println("No recommendations found")
 	}
-	id := args[0]
-	fmt.Printf("Rejected recommendation: %s\n", id)
-	return nil
 }
 
-func applyRecommendations(args []string) error {
-	fmt.Println("Applying approved recommendations...")
-	return nil
+func approveRecommendation(id string) {
+	req, _ := http.NewRequest("POST", DAEMON_URL+"/api/autoevolve/approve/"+id, nil)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer resp.Body.Close()
+	fmt.Printf("Approved recommendation %s\n", id)
 }
 
-func runStatus(cmd *cobra.Command, args []string) error {
-	// Build a comprehensive status report
-	fmt.Println("Brain System Status")
-	fmt.Println("===================")
-	fmt.Println()
+func rejectRecommendation(id string) {
+	req, _ := http.NewRequest("POST", DAEMON_URL+"/api/autoevolve/reject/"+id, nil)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer resp.Body.Close()
+	fmt.Printf("Rejected recommendation %s\n", id)
+}
 
-	// Core subsystem status summary
+func applyRecommendations() {
+	resp, err := http.Post(DAEMON_URL+"/api/autoevolve/apply", "application/json", nil)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer resp.Body.Close()
+	var res map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&res)
+	if applied, ok := res["applied"].([]interface{}); ok {
+		fmt.Printf("Applied %d recommendations:\n", len(applied))
+		for _, a := range applied {
+			fmt.Printf("  - %v\n", a)
+		}
+	} else if errVal, ok := res["error"].(string); ok {
+		fmt.Printf("Failed: %s\n", errVal)
+	}
+}
+
+func showTokenWaste() {
+	resp, err := http.Get(DAEMON_URL + "/api/autoevolve/run")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer resp.Body.Close()
+	var res map[string]interface{}
+	json.NewDecoder(resp.Body).Decode(&res)
+
+	if report, ok := res["report"].(map[string]interface{}); ok {
+		if waste, ok := report["token_waste"].([]interface{}); ok {
+			fmt.Printf("Token Waste Analysis (%d findings):\n", len(waste))
+			for i, w := range waste {
+				fmt.Printf("  %d. %v\n", i+1, w)
+			}
+		} else {
+			fmt.Println("No token waste data available")
+		}
+	} else {
+		fmt.Printf("Analysis result: %v\n", res)
+	}
+}
+
+// runStatus is retained for the 'brain status' command in main.go
+func runStatus(args []string) error {
+	resp, err := http.Get(DAEMON_URL + "/api/status")
+	if err == nil {
+		defer resp.Body.Close()
+		if resp.StatusCode == http.StatusOK {
+			var res map[string]interface{}
+			if err := json.NewDecoder(resp.Body).Decode(&res); err == nil {
+				fmt.Println("Brain System Status")
+				fmt.Println("===================")
+				fmt.Println()
+
+				fmt.Printf("  Daemon status: %v\n", res["status"])
+				fmt.Printf("  Environment:   %v\n", res["environment"])
+				fmt.Printf("  Processes:     %v\n", res["processes"])
+				fmt.Printf("  Sync status:   %v\n", res["sync_status"])
+				fmt.Printf("  Sync running:   %v\n", res["sync_running"])
+				fmt.Printf("  Auth required:  %v\n", boolValue(res["auth_required"]))
+				fmt.Printf("  Authenticated:  %v\n", boolValue(res["auth_authenticated"]))
+				if user, ok := res["auth_user"].(map[string]interface{}); ok && user != nil {
+					fmt.Printf("  User:          %v (%v)\n", user["email"], user["role"])
+				}
+				if sections := stringSliceValue(res["auth_sections"]); len(sections) > 0 {
+					fmt.Printf("  Sections:      %s\n", strings.Join(sections, ", "))
+				}
+				if caps := stringSliceValue(res["auth_capabilities"]); len(caps) > 0 {
+					fmt.Printf("  Capabilities:   %s\n", strings.Join(caps, ", "))
+				}
+				if msg, ok := res["auth_message"].(string); ok && msg != "" {
+					fmt.Printf("  Auth note:      %s\n", msg)
+				}
+				fmt.Println()
+
+				for _, s := range []struct {
+					name    string
+					status  string
+					details string
+				}{
+					{"Observability", "initialized", "OpenTelemetry + Prometheus ready"},
+					{"Artifact Registry", "initialized", "Dependency tracking + version resolution"},
+					{"Token Efficiency", "initialized", "Multi-tier cache + compaction"},
+					{"Context Compiler", "initialized", "12-layer bundles + progressive disclosure"},
+					{"Model Router", "initialized", "3-tier routing + budget enforcement"},
+					{"Context Curator", "initialized", "Deduplication + autoDream"},
+					{"Memory Sync", "initialized", "5 conflict strategies + encryption"},
+					{"MCP Hub", "initialized", "5 official servers + proxy"},
+					{"Governance", "initialized", "RBAC + ABAC + hierarchical policies"},
+					{"Delegation Graph", "initialized", "DAG + 4 modes + fallback chains"},
+					{"Agent Pool", "initialized", "9 roles + auto-scaling"},
+					{"Workflows", "initialized", "6 pre-built workflows"},
+					{"Skill Registry", "initialized", "8-point security scanner"},
+					{"AutoEvolve", "initialized", "Monitor->Analyze->Propose->Apply"},
+					{"Cost Engine", "initialized", "Estimator + Budget + Optimizer"},
+				} {
+					fmt.Printf("  %-20s [%-12s] %s\n", s.name, s.status, s.details)
+				}
+
+				fmt.Println()
+				fmt.Printf("  Total: %d core subsystems operational\n", 15)
+				return nil
+			}
+		}
+	}
+
 	subsystems := []struct {
 		name    string
 		status  string
@@ -145,25 +221,16 @@ func runStatus(cmd *cobra.Command, args []string) error {
 		{"Cost Engine", "initialized", "Estimator + Budget + Optimizer"},
 	}
 
+	fmt.Println("Brain System Status")
+	fmt.Println("===================")
+	fmt.Println()
+
 	for _, s := range subsystems {
 		fmt.Printf("  %-20s [%-12s] %s\n", s.name, s.status, s.details)
 	}
 
 	fmt.Println()
 	fmt.Printf("  Total: %d core subsystems operational\n", len(subsystems))
+	printLocalAuthStatus()
 	return nil
 }
-
-// Type assertions to verify all core packages compile together
-var _ = autoevolve.Recommendation{}
-var _ = skills.SecurityScanner{}
-var _ = workflow.WorkflowDAG{}
-var _ = delegation.DelegationGraph{}
-var _ = agentpool.PoolManager{}
-var _ = mcp.MCPRegistry{}
-var _ = runtime.ModelRouter{}
-var _ = efficiency.TokenEfficiencyEngine{}
-var _ = context.ContextCompiler{}
-var _ = curatorpkg.CuratorService{}
-var _ = governance.PolicyResolver{}
-var _ = cost.CostEstimator{}

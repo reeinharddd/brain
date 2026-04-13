@@ -1,1 +1,2206 @@
-skills: {}
+skills:
+    golang-benchmark:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Golang benchmarking, profiling, and performance measurement. Use when writing, running, or comparing Go benchmarks, profiling hot paths with pprof, interpreting CPU/memory/trace profiles, analyzing re
+        id: golang-benchmark
+        kind: skill
+        maintained: true
+        name: Go Benchmark
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-benchmark
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-benchmark
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-cli:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Golang CLI application development. Use when building, modifying, or reviewing a Go CLI tool — especially for command structure, flag handling, configuration layering, version embedding, exit codes, I
+        id: golang-cli
+        kind: skill
+        maintained: true
+        name: Go Cli
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-cli
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-cli
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-code-style:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Golang code style, formatting and conventions. Use when writing code, reviewing style, configuring linters, writing comments, or establishing project standards.
+        id: golang-code-style
+        kind: skill
+        maintained: true
+        name: Go Code Style
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-code-style
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-code-style
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-concurrency:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Golang concurrency patterns. Use when writing or reviewing concurrent Go code involving goroutines, channels, select, locks, sync primitives, errgroup, singleflight, worker pools, or fan-out/fan-in pi
+        id: golang-concurrency
+        kind: skill
+        maintained: true
+        name: Go Concurrency
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-concurrency
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-concurrency
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-context:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Idiomatic context.Context usage in Golang — creation, propagation, cancellation, timeouts, deadlines, context values, and cross-service tracing. Apply when working with context.Context in any Go code.
+        id: golang-context
+        kind: skill
+        maintained: true
+        name: Go Context
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-context
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-context
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-continuous-integration:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Provides CI/CD pipeline configuration using GitHub Actions for Golang projects. Covers testing, linting, SAST, security scanning, code coverage, Dependabot, Renovate, GoReleaser, code review automatio
+        id: golang-continuous-integration
+        kind: skill
+        maintained: true
+        name: Go Continuous Integration
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-continuous-integration
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-continuous-integration
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-data-structures:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Golang data structures — slices (internals, capacity growth, preallocation, slices package), maps (internals, hash buckets, maps package), arrays, container/list/heap/ring, strings.Builder vs bytes.Bu
+        id: golang-data-structures
+        kind: skill
+        maintained: true
+        name: Go Data Structures
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-data-structures
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-data-structures
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-database:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Comprehensive guide for Go database access. Covers parameterized queries, struct scanning, NULLable column handling, error patterns, transactions, isolation levels, SELECT FOR UPDATE, connection pool,
+        id: golang-database
+        kind: skill
+        maintained: true
+        name: Go Database
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-database
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-database
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-dependency-injection:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Comprehensive guide for dependency injection (DI) in Golang. Covers why DI matters (testability, loose coupling, separation of concerns, lifecycle management), manual constructor injection, and DI lib
+        id: golang-dependency-injection
+        kind: skill
+        maintained: true
+        name: Go Dependency Injection
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-dependency-injection
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-dependency-injection
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-dependency-management:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Provides dependency management strategies for Golang projects including go.mod management, installing/upgrading packages, semantic versioning, Minimal Version Selection, vulnerability scanning, outdat
+        id: golang-dependency-management
+        kind: skill
+        maintained: true
+        name: Go Dependency Management
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-dependency-management
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-dependency-management
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-design-patterns:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Idiomatic Golang design patterns — functional options, constructors, error flow and cascading, resource management and lifecycle, graceful shutdown, resilience, architecture, dependency injection, dat
+        id: golang-design-patterns
+        kind: skill
+        maintained: true
+        name: Go Design Patterns
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-design-patterns
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-design-patterns
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-documentation:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Comprehensive documentation guide for Golang projects, covering godoc comments, README, CONTRIBUTING, CHANGELOG, Go Playground, Example tests, API docs, and llms.txt. Use when writing or reviewing doc
+        id: golang-documentation
+        kind: skill
+        maintained: true
+        name: Go Documentation
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-documentation
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-documentation
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-error-handling:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Idiomatic Golang error handling — creation, wrapping with %w, errors.Is/As, errors.Join, custom error types, sentinel errors, panic/recover, the single handling rule, structured logging with slog, HTT
+        id: golang-error-handling
+        kind: skill
+        maintained: true
+        name: Go Error Handling
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-error-handling
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-error-handling
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-grpc:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Provides gRPC usage guidelines, protobuf organization, and production-ready patterns for Golang microservices. Use when implementing, reviewing, or debugging gRPC servers/clients, writing proto files,
+        id: golang-grpc
+        kind: skill
+        maintained: true
+        name: Go Grpc
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-grpc
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-grpc
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-linter:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Provides linting best practices and golangci-lint configuration for Go projects. Covers running linters, configuring .golangci.yml, suppressing warnings with nolint directives, interpreting lint outpu
+        id: golang-linter
+        kind: skill
+        maintained: true
+        name: Go Linter
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-linter
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-linter
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-modernize:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Continuously modernize Golang code to use the latest language features, standard library improvements, and idiomatic patterns. Use this skill whenever writing, reviewing, or refactoring Go code to ens
+        id: golang-modernize
+        kind: skill
+        maintained: true
+        name: Go Modernize
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-modernize
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-modernize
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-naming:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Go (Golang) naming conventions — covers packages, constructors, structs, interfaces, constants, enums, errors, booleans, receivers, getters/setters, functional options, acronyms, test functions, and s
+        id: golang-naming
+        kind: skill
+        maintained: true
+        name: Go Naming
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-naming
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-naming
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-observability:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Golang everyday observability — the always-on signals in production. Covers structured logging with slog, Prometheus metrics, OpenTelemetry distributed tracing, continuous profiling with pprof/Pyrosco
+        id: golang-observability
+        kind: skill
+        maintained: true
+        name: Go Observability
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-observability
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-observability
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-performance:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Golang performance optimization patterns and methodology - if X bottleneck, then apply Y. Covers allocation reduction, CPU efficiency, memory layout, GC tuning, pooling, caching, and hot-path optimiza
+        id: golang-performance
+        kind: skill
+        maintained: true
+        name: Go Performance
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-performance
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-performance
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-popular-libraries:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Recommends production-ready Golang libraries and frameworks. Apply when the user asks for library suggestions, wants to compare alternatives, or needs to choose a library for a specific task. Also app
+        id: golang-popular-libraries
+        kind: skill
+        maintained: true
+        name: Go Popular Libraries
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-popular-libraries
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-popular-libraries
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-project-layout:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Provides a guide for setting up Golang project layouts and workspaces. Use this whenever starting a new Go project, organizing an existing codebase, setting up a monorepo with multiple packages, creat
+        id: golang-project-layout
+        kind: skill
+        maintained: true
+        name: Go Project Layout
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-project-layout
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-project-layout
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-safety:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Defensive Golang coding to prevent panics, silent data corruption, and subtle runtime bugs. Use whenever writing or reviewing Go code that involves nil-prone types (pointers, interfaces, maps, slices,
+        id: golang-safety
+        kind: skill
+        maintained: true
+        name: Go Safety
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-safety
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-safety
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-samber-do:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Implements dependency injection in Golang using samber/do. Apply this skill when working with dependency injection, setting up service containers, managing service lifecycles, or when you see code usi
+        id: golang-samber-do
+        kind: skill
+        maintained: true
+        name: Go Samber Do
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-samber-do
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-samber-do
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-samber-hot:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: In-memory caching in Golang using samber/hot — eviction algorithms (LRU, LFU, TinyLFU, W-TinyLFU, S3FIFO, ARC, TwoQueue, SIEVE, FIFO), TTL, cache loaders, sharding, stale-while-revalidate, missing key
+        id: golang-samber-hot
+        kind: skill
+        maintained: true
+        name: Go Samber Hot
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-samber-hot
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-samber-hot
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-samber-lo:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Functional programming helpers for Golang using samber/lo — 500+ type-safe generic functions for slices, maps, channels, strings, math, tuples, and concurrency (Map, Filter, Reduce, GroupBy, Chunk, Fl
+        id: golang-samber-lo
+        kind: skill
+        maintained: true
+        name: Go Samber Lo
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-samber-lo
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-samber-lo
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-samber-mo:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Monadic types for Golang using samber/mo — Option, Result, Either, Future, IO, Task, and State types for type-safe nullable values, error handling, and functional composition with pipeline sub-package
+        id: golang-samber-mo
+        kind: skill
+        maintained: true
+        name: Go Samber Mo
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-samber-mo
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-samber-mo
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-samber-oops:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Structured error handling in Golang with samber/oops — error builders, stack traces, error codes, error context, error wrapping, error attributes, user-facing vs developer messages, panic recovery, an
+        id: golang-samber-oops
+        kind: skill
+        maintained: true
+        name: Go Samber Oops
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-samber-oops
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-samber-oops
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-samber-ro:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Reactive streams and event-driven programming in Golang using samber/ro — ReactiveX implementation with 150+ type-safe operators, cold/hot observables, 5 subject types (Publish, Behavior, Replay, Asyn
+        id: golang-samber-ro
+        kind: skill
+        maintained: true
+        name: Go Samber Ro
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-samber-ro
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-samber-ro
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-samber-slog:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Structured logging extensions for Golang using samber/slog-**** packages — multi-handler pipelines (slog-multi), log sampling (slog-sampling), attribute formatting (slog-formatter), HTTP middleware (s
+        id: golang-samber-slog
+        kind: skill
+        maintained: true
+        name: Go Samber Slog
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-samber-slog
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-samber-slog
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-security:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Security best practices and vulnerability prevention for Golang. Covers injection (SQL, command, XSS), cryptography, filesystem safety, network security, cookies, secrets management, memory safety, an
+        id: golang-security
+        kind: skill
+        maintained: true
+        name: Go Security
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-security
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-security
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-stay-updated:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Provides resources to stay updated with Golang news, communities and people to follow. Use when seeking Go learning resources, discovering new libraries, finding community channels, or keeping up with
+        id: golang-stay-updated
+        kind: skill
+        maintained: true
+        name: Go Stay Updated
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-stay-updated
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-stay-updated
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-stretchr-testify:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: 'Comprehensive guide to stretchr/testify for Golang testing. Covers assert, require, mock, and suite packages in depth. Use whenever writing tests with testify, creating mocks, setting up test suites, '
+        id: golang-stretchr-testify
+        kind: skill
+        maintained: true
+        name: Go Stretchr Testify
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-stretchr-testify
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-stretchr-testify
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-structs-interfaces:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Golang struct and interface design patterns — composition, embedding, type assertions, type switches, interface segregation, dependency injection via interfaces, struct field tags, and pointer vs valu
+        id: golang-structs-interfaces
+        kind: skill
+        maintained: true
+        name: Go Structs Interfaces
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-structs-interfaces
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-structs-interfaces
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-testing:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Provides a comprehensive guide for writing production-ready Golang tests. Covers table-driven tests, test suites with testify, mocks, unit tests, integration tests, benchmarks, code coverage, parallel
+        id: golang-testing
+        kind: skill
+        maintained: true
+        name: Go Testing
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-testing
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-testing
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0
+    golang-troubleshooting:
+        category: development
+        compatibility:
+            min_brain_version: 0.1.0
+            min_capability_tier: 2
+            surfaces:
+                aider: '>=1.0.0'
+                claude-code: '>=1.0.0'
+                cli: '>=1.0.0'
+                cline: '>=1.0.0'
+                codex-cli: '>=1.0.0'
+                continue: '>=1.0.0'
+                cursor: '>=1.0.0'
+                gemini-cli: '>=1.0.0'
+                jetbrains: '>=1.0.0'
+                neovim: '>=1.0.0'
+                opencode: '>=1.0.0'
+                qwen-code: '>=1.0.0'
+                vscode: '>=1.0.0'
+                windsurf: '>=1.0.0'
+                zed: '>=1.0.0'
+        description: Troubleshoot Golang programs systematically - find and fix the root cause. Use when encountering bugs, crashes, deadlocks, or unexpected behavior in Go code. Covers debugging methodology, common Go pi
+        id: golang-troubleshooting
+        kind: skill
+        maintained: true
+        name: Go Troubleshooting
+        scope: global
+        security_scan:
+            checks:
+                dangerous_commands: pass
+                env_harvesting: pass
+                file_structure: pass
+                hardcoded_secrets: pass
+                network_access: pass
+                obfuscation: pass
+                privilege_escalation: pass
+                prompt_injection: pass
+            passed_at: "2026-04-11T00:00:00Z"
+        source: .github/skills/golang-troubleshooting
+        sync_to:
+            - cli
+            - vscode
+            - cursor
+            - claude-code
+            - qwen-code
+            - codex-cli
+            - gemini-cli
+            - opencode
+            - continue
+            - cline
+            - zed
+            - jetbrains
+            - windsurf
+            - neovim
+            - aider
+        tags:
+            - go
+            - golang-troubleshooting
+        usage:
+            success_rate: 1
+            top_surfaces: {}
+            total_activations: 0
+        version: 1.0.0

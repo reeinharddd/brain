@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#3f008e",
+                        "primary-fixed-dim": "#d2bbff",
+                        "outline-variant": "#4a4455",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "inverse-primary": "#732ee4",
+                        "secondary": "#c8c6c5",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#353534",
+                        "on-secondary": "#313030",
+                        "on-primary-fixed": "#25005a",
+                        "secondary-container": "#474746",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#7c3aed",
+                        "surface-bright": "#3a3939",
+                        "on-secondary-fixed-variant": "#474746",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary": "#4f2500",
+                        "surface-tint": "#d2bbff",
+                        "on-tertiary-container": "#ffe0cd",
+                        "surface-container": "#201f1f",
+                        "primary": "#d2bbff",
+                        "tertiary-fixed": "#ffdcc6",
+                        "surface-dim": "#131313",
+                        "outline": "#958da1",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-container": "#ede0ff",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary-container": "#a15100",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "surface-variant": "#353534",
+                        "tertiary": "#ffb784",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "background": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#eaddff",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#b7b4b4",
+                        "on-surface-variant": "#ccc3d8",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "surface": "#131313",
+                        "on-tertiary-fixed": "#301400"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                        "label": ["Space Grotesk", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0e0e0e;
+            color: #e5e2e1;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mono-tight {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.02em;
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col w-[240px] bg-[#111111] border-r border-[#4A4455] z-50">
+<div class="p-6">
+<div class="font-['Space_Grotesk'] font-bold text-2xl tracking-tighter text-[#F5F5F3]">brain</div>
+<div class="font-mono text-[10px] tracking-tight text-[#A1A1A1] mt-1">V1.0.4-STABLE</div>
+</div>
+<nav class="flex-1 px-0 mt-4">
+<div class="font-mono text-sm tracking-tight space-y-1">
+<a class="flex items-center gap-3 py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">terminal</span>
+<span>Runtime</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#7C3AED] font-bold border-l-2 border-[#7C3AED] pl-4 hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">psychology</span>
+<span>Agents</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">database</span>
+<span>Memory</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">policy</span>
+<span>Rules</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">extension</span>
+<span>MCP Tools</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">subject</span>
+<span>Logs</span>
+</a>
+<a class="flex items-center gap-3 py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">analytics</span>
+<span>Evals</span>
+</a>
+</div>
+</nav>
+<div class="px-6 py-4 mt-auto">
+<button class="w-full py-2 bg-primary-container text-on-primary font-mono text-xs font-bold rounded-lg hover:bg-[#D2BBFF] transition-none uppercase">
+                NEW_SESSION
+            </button>
+</div>
+<div class="border-t border-[#4A4455] py-4">
+<div class="font-mono text-sm tracking-tight">
+<a class="flex items-center gap-3 py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined text-lg">description</span>
+<span>Docs</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 left-[240px] right-0 h-12 bg-[#0A0A0A] flex items-center justify-between px-6 z-40 border-b border-[#4A4455]/0">
+<div class="flex gap-8">
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">System</a>
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">Network</a>
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">Nodes</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm text-[#A1A1A1]">search</span>
+<input class="bg-[#111111] border border-[#4A4455] rounded px-9 py-1 text-xs font-mono focus:ring-1 focus:ring-[#7C3AED] focus:border-[#7C3AED] outline-none w-64 text-[#F5F5F3]" placeholder="SEARCH_SYSTEM_NODES..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-[#A1A1A1]">
+<span class="material-symbols-outlined cursor-pointer hover:text-[#7C3AED]">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-[#7C3AED]">cloud_done</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-[#7C3AED]">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[240px] mt-12 p-8 h-[calc(100vh-48px-40px)] overflow-y-auto bg-surface-container-lowest">
+<!-- Section Header -->
+<div class="flex justify-between items-end mb-12 border-b border-[#4A4455] pb-6">
+<div>
+<h1 class="font-headline font-bold text-5xl tracking-tighter text-[#F5F5F3]">Agents</h1>
+<p class="font-mono text-sm text-[#A1A1A1] mt-2">ACTIVE_INSTANCES: 14 / SYSTEM_LOAD: 22%</p>
+</div>
+<button class="bg-[#7C3AED] text-white px-6 py-3 font-mono text-sm font-bold rounded-lg hover:bg-[#D2BBFF] transition-none flex items-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                DEPLOY NEW AGENT
+            </button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Agent Card 1: Active -->
+<div class="bg-[#111111] border border-[#4A4455] p-6 rounded-lg group hover:border-[#7C3AED] transition-none flex flex-col justify-between min-h-[220px]">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<span class="mono-tight font-bold text-xl text-[#F5F5F3]">CENTINEL_01</span>
+<span class="font-mono text-xs text-[#A1A1A1] uppercase tracking-wider">Optimizer</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-[#052c16] border border-[#16a34a] rounded text-[10px] font-mono text-[#4ade80] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4ade80]"></span>
+                        ACTIVE
+                    </div>
+</div>
+<div class="mt-8 flex gap-3">
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg bg-[#171717] p-2 rounded">memory</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg bg-[#171717] p-2 rounded">api</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg bg-[#171717] p-2 rounded">shield</span>
+</div>
+<div class="mt-6 flex justify-between items-center">
+<div class="font-mono text-[10px] text-[#A1A1A1]">
+                        LAST_EXEC: <span class="text-[#F5F5F3]">2024-05-20 14:22:11</span>
+</div>
+<span class="material-symbols-outlined text-[#A1A1A1] group-hover:text-[#7C3AED]">arrow_forward</span>
+</div>
+</div>
+<!-- Agent Card 2: Idle -->
+<div class="bg-[#111111] border border-[#4A4455] p-6 rounded-lg group hover:border-[#7C3AED] transition-none flex flex-col justify-between min-h-[220px]">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<span class="mono-tight font-bold text-xl text-[#F5F5F3]">VECTOR_SCOUT</span>
+<span class="font-mono text-xs text-[#A1A1A1] uppercase tracking-wider">Retrieval Engine</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-[#2e1d05] border border-[#d97706] rounded text-[10px] font-mono text-[#fbbf24] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#fbbf24]"></span>
+                        IDLE
+                    </div>
+</div>
+<div class="mt-8 flex gap-3">
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg bg-[#171717] p-2 rounded">database</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg bg-[#171717] p-2 rounded">search</span>
+</div>
+<div class="mt-6 flex justify-between items-center">
+<div class="font-mono text-[10px] text-[#A1A1A1]">
+                        LAST_EXEC: <span class="text-[#F5F5F3]">2024-05-20 09:05:32</span>
+</div>
+<span class="material-symbols-outlined text-[#A1A1A1] group-hover:text-[#7C3AED]">arrow_forward</span>
+</div>
+</div>
+<!-- Agent Card 3: Active -->
+<div class="bg-[#111111] border border-[#4A4455] p-6 rounded-lg group hover:border-[#7C3AED] transition-none flex flex-col justify-between min-h-[220px]">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<span class="mono-tight font-bold text-xl text-[#F5F5F3]">LOGIC_GATES</span>
+<span class="font-mono text-xs text-[#A1A1A1] uppercase tracking-wider">Validator</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-[#052c16] border border-[#16a34a] rounded text-[10px] font-mono text-[#4ade80] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4ade80]"></span>
+                        ACTIVE
+                    </div>
+</div>
+<div class="mt-8 flex gap-3">
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg bg-[#171717] p-2 rounded">rule</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg bg-[#171717] p-2 rounded">code</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg bg-[#171717] p-2 rounded">checklist</span>
+</div>
+<div class="mt-6 flex justify-between items-center">
+<div class="font-mono text-[10px] text-[#A1A1A1]">
+                        LAST_EXEC: <span class="text-[#F5F5F3]">JUST NOW</span>
+</div>
+<span class="material-symbols-outlined text-[#A1A1A1] group-hover:text-[#7C3AED]">arrow_forward</span>
+</div>
+</div>
+<!-- Agent Card 4: Detailed Stats -->
+<div class="bg-[#111111] border border-[#4A4455] p-6 rounded-lg group hover:border-[#7C3AED] transition-none flex flex-col justify-between min-h-[220px] xl:col-span-2">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<span class="mono-tight font-bold text-xl text-[#F5F5F3]">NEURAL_BRIDGE</span>
+<span class="font-mono text-xs text-[#A1A1A1] uppercase tracking-wider">Translation Service</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-[#052c16] border border-[#16a34a] rounded text-[10px] font-mono text-[#4ade80] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4ade80]"></span>
+                        ACTIVE
+                    </div>
+</div>
+<div class="grid grid-cols-3 gap-8 mt-4">
+<div class="font-mono">
+<div class="text-[10px] text-[#A1A1A1]">THROUGHPUT</div>
+<div class="text-xl text-[#F5F5F3]">1.2 GB/s</div>
+</div>
+<div class="font-mono">
+<div class="text-[10px] text-[#A1A1A1]">LATENCY</div>
+<div class="text-xl text-[#F5F5F3]">4ms</div>
+</div>
+<div class="font-mono">
+<div class="text-[10px] text-[#A1A1A1]">UPTIME</div>
+<div class="text-xl text-[#F5F5F3]">99.98%</div>
+</div>
+</div>
+<div class="mt-6 flex justify-between items-center">
+<div class="font-mono text-[10px] text-[#A1A1A1]">
+                        LAST_EXEC: <span class="text-[#F5F5F3]">2024-05-20 14:15:00</span>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-[#A1A1A1] cursor-pointer hover:text-[#7C3AED]">settings</span>
+<span class="material-symbols-outlined text-[#A1A1A1] cursor-pointer hover:text-[#7C3AED]">stop_circle</span>
+</div>
+</div>
+</div>
+<!-- Agent Card 5: Error state (Variant) -->
+<div class="bg-[#111111] border border-[#93000a] p-6 rounded-lg group transition-none flex flex-col justify-between min-h-[220px]">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<span class="mono-tight font-bold text-xl text-[#ffb4ab]">SCRAPER_BOTA</span>
+<span class="font-mono text-xs text-[#ffb4ab] uppercase tracking-wider">Data Collector</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-[#690005] border border-[#ffb4ab] rounded text-[10px] font-mono text-[#ffb4ab] font-bold">
+<span class="material-symbols-outlined text-[10px]">error</span>
+                        FAULT
+                    </div>
+</div>
+<div class="mt-6 p-3 bg-[#690005]/20 border-l-2 border-[#ffb4ab] font-mono text-[11px] text-[#ffb4ab]">
+                    ERR: RATE_LIMIT_EXCEEDED_X509
+                </div>
+<div class="mt-6 flex justify-between items-center">
+<div class="font-mono text-[10px] text-[#A1A1A1]">
+                        LAST_EXEC: <span class="text-[#F5F5F3]">2024-05-19 23:59:59</span>
+</div>
+<button class="font-mono text-[10px] text-[#ffb4ab] hover:underline underline-offset-4">REBOOT_SERVICE</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 ml-[240px] w-[calc(100%-240px)] bg-[#171717] border-t border-[#4A4455] h-10 flex items-center px-4 z-50 justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#7C3AED] text-sm">keyboard_arrow_right</span>
+<span class="font-mono text-[11px] uppercase text-[#7C3AED]">COMMAND_LINE</span>
+</div>
+<div class="flex items-center gap-6 font-mono text-[10px] text-[#A1A1A1]">
+<span>LOC: /OS/AGENTS</span>
+<span>UTF-8</span>
+<span class="text-[#7C3AED]">● CONNECTED</span>
+</div>
+</footer>
+</body></html>

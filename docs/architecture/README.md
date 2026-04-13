@@ -26,18 +26,25 @@ This folder contains the canonical architecture documents for Brain.
 9. [model-compatibility-and-capability-layering.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/model-compatibility-and-capability-layering.md)
 10. [ide-cli-integration-strategy.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/ide-cli-integration-strategy.md)
 11. [implementation-gap-roadmap.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/implementation-gap-roadmap.md)
-12. [unified-capability-enhancement-roadmap.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/unified-capability-enhancement-roadmap.md)
+12. [stack-and-implementation-baseline.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/stack-and-implementation-baseline.md)
+13. [infrastructure-baseline-canonical.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/infrastructure-baseline-canonical.md)
+14. [deployment-profiles-and-infrastructure-baseline.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/deployment-profiles-and-infrastructure-baseline.md)
+15. [unified-capability-enhancement-roadmap.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/unified-capability-enhancement-roadmap.md)
+16. [brain-os-visual-system.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/brain-os-visual-system.md)
 
 ## Supporting Documents
 
 - [artifact-migration-and-compatibility-plan.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/artifact-migration-and-compatibility-plan.md)
 - [capability-control-plane-roadmap.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/capability-control-plane-roadmap.md)
 - [control-plane-domain-map.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/control-plane-domain-map.md)
+- [brain-os-visual-system.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/brain-os-visual-system.md)
 - [environment-configuration.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/environment-configuration.md)
 - [development-methodology.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/development-methodology.md)
 - [documentation-enforcement-system.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/documentation-enforcement-system.md)
 - [documentation-boundary-and-markdown-policy.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/documentation-boundary-and-markdown-policy.md)
 - [stack-and-implementation-baseline.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/stack-and-implementation-baseline.md)
+- [infrastructure-baseline-canonical.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/infrastructure-baseline-canonical.md)
+- [deployment-profiles-and-infrastructure-baseline.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/deployment-profiles-and-infrastructure-baseline.md)
 - [research-foundations.md](/home/reeinharrrd/Work/Personal/brain/docs/architecture/research-foundations.md)
 
 ## Rules

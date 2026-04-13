@@ -26,9 +26,31 @@ Brain is moving beyond a personal environment manager into a control plane suita
 
 ## Non-Goals
 
-- Picking a specific external identity provider in this phase.
+- Building a bespoke password or identity provider inside Brain.
 - Designing the full UI for account administration.
 - Replacing operating-system security controls.
+
+## Identity Technology Baseline
+
+Brain uses Logto as the default identity provider baseline, with OIDC Authorization Code + PKCE as the transport contract.
+
+- Local mode can use a lightweight bootstrap login or a dev Logto instance.
+- Self-hosted deployments can run Logto themselves or plug in another tested OIDC provider.
+- Hosted cloud deployments use the Brain-hosted Logto posture.
+- GitHub repository linking should use a GitHub App by default, not an OAuth App.
+
+Why this choice:
+
+- Logto is open source and self-hostable.
+- OIDC + PKCE is a standard login flow that works across browser, desktop, and CLI handoff patterns.
+- The provider can change by deployment without changing policy semantics inside Brain.
+- GitHub Apps give a tighter permission model for repo linking than broad OAuth grants.
+
+Why not other options:
+
+- Custom auth would add attack surface and duplicate solved security work.
+- OAuth-only flows are less explicit than the chosen OIDC baseline.
+- SaaS-only providers make the local and self-hosted story harder to keep consistent.
 
 ## High-Level Design
 

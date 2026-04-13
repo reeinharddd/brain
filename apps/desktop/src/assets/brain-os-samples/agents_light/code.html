@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #FFFFFF;
+            color: #0A0A0A;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .headline-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for technical look */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F5F3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0A0A0A;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#FFFFFF",
+                      "primary-fixed-dim": "#7C3AED",
+                      "outline-variant": "#0A0A0A",
+                      "tertiary-fixed-dim": "#ffb784",
+                      "inverse-primary": "#732ee4",
+                      "secondary": "#0A0A0A",
+                      "error": "#BA1A1A",
+                      "surface-container-highest": "#E5E2E1",
+                      "on-secondary": "#FFFFFF",
+                      "on-primary-fixed": "#25005a",
+                      "secondary-container": "#F5F5F3",
+                      "on-error": "#FFFFFF",
+                      "on-error-container": "#410002",
+                      "primary-container": "#7C3AED",
+                      "surface-bright": "#FFFFFF",
+                      "on-secondary-fixed-variant": "#474746",
+                      "secondary-fixed": "#e5e2e1",
+                      "on-tertiary": "#ffffff",
+                      "surface-tint": "#7C3AED",
+                      "on-tertiary-container": "#301400",
+                      "surface-container": "#FFFFFF",
+                      "primary": "#7C3AED",
+                      "tertiary-fixed": "#ffdcc6",
+                      "surface-dim": "#F5F5F3",
+                      "outline": "#0A0A0A",
+                      "inverse-on-surface": "#F5F5F3",
+                      "on-primary-container": "#FFFFFF",
+                      "surface-container-low": "#F5F5F3",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "tertiary-container": "#ffdbca",
+                      "on-primary-fixed-variant": "#5a00c6",
+                      "surface-variant": "#F5F5F3",
+                      "tertiary": "#8F4E00",
+                      "inverse-surface": "#0A0A0A",
+                      "on-secondary-fixed": "#0A0A0A",
+                      "background": "#FFFFFF",
+                      "surface-container-lowest": "#FFFFFF",
+                      "primary-fixed": "#eaddff",
+                      "on-background": "#0A0A0A",
+                      "on-surface": "#0A0A0A",
+                      "error-container": "#FFDAD6",
+                      "surface-container-high": "#F5F5F3",
+                      "on-secondary-container": "#0A0A0A",
+                      "on-surface-variant": "#4A4455",
+                      "on-tertiary-fixed-variant": "#713700",
+                      "surface": "#FFFFFF",
+                      "on-tertiary-fixed": "#301400"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0px",
+                      "lg": "0px",
+                      "xl": "0px",
+                      "full": "0px"
+              },
+              "fontFamily": {
+                      "headline": ["Space Grotesk"],
+                      "body": ["JetBrains Mono"],
+                      "label": ["JetBrains Mono"]
+              }
+            },
+          }
+        }
+    </script>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar (Execution from JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col w-[240px] h-screen border-r border-[#0A0A0A] bg-[#FFFFFF] z-50">
+<div class="p-6 flex flex-col gap-1">
+<span class="font-['Space_Grotesk'] font-bold text-2xl tracking-tighter text-[#0A0A0A]">brain</span>
+<span class="font-mono text-[10px] tracking-tight text-[#A1A1A1]">V1.0.4-STABLE</span>
+</div>
+<nav class="flex-1 mt-4">
+<!-- Navigation Items Mapping -->
+<div class="flex flex-col">
+<a class="flex items-center h-10 text-[#A1A1A1] pl-4 hover:text-[#0A0A0A] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="terminal">terminal</span>
+                    Runtime
+                </a>
+<!-- ACTIVE TAB: Agents -->
+<a class="flex items-center h-10 text-[#7C3AED] font-bold border-l-2 border-[#7C3AED] pl-4 font-mono text-sm tracking-tight transition-none bg-[#F5F5F3]" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="psychology">psychology</span>
+                    Agents
+                </a>
+<a class="flex items-center h-10 text-[#A1A1A1] pl-4 hover:text-[#0A0A0A] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="database">database</span>
+                    Memory
+                </a>
+<a class="flex items-center h-10 text-[#A1A1A1] pl-4 hover:text-[#0A0A0A] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="policy">policy</span>
+                    Rules
+                </a>
+<a class="flex items-center h-10 text-[#A1A1A1] pl-4 hover:text-[#0A0A0A] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="extension">extension</span>
+                    MCP Tools
+                </a>
+<a class="flex items-center h-10 text-[#A1A1A1] pl-4 hover:text-[#0A0A0A] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="subject">subject</span>
+                    Logs
+                </a>
+<a class="flex items-center h-10 text-[#A1A1A1] pl-4 hover:text-[#0A0A0A] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="analytics">analytics</span>
+                    Evals
+                </a>
+</div>
+</nav>
+<div class="p-4 border-t border-[#0A0A0A]">
+<button class="w-full py-2 bg-[#7C3AED] text-white font-mono text-xs font-bold tracking-widest uppercase hover:bg-[#6D28D9] transition-none">
+                NEW_SESSION
+            </button>
+</div>
+<footer class="flex flex-col border-t border-[#0A0A0A] py-2">
+<a class="flex items-center h-10 text-[#A1A1A1] pl-4 hover:text-[#0A0A0A] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="flex items-center h-10 text-[#A1A1A1] pl-4 hover:text-[#0A0A0A] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="description">description</span>
+                Docs
+            </a>
+</footer>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 ml-[240px] flex flex-col min-h-screen bg-[#FFFFFF]">
+<!-- TopNavBar (Execution from JSON) -->
+<header class="flex items-center justify-between px-6 h-12 bg-[#FFFFFF] border-b border-[#0A0A0A] w-full sticky top-0 z-40">
+<div class="flex items-center gap-8">
+<nav class="flex items-center gap-6">
+<a class="text-[#A1A1A1] font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest hover:text-[#0A0A0A]" href="#">System</a>
+<a class="text-[#A1A1A1] font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest hover:text-[#0A0A0A]" href="#">Network</a>
+<a class="text-[#A1A1A1] font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest hover:text-[#0A0A0A]" href="#">Nodes</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-[#F5F5F3] border border-[#0A0A0A] px-2 h-8">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-[10px] font-mono w-48 placeholder-[#A1A1A1] text-[#0A0A0A]" placeholder="FILTER_AGENTS..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl text-[#0A0A0A]" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-xl text-[#7C3AED]" data-icon="cloud_done">cloud_done</span>
+<span class="material-symbols-outlined text-xl text-[#0A0A0A]" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<section class="p-8">
+<div class="flex justify-between items-end mb-10 border-b-4 border-[#0A0A0A] pb-4">
+<div>
+<h1 class="headline-font text-5xl font-black tracking-tighter uppercase leading-none">Agents</h1>
+<p class="font-mono text-xs mt-2 text-[#A1A1A1]">TOTAL_ACTIVE_INSTANCES: 04 // SYSTEM_STABILITY: 98.2%</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-[#0A0A0A] text-white font-mono text-[10px] uppercase font-bold tracking-wider">DEPLOY_ALL</button>
+<button class="px-4 py-2 border-2 border-[#0A0A0A] text-[#0A0A0A] font-mono text-[10px] uppercase font-bold tracking-wider hover:bg-[#F5F5F3]">REBOOT_CLUSTER</button>
+</div>
+</div>
+<!-- Bento Grid of Agent Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Agent 01 -->
+<div class="border-2 border-[#0A0A0A] bg-[#FFFFFF] p-6 flex flex-col gap-4 group hover:bg-[#F5F5F3] transition-none cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="bg-[#0A0A0A] text-white px-2 py-1 text-[10px] font-mono">ID: X-900</div>
+<span class="material-symbols-outlined text-[#7C3AED]" data-icon="bolt" data-weight="fill" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="h-32 bg-[#F5F5F3] border border-[#0A0A0A] relative overflow-hidden">
+<img alt="technical blueprint" class="w-full h-full object-cover opacity-80" data-alt="abstract technical blueprint of a neural network with high contrast black lines on white background minimalist brutalist style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFvxV7fpraush-5buKDuS5nNUs9dY4otNU6jUkr8o1b8BFkMJol8lcL0sIcXXvqLrq50UCYBSjqZ9d984A4XGHhNPUamewhmiYPwWMSiaxNWUWyV5sfSWk6QlqwD4Aw2z2r_zf-j5NKS_ma7gXMxwgm8mUzEyGguJYpv0jIg0pb8tMz4gZ_DltaI48dh9ITyIn52iXXmmW-irwViPwktDQK_N7IBz3vM6w1wgQ2nQ2anrhxdonVqnRshCarhqQHCzpi3Y7_4SOWJxb"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#FFFFFF] to-transparent opacity-40"></div>
+</div>
+<div>
+<h3 class="headline-font font-bold text-xl uppercase tracking-tight">Logic.Core</h3>
+<p class="font-mono text-[11px] text-[#A1A1A1] mt-1">Specialized in deductive reasoning and architectural validation.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-[#0A0A0A] flex justify-between items-center">
+<span class="font-mono text-[10px] font-bold text-[#0A0A0A]">STATUS: RUNNING</span>
+<span class="font-mono text-[10px] text-[#7C3AED]">CPU: 12%</span>
+</div>
+</div>
+<!-- Agent 02 -->
+<div class="border-2 border-[#0A0A0A] bg-[#FFFFFF] p-6 flex flex-col gap-4 group hover:bg-[#F5F5F3] transition-none cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="bg-[#0A0A0A] text-white px-2 py-1 text-[10px] font-mono">ID: V-402</div>
+<span class="material-symbols-outlined text-[#A1A1A1]" data-icon="stop_circle">stop_circle</span>
+</div>
+<div class="h-32 bg-[#F5F5F3] border border-[#0A0A0A] relative overflow-hidden">
+<img alt="data visualization" class="w-full h-full object-cover grayscale" data-alt="high density data visualization patterns with complex geometric structures and nodes on a clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_YWsbihCTcugPoNzJSkP4bXKQYw31csRj3sjxB1QOLo7yZspUBcOPxry9dbKcOuzQ3JBmO5zuctzK-hiHoOLoGf7iC5qQiVmmclRkIEF-_ODjVzjg6wjv7z5I6ORRgyFPDiQplDhXtoyNEJZX2JiB2Pzd95ygfhjEwTHK-UEPEIt2_3y79LmoNkOzlTLkCylrYdGPduPn25Od9IwI7ez0onqVSojRE6LrsgbkJK5L1-xd119b_ydfNA08fujvS6e_AYksiXVIK0pz"/>
+</div>
+<div>
+<h3 class="headline-font font-bold text-xl uppercase tracking-tight">Data.Stream</h3>
+<p class="font-mono text-[11px] text-[#A1A1A1] mt-1">Real-time ingestion and vectorization of unstructured knowledge bases.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-[#0A0A0A] flex justify-between items-center">
+<span class="font-mono text-[10px] font-bold text-[#A1A1A1]">STATUS: IDLE</span>
+<span class="font-mono text-[10px] text-[#A1A1A1]">CPU: 0%</span>
+</div>
+</div>
+<!-- Agent 03 -->
+<div class="border-2 border-[#0A0A0A] bg-[#FFFFFF] p-6 flex flex-col gap-4 group hover:bg-[#F5F5F3] transition-none cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="bg-[#0A0A0A] text-white px-2 py-1 text-[10px] font-mono">ID: K-311</div>
+<span class="material-symbols-outlined text-[#7C3AED]" data-icon="bolt" data-weight="fill" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="h-32 bg-[#F5F5F3] border border-[#0A0A0A] relative overflow-hidden">
+<img alt="code architecture" class="w-full h-full object-cover" data-alt="schematic architectural drawing of a computer chip with intricate paths and circuits in monochrome black and white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAT8Xee_-SBx0b0_cvAL7LjvMdw9Lu8Jjo71mSLSpsoDoYr7EHawq5z-F3WdzrGgHOcNFba1KVXJyCyvP1_5f2dnANQxAFo_g60k-z9M9Rn3Q7iUoznCgZpjQQlJ3ggfj9Z6bL_j4h2lDqcFJ3FeoIqN5912JOzZzxG_4_1Wl9dyy6aWqfDkVTiEc9d4aKSxbpJy1J0JpAPCPysJCneP84pAX7fAWEeMe5vejNd5FasERgxdrSwLoFVYqTuR9HEYVoNQ7igD5kxS7M7"/>
+</div>
+<div>
+<h3 class="headline-font font-bold text-xl uppercase tracking-tight">Code.Synthesizer</h3>
+<p class="font-mono text-[11px] text-[#A1A1A1] mt-1">Autonomously generates and optimizes low-level system kernels.</p>
+</div>
+<div class="mt-auto pt-4 border-t border-[#0A0A0A] flex justify-between items-center">
+<span class="font-mono text-[10px] font-bold text-[#0A0A0A]">STATUS: COMPILING</span>
+<span class="font-mono text-[10px] text-[#7C3AED]">CPU: 84%</span>
+</div>
+</div>
+<!-- Agent 04 (Asymmetric Large Card) -->
+<div class="md:col-span-2 border-2 border-[#7C3AED] bg-[#FFFFFF] p-8 flex flex-col md:flex-row gap-8 group cursor-pointer">
+<div class="flex-1">
+<div class="bg-[#7C3AED] text-white inline-block px-2 py-1 text-[10px] font-mono mb-4">EXPERIMENTAL_V2</div>
+<h3 class="headline-font font-bold text-3xl uppercase tracking-tight leading-none mb-4">Neural.Vision.Alpha</h3>
+<p class="font-mono text-sm text-[#4A4455] mb-6">A multi-modal vision transformer designed for zero-shot object detection and semantic spatial mapping in high-latency environments.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-[#F5F5F3] p-3 border border-[#0A0A0A]">
+<span class="block font-mono text-[9px] text-[#A1A1A1]">LATENCY</span>
+<span class="font-mono font-bold text-lg">14ms</span>
+</div>
+<div class="bg-[#F5F5F3] p-3 border border-[#0A0A0A]">
+<span class="block font-mono text-[9px] text-[#A1A1A1]">ACCURACY</span>
+<span class="font-mono font-bold text-lg">99.1%</span>
+</div>
+</div>
+</div>
+<div class="w-full md:w-1/3 bg-[#0A0A0A] relative flex items-center justify-center p-4">
+<img alt="vision sensor" class="w-full h-full object-cover mix-blend-screen opacity-70" data-alt="stylized computer vision sensor graphic with digital scan lines and focus brackets on stark white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfvSltAoJ7IFelQZMbwaWEaeRd3qlBOlHYTr7fOSZ1CwHQaqJViuOyu68QoVJkdjKP78G0hKHXrUoSqWswfpuMz0WmjwWPi5XRt5JBrKoPsV69Fwg1x_lDKqX8V40pPOnCRJQoWIGowHR1A-7hJxqmivOMX4o2Q7W7L7VxQX-1edpjiQYHi88lcDxGLINntG_TazABdf8O12VMEzy3x9IgQTGmjvU1p1bJE4BvolcBHsJose2UgV8_mgfYbo-6oCr28ra0ubebossM"/>
+<div class="absolute inset-0 border-[10px] border-[#FFFFFF] border-opacity-20 pointer-events-none"></div>
+</div>
+</div>
+<!-- Add New Agent Placeholder -->
+<div class="border-2 border-dashed border-[#A1A1A1] flex flex-col items-center justify-center p-6 hover:border-[#7C3AED] hover:bg-[#F5F5F3] transition-none cursor-pointer">
+<span class="material-symbols-outlined text-4xl text-[#A1A1A1] mb-2" data-icon="add_circle">add_circle</span>
+<span class="font-mono text-xs font-bold uppercase tracking-widest text-[#A1A1A1]">REGISTER_NEW_ENTITY</span>
+</div>
+</div>
+</section>
+<!-- BottomNavBar (Execution from JSON) -->
+<footer class="fixed bottom-0 ml-[240px] w-[calc(100%-240px)] border-t border-[#0A0A0A] h-10 bg-[#FFFFFF] flex items-center px-4 z-50">
+<div class="flex items-center gap-2 text-[#7C3AED]">
+<span class="material-symbols-outlined text-sm" data-icon="keyboard_arrow_right">keyboard_arrow_right</span>
+<span class="font-mono text-[11px] uppercase tracking-wider font-bold">COMMAND_LINE</span>
+</div>
+<div class="ml-auto flex items-center gap-6">
+<span class="font-mono text-[10px] text-[#A1A1A1]">UPTIME: 14:02:11</span>
+<span class="font-mono text-[10px] text-[#A1A1A1]">ACTIVE_AGENTS: 04</span>
+<div class="flex items-center gap-1">
+<div class="w-1.5 h-1.5 bg-[#7C3AED]"></div>
+<span class="font-mono text-[10px] text-[#0A0A0A]">SYNC_OK</span>
+</div>
+</div>
+</footer>
+</main>
+</body></html>

@@ -82,6 +82,8 @@ Qdrant must be treated as:
 - a reusable service for memory retrieval, artifact similarity, and RAG-style indexing
 - a component that can run locally, in managed cloud, or in organization-hosted deployments
 
+The profile-specific choices for database, cache, object storage, and backups are recorded in the canonical infrastructure baseline. This document stays focused on memory behavior and retrieval rules.
+
 Qdrant must not be treated as:
 
 - the canonical source of truth for artifacts
@@ -183,6 +185,7 @@ Memory must follow the same governance model as artifacts:
 ## Related Documents
 
 - `docs/architecture/brain-v2-target-architecture.md`
+- `docs/architecture/infrastructure-baseline-canonical.md`
 - `docs/architecture/ai-runtime-and-context-optimization.md`
 - `docs/architecture/context-agent-systems-and-cost-optimization.md`
 - `docs/architecture/identity-policy-security.md`

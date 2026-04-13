@@ -1,9 +1,13 @@
-go 1.24.4
+go 1.25.0
 
 use (
-	./core
+	./apps/acp
 	./apps/cli
 	./apps/daemon
+	./apps/mcp_servers/filesystem
+	./apps/mcp_servers/git
+	./apps/mcp_servers/terminal
 	./apps/tui
-	./apps/acp
+	./core
+	./test
 )

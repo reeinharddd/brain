@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#3f008e",
+                    "primary-fixed-dim": "#d2bbff",
+                    "outline-variant": "#4a4455",
+                    "tertiary-fixed-dim": "#ffb784",
+                    "inverse-primary": "#732ee4",
+                    "secondary": "#c8c6c5",
+                    "error": "#ffb4ab",
+                    "surface-container-highest": "#353534",
+                    "on-secondary": "#313030",
+                    "on-primary-fixed": "#25005a",
+                    "secondary-container": "#474746",
+                    "on-error": "#690005",
+                    "on-error-container": "#ffdad6",
+                    "primary-container": "#7c3aed",
+                    "surface-bright": "#3a3939",
+                    "on-secondary-fixed-variant": "#474746",
+                    "secondary-fixed": "#e5e2e1",
+                    "on-tertiary": "#4f2500",
+                    "surface-tint": "#d2bbff",
+                    "on-tertiary-container": "#ffe0cd",
+                    "surface-container": "#201f1f",
+                    "primary": "#d2bbff",
+                    "tertiary-fixed": "#ffdcc6",
+                    "surface-dim": "#131313",
+                    "outline": "#958da1",
+                    "inverse-on-surface": "#313030",
+                    "on-primary-container": "#ede0ff",
+                    "surface-container-low": "#1c1b1b",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "tertiary-container": "#a15100",
+                    "on-primary-fixed-variant": "#5a00c6",
+                    "surface-variant": "#353534",
+                    "tertiary": "#ffb784",
+                    "inverse-surface": "#e5e2e1",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "background": "#131313",
+                    "surface-container-lowest": "#0e0e0e",
+                    "primary-fixed": "#eaddff",
+                    "on-background": "#e5e2e1",
+                    "on-surface": "#e5e2e1",
+                    "error-container": "#93000a",
+                    "surface-container-high": "#2a2a2a",
+                    "on-secondary-container": "#b7b4b4",
+                    "on-surface-variant": "#ccc3d8",
+                    "on-tertiary-fixed-variant": "#713700",
+                    "surface": "#131313",
+                    "on-tertiary-fixed": "#301400"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Space Grotesk"],
+                    "label": ["Space Grotesk"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0A0A0A;
+            color: #F5F5F3;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111111;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4A4455;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Execution from JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col w-[240px] h-screen border-r border-[#4A4455] bg-[#111111] z-50">
+<div class="p-6">
+<div class="font-['Space_Grotesk'] font-bold text-2xl tracking-tighter text-[#F5F5F3]">brain</div>
+<div class="font-mono text-[10px] tracking-tight text-[#A1A1A1] mt-1">V1.0.4-STABLE</div>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="terminal">terminal</span>
+                Runtime
+            </a>
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="psychology">psychology</span>
+                Agents
+            </a>
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="database">database</span>
+                Memory
+            </a>
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="policy">policy</span>
+                Rules
+            </a>
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="extension">extension</span>
+                MCP Tools
+            </a>
+<!-- Active State: Logs -->
+<a class="flex items-center py-2 text-[#7C3AED] font-bold border-l-2 border-[#7C3AED] pl-4 font-mono text-sm tracking-tight transition-none bg-[#171717]" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="subject">subject</span>
+                Logs
+            </a>
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="analytics">analytics</span>
+                Evals
+            </a>
+</nav>
+<div class="p-4 border-t border-[#4A4455]">
+<button class="w-full py-2 bg-[#7C3AED] text-[#3F008E] font-mono text-xs font-bold uppercase tracking-wider rounded-sm hover:bg-[#D2BBFF] transition-none">
+                NEW_SESSION
+            </button>
+</div>
+<div class="px-2 py-4 space-y-1 border-t border-[#4A4455]">
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="settings">settings</span>
+                Settings
+            </a>
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] font-mono text-sm tracking-tight transition-none" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="description">description</span>
+                Docs
+            </a>
+</div>
+</aside>
+<!-- TopNavBar (Execution from JSON) -->
+<header class="fixed left-[240px] top-0 h-12 w-[calc(100%-240px)] flex items-center justify-between px-6 bg-[#0A0A0A] z-40">
+<div class="flex items-center space-x-6">
+<nav class="flex items-center space-x-8">
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">System</a>
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">Network</a>
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">Nodes</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex items-center bg-[#111111] px-3 py-1 border border-[#4A4455]">
+<span class="material-symbols-outlined text-sm text-[#A1A1A1] mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none text-[10px] font-mono focus:ring-0 text-[#F5F5F3] w-48 placeholder:text-[#4A4455]" placeholder="FILTER LOGS..." type="text"/>
+</div>
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg cursor-pointer hover:text-[#7C3AED]" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-[#7C3AED] text-lg cursor-pointer" data-icon="cloud_done">cloud_done</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg cursor-pointer hover:text-[#7C3AED]" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] pt-12 pb-10 min-h-screen bg-[#0A0A0A] flex flex-col">
+<!-- Terminal Header / Info Bar -->
+<div class="px-6 py-4 border-b border-[#4A4455] bg-[#0E0E0E] flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<h1 class="font-['Space_Grotesk'] text-lg font-bold tracking-tight text-[#F5F5F3]">system_activity.log</h1>
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="font-mono text-[10px] text-green-500 uppercase tracking-tighter">Live Stream Active</span>
+</div>
+</div>
+<div class="flex items-center space-x-2 font-mono text-[10px]">
+<span class="text-[#A1A1A1]">PID: 8842</span>
+<span class="text-[#4A4455]">|</span>
+<span class="text-[#A1A1A1]">Uptime: 14h 22m 04s</span>
+<span class="text-[#4A4455]">|</span>
+<span class="text-[#7C3AED]">Buffer: 1024KB</span>
+</div>
+</div>
+<!-- Raw Terminal Container -->
+<div class="flex-1 p-6 font-mono text-sm custom-scrollbar overflow-y-auto bg-[#0A0A0A]">
+<div class="max-w-none space-y-1">
+<!-- Log Entry: INFO -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:02:11</span>
+<span class="text-green-500 font-bold shrink-0 w-16">[INFO]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-102</span>
+<span class="text-[#F5F5F3] tracking-tight">Kernel initialization sequence completed. All modules verified.</span>
+</div>
+<!-- Log Entry: INFO -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:02:12</span>
+<span class="text-green-500 font-bold shrink-0 w-16">[INFO]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-104</span>
+<span class="text-[#F5F5F3] tracking-tight">Handshake established with Node-Omega-4. Latency: 4ms.</span>
+</div>
+<!-- Log Entry: WARN -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:02:15</span>
+<span class="text-yellow-500 font-bold shrink-0 w-16">[WARN]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-089</span>
+<span class="text-[#F5F5F3] tracking-tight">Memory utilization at 84%. Garbage collection cycle initiated.</span>
+</div>
+<!-- Log Entry: ERROR -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:02:22</span>
+<span class="text-red-500 font-bold shrink-0 w-16">[ERROR]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-211</span>
+<span class="text-[#F5F5F3] tracking-tight">Failed to propagate memory vector to cluster primary. Retrying in 500ms...</span>
+</div>
+<!-- Log Entry: INFO -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:02:22</span>
+<span class="text-green-500 font-bold shrink-0 w-16">[INFO]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-102</span>
+<span class="text-[#F5F5F3] tracking-tight">Requesting new auth token for 'brain-core-service'.</span>
+</div>
+<!-- Log Entry: INFO -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:02:24</span>
+<span class="text-green-500 font-bold shrink-0 w-16">[INFO]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-102</span>
+<span class="text-[#F5F5F3] tracking-tight">Auth token successfully rotated. TTL: 3600s.</span>
+</div>
+<!-- Log Entry: INFO -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:03:01</span>
+<span class="text-green-500 font-bold shrink-0 w-16">[INFO]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-115</span>
+<span class="text-[#F5F5F3] tracking-tight">Agent 'Orion-Alpha' reporting for duty. Intent: Analysis.</span>
+</div>
+<!-- Log Entry: WARN -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:03:05</span>
+<span class="text-yellow-500 font-bold shrink-0 w-16">[WARN]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-115</span>
+<span class="text-[#F5F5F3] tracking-tight">Incomplete dataset detected in memory partition 7. Interpolating missing values.</span>
+</div>
+<!-- Log Entry: ERROR -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:03:10</span>
+<span class="text-red-500 font-bold shrink-0 w-16">[ERROR]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-999</span>
+<span class="text-[#F5F5F3] tracking-tight">CRITICAL: Segment violation in agent logic processor. Immediate shutdown of worker threads recommended.</span>
+</div>
+<!-- Log Entry: INFO -->
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:03:11</span>
+<span class="text-green-500 font-bold shrink-0 w-16">[INFO]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-001</span>
+<span class="text-[#F5F5F3] tracking-tight">Root supervisor acknowledging critical state. Initiating failover to secondary compute cluster.</span>
+</div>
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:03:15</span>
+<span class="text-green-500 font-bold shrink-0 w-16">[INFO]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-102</span>
+<span class="text-[#F5F5F3] tracking-tight">Secondary cluster online. Load balancing active.</span>
+</div>
+<div class="flex items-start space-x-4 py-0.5 hover:bg-[#111111] group">
+<span class="text-[#4A4455] select-none text-[11px] w-28 shrink-0">2023-10-24 14:03:40</span>
+<span class="text-green-500 font-bold shrink-0 w-16">[INFO]</span>
+<span class="text-[#A1A1A1] shrink-0 w-12">P-044</span>
+<span class="text-[#F5F5F3] tracking-tight">Database integrity check: 100% success. No data loss detected during segment violation.</span>
+</div>
+<div class="flex items-start space-x-4 py-0.5 animate-pulse">
+<span class="text-[#7C3AED] select-none text-[11px] w-28 shrink-0">2023-10-24 14:04:02</span>
+<span class="text-[#7C3AED] font-bold shrink-0 w-16">[SYNC]</span>
+<span class="text-[#7C3AED] shrink-0 w-12">P-ALL</span>
+<span class="text-[#7C3AED] tracking-tight">System stabilization complete. Entering monitor mode...</span>
+</div>
+<!-- Cursor/Prompt -->
+<div class="flex items-center space-x-2 pt-2">
+<span class="text-[#7C3AED] font-bold">➜</span>
+<span class="text-[#F5F5F3] font-bold">brain/logs</span>
+<span class="w-2 h-4 bg-[#7C3AED] animate-pulse"></span>
+</div>
+</div>
+</div>
+<!-- Footer Terminal Actions -->
+<div class="bg-[#111111] border-t border-[#4A4455] h-12 px-6 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<button class="flex items-center text-[10px] font-mono text-[#A1A1A1] hover:text-[#7C3AED] uppercase">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="download">download</span>
+                    Export Log
+                </button>
+<button class="flex items-center text-[10px] font-mono text-[#A1A1A1] hover:text-[#7C3AED] uppercase">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="delete">delete</span>
+                    Clear Buffer
+                </button>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex items-center">
+<span class="text-[10px] font-mono text-[#4A4455] mr-2">LOG_LEVEL:</span>
+<select class="bg-transparent border-none text-[10px] font-mono text-[#F5F5F3] focus:ring-0 p-0 cursor-pointer">
+<option>DEBUG</option>
+<option selected="">ALL</option>
+<option>WARN+</option>
+<option>ERROR ONLY</option>
+</select>
+</div>
+<div class="h-4 w-px bg-[#4A4455]"></div>
+<div class="text-[10px] font-mono text-[#A1A1A1]">
+                    Lines: 14,902
+                </div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Execution from JSON) -->
+<footer class="fixed bottom-0 ml-[240px] w-[calc(100%-240px)] border-t border-[#4A4455] h-10 bg-[#171717] flex items-center px-4 z-50">
+<div class="flex items-center space-x-2 text-[#7C3AED] font-mono text-[11px] uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="keyboard_arrow_right">keyboard_arrow_right</span>
+<span>COMMAND_LINE</span>
+</div>
+<div class="flex-1 px-4">
+<div class="w-full bg-[#0A0A0A] h-6 flex items-center px-3 border border-[#4A4455]">
+<span class="text-[#7C3AED] font-mono text-[10px] mr-2">/</span>
+<input class="bg-transparent border-none text-[10px] font-mono focus:ring-0 text-[#A1A1A1] w-full p-0" placeholder="Type a command..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex items-center text-[10px] font-mono text-[#A1A1A1]">
+<span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                CORE_IDLE
+            </div>
+<div class="text-[10px] font-mono text-[#4A4455]">
+                UTF-8
+            </div>
+</div>
+</footer>
+</body></html>

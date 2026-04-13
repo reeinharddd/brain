@@ -8,6 +8,9 @@ import (
 )
 
 func TestConnectionManager_Start(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode: requires real MCP server binaries")
+	}
 	ctx := context.Background()
 	cm := NewConnectionManager()
 
@@ -61,6 +64,9 @@ func TestConnectionManager_Start(t *testing.T) {
 }
 
 func TestConnectionManager_Stop(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	ctx := context.Background()
 	cm := NewConnectionManager()
 
@@ -113,6 +119,9 @@ func TestConnectionManager_Stop(t *testing.T) {
 }
 
 func TestConnectionManager_GetInstance(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	ctx := context.Background()
 	cm := NewConnectionManager()
 
@@ -148,6 +157,9 @@ func TestConnectionManager_GetInstance(t *testing.T) {
 }
 
 func TestConnectionManager_ListInstances(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	ctx := context.Background()
 	cm := NewConnectionManager()
 
@@ -179,6 +191,9 @@ func TestConnectionManager_ListInstances(t *testing.T) {
 }
 
 func TestConnectionManager_HealthCheck(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	ctx := context.Background()
 	cm := NewConnectionManager()
 
@@ -228,6 +243,9 @@ func TestConnectionManager_HealthCheck(t *testing.T) {
 }
 
 func TestConnectionManager_HealthCheckAll(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	ctx := context.Background()
 	cm := NewConnectionManager()
 
@@ -296,6 +314,9 @@ func TestRateLimiter(t *testing.T) {
 }
 
 func TestConnectionManager_AcquireToken(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	ctx := context.Background()
 	cm := NewConnectionManager()
 
@@ -413,6 +434,9 @@ func TestConnectionManager_ContextCancellation(t *testing.T) {
 }
 
 func TestConnectionManager_SetRateLimit(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	ctx := context.Background()
 	cm := NewConnectionManager()
 

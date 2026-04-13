@@ -186,14 +186,12 @@ func main() {
 		startUI()
 
 	case "status":
-		if err := runStatus(nil, os.Args[2:]); err != nil {
+		if err := runStatus(os.Args[2:]); err != nil {
 			fmt.Println("Error:", err)
 		}
 
 	case "review":
-		if err := runReview(os.Args[2:]); err != nil {
-			fmt.Println("Error:", err)
-		}
+		HandleReviewCommand(os.Args[2:])
 
 	case "ps":
 		resp, err := http.Get(DAEMON_URL + "/api/processes")
@@ -210,7 +208,7 @@ func main() {
 		}
 
 	case "logs":
-		conn, _, err := websocket.DefaultDialer.Dial(DAEMON_WS, nil)
+		conn, _, err := websocket.DefaultDialer.Dial(authWebSocketURL(), nil)
 		if err != nil {
 			fmt.Println("❌ WebSocket Failed to connect:", err)
 			return
@@ -245,6 +243,8 @@ func main() {
 
 	case "hooks":
 		os.Exit(runHookCommand(os.Args[2:]))
+	case "auth":
+		HandleAuthCommand(os.Args)
 
 	case "skills":
 		HandleSkillsCommand(os.Args)
@@ -335,6 +335,24 @@ func main() {
 	case "test":
 		os.Exit(runTestCommand(os.Args[2:]))
 
+	case "workflows":
+		handleWorkflowsCommand(os.Args)
+
+	case "delegation":
+		handleDelegationCommand(os.Args)
+
+	case "autoevolve":
+		handleAutoevolveCommand(os.Args)
+
+	case "memory":
+		handleMemoryCommand(os.Args)
+
+	case "context":
+		handleContextCommand(os.Args)
+
+	case "cost":
+		handleCostCommand(os.Args)
+
 	default:
 		printHelp()
 	}
@@ -352,15 +370,26 @@ func printHelp() {
 	fmt.Println("  daemon-orchestrate             Start daemon with full service orchestration")
 	fmt.Println("  ui                             Start desktop web UI (and daemon)")
 	fmt.Println("  status                         Check daemon status")
-	fmt.Println("  mcp serve                      Run the Brain MCP stdio server")
-	fmt.Println("  hooks ...                      Run hook helpers without shell wrappers")
-	fmt.Println("  providers                      List available LLM providers")
-	fmt.Println("  sync [--dry-run|status]        Trigger unified config sync")
-	fmt.Println("  test [suite] [flags]            Run test orchestrator (Phase 1)")
 	fmt.Println("  ps                             List managed processes")
 	fmt.Println("  logs                           Stream real-time global logs")
 	fmt.Println("  start <id> <command> [args..]  Start a specific process")
 	fmt.Println("  stop <id>                      Stop a specific process")
+	fmt.Println("  sync [--dry-run|status]        Trigger unified config sync")
+	fmt.Println("  providers                      List available LLM providers")
+	fmt.Println("  mcp serve                      Run the Brain MCP stdio server")
+	fmt.Println("  skills                         Manage skills (list, create, search)")
+	fmt.Println("  mcps                           Manage MCP servers")
+	fmt.Println("  agents                         Manage agents")
+	fmt.Println("  docs-rag <query>               Search documentation")
+	fmt.Println("  workflows <subcommand>         Manage workflows (list, execute, status, dag)")
+	fmt.Println("  delegation <subcommand>        Manage agent delegation (execute, status, cancel)")
+	fmt.Println("  autoevolve <subcommand>        Self-improvement engine (run, approve, apply)")
+	fmt.Println("  memory <subcommand>            Memory system (status, list)")
+	fmt.Println("  context <subcommand>           Context management (bundle, curator)")
+	fmt.Println("  cost <subcommand>              Cost tracking (budget, report)")
+	fmt.Println("  hooks ...                      Run hook helpers without shell wrappers")
+	fmt.Println("  auth <subcommand>             Manage daemon login sessions")
+	fmt.Println("  test [suite] [flags]            Run test orchestrator (Phase 1)")
 }
 
 func runTestCommand(args []string) int {
@@ -470,4 +499,505 @@ Examples:
   brain sync --dry-run
   brain sync status
 	`)
+}
+
+func handleWorkflowsCommand(args []string) {
+	if len(args) < 3 {
+		printWorkflowHelp()
+		return
+	}
+
+	subcommand := args[2]
+	switch subcommand {
+	case "list":
+		resp, err := http.Get(DAEMON_URL + "/api/workflows/list")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if workflows, ok := res["workflows"].([]interface{}); ok {
+			fmt.Println("Available Workflows:")
+			for _, w := range workflows {
+				fmt.Printf("  - %v\n", w)
+			}
+		}
+
+	case "execute":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain workflows execute <workflow-name> [--budget N]")
+			return
+		}
+		name := args[3]
+		payload := map[string]interface{}{"workflow": name}
+		body, _ := json.Marshal(payload)
+		resp, err := http.Post(DAEMON_URL+"/api/workflows/execute", "application/json", bytes.NewBuffer(body))
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if execID, ok := res["execution_id"].(string); ok {
+			fmt.Printf("✅ Workflow '%s' started. Execution ID: %s\n", name, execID)
+			fmt.Println("Use 'brain workflows status <execution_id>' to check progress.")
+		} else {
+			fmt.Printf("❌ Failed to start workflow: %v\n", res)
+		}
+
+	case "status":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain workflows status <execution_id>")
+			return
+		}
+		execID := args[3]
+		resp, err := http.Get(DAEMON_URL + "/api/workflows/" + execID + "/status")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Printf("Workflow Status [%s]:\n", execID)
+		fmt.Printf("  Status: %v\n", res["status"])
+		if nodes, ok := res["nodes"].([]interface{}); ok {
+			fmt.Println("  Nodes:")
+			for _, n := range nodes {
+				fmt.Printf("    - %v\n", n)
+			}
+		}
+
+	case "dag":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain workflows dag <workflow-name>")
+			return
+		}
+		name := args[3]
+		resp, err := http.Get(DAEMON_URL + "/api/workflows/" + name + "/dag")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if nodes, ok := res["nodes"].([]interface{}); ok {
+			fmt.Printf("Workflow DAG [%s]:\n", name)
+			for _, n := range nodes {
+				fmt.Printf("  - %v\n", n)
+			}
+		}
+
+	default:
+		printWorkflowHelp()
+	}
+}
+
+func printWorkflowHelp() {
+	fmt.Println("Usage: brain workflows <subcommand>")
+	fmt.Println("\nSubcommands:")
+	fmt.Println("  list                          List available workflows")
+	fmt.Println("  execute <name>                Execute a workflow")
+	fmt.Println("  status <execution_id>         Check workflow execution status")
+	fmt.Println("  dag <name>                    Show workflow DAG structure")
+}
+
+func handleDelegationCommand(args []string) {
+	if len(args) < 3 {
+		printDelegationHelp()
+		return
+	}
+
+	subcommand := args[2]
+	switch subcommand {
+	case "execute":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain delegation execute <graph_json_file>")
+			return
+		}
+		data, err := os.ReadFile(args[3])
+		if err != nil {
+			fmt.Println("❌ Failed to read graph file:", err)
+			return
+		}
+		var graph map[string]interface{}
+		if err := json.Unmarshal(data, &graph); err != nil {
+			fmt.Println("❌ Invalid JSON:", err)
+			return
+		}
+		body, _ := json.Marshal(graph)
+		resp, err := http.Post(DAEMON_URL+"/api/delegation/execute", "application/json", bytes.NewBuffer(body))
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if execID, ok := res["execution_id"].(string); ok {
+			fmt.Printf("✅ Delegation started. Execution ID: %s\n", execID)
+		} else {
+			fmt.Printf("❌ Failed: %v\n", res)
+		}
+
+	case "status":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain delegation status <execution_id>")
+			return
+		}
+		execID := args[3]
+		resp, err := http.Get(DAEMON_URL + "/api/delegation/" + execID + "/status")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Printf("Delegation [%s]:\n", execID)
+		fmt.Printf("  Status: %v\n", res["status"])
+		if results, ok := res["results"].([]interface{}); ok {
+			fmt.Println("  Results:")
+			for _, r := range results {
+				fmt.Printf("    - %v\n", r)
+			}
+		}
+
+	case "cancel":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain delegation cancel <execution_id>")
+			return
+		}
+		execID := args[3]
+		req, _ := http.NewRequest("POST", DAEMON_URL+"/api/delegation/"+execID+"/cancel", nil)
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		fmt.Printf("✅ Delegation %s cancelled\n", execID)
+
+	case "executions":
+		resp, err := http.Get(DAEMON_URL + "/api/delegation/executions")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if execs, ok := res["executions"].([]interface{}); ok {
+			fmt.Printf("Active Executions (%d):\n", len(execs))
+			for _, e := range execs {
+				fmt.Printf("  - %v\n", e)
+			}
+		}
+
+	default:
+		printDelegationHelp()
+	}
+}
+
+func printDelegationHelp() {
+	fmt.Println("Usage: brain delegation <subcommand>")
+	fmt.Println("\nSubcommands:")
+	fmt.Println("  execute <graph.json>          Execute a delegation graph")
+	fmt.Println("  status <execution_id>         Check execution status")
+	fmt.Println("  cancel <execution_id>         Cancel running execution")
+	fmt.Println("  executions                    List all active executions")
+}
+
+func handleAutoevolveCommand(args []string) {
+	if len(args) < 3 {
+		printAutoevolveHelp()
+		return
+	}
+
+	subcommand := args[2]
+	switch subcommand {
+	case "status":
+		resp, err := http.Get(DAEMON_URL + "/api/autoevolve/status")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Println("AutoEvolve Status:")
+		fmt.Printf("  Enabled: %v\n", res["enabled"])
+		fmt.Printf("  Telemetry Events: %v\n", res["telemetry_count"])
+		fmt.Printf("  Pending Approvals: %v\n", res["pending_approvals"])
+		fmt.Printf("  Applied: %v\n", res["history_count"])
+
+	case "run":
+		resp, err := http.Post(DAEMON_URL+"/api/autoevolve/run", "application/json", nil)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if report, ok := res["report"]; ok {
+			fmt.Println("✅ Analysis complete:")
+			prettyPrint(report)
+		} else {
+			fmt.Printf("❌ Failed: %v\n", res)
+		}
+
+	case "recommendations":
+		resp, err := http.Get(DAEMON_URL + "/api/autoevolve/recommendations")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if recs, ok := res["recommendations"].([]interface{}); ok {
+			fmt.Printf("Recommendations (%d):\n", len(recs))
+			for i, r := range recs {
+				fmt.Printf("  %d. %v\n", i+1, r)
+			}
+		}
+
+	case "approve":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain autoevolve approve <id>")
+			return
+		}
+		id := args[3]
+		req, _ := http.NewRequest("POST", DAEMON_URL+"/api/autoevolve/approve/"+id, nil)
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		fmt.Printf("✅ Recommendation %s approved\n", id)
+
+	case "reject":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain autoevolve reject <id>")
+			return
+		}
+		id := args[3]
+		req, _ := http.NewRequest("POST", DAEMON_URL+"/api/autoevolve/reject/"+id, nil)
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		fmt.Printf("✅ Recommendation %s rejected\n", id)
+
+	case "apply":
+		resp, err := http.Post(DAEMON_URL+"/api/autoevolve/apply", "application/json", nil)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		if applied, ok := res["applied"].([]interface{}); ok {
+			fmt.Printf("✅ Applied %d recommendations:\n", len(applied))
+			for _, a := range applied {
+				fmt.Printf("  - %v\n", a)
+			}
+		}
+
+	case "enable":
+		req, _ := http.NewRequest("POST", DAEMON_URL+"/api/autoevolve/enable", nil)
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		fmt.Println("✅ AutoEvolve enabled")
+
+	case "disable":
+		req, _ := http.NewRequest("POST", DAEMON_URL+"/api/autoevolve/disable", nil)
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		fmt.Println("✅ AutoEvolve disabled")
+
+	default:
+		printAutoevolveHelp()
+	}
+}
+
+func printAutoevolveHelp() {
+	fmt.Println("Usage: brain autoevolve <subcommand>")
+	fmt.Println("\nSubcommands:")
+	fmt.Println("  status                          Show AutoEvolve status")
+	fmt.Println("  run                             Run analysis")
+	fmt.Println("  recommendations                 List pending recommendations")
+	fmt.Println("  approve <id>                    Approve a recommendation")
+	fmt.Println("  reject <id>                     Reject a recommendation")
+	fmt.Println("  apply                           Apply all approved recommendations")
+	fmt.Println("  enable                          Enable AutoEvolve engine")
+	fmt.Println("  disable                         Disable AutoEvolve engine")
+}
+
+func handleMemoryCommand(args []string) {
+	if len(args) < 3 {
+		fmt.Println("Usage: brain memory <subcommand>")
+		fmt.Println("\nSubcommands:")
+		fmt.Println("  status         Show memory status")
+		fmt.Println("  list [scope]   List memory entries")
+		return
+	}
+
+	subcommand := args[2]
+	switch subcommand {
+	case "status":
+		resp, err := http.Get(DAEMON_URL + "/api/qdrant/status")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Println("Memory Status:")
+		prettyPrint(res)
+
+	case "list":
+		scope := "global"
+		if len(args) >= 4 {
+			scope = args[3]
+		}
+		resp, err := http.Get(DAEMON_URL + "/api/mcp/call?server_id=brain-knowledge&tool=list_collections")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Printf("Memory Collections [%s]:\n", scope)
+		prettyPrint(res)
+
+	default:
+		fmt.Println("Unknown memory subcommand:", subcommand)
+	}
+}
+
+func handleContextCommand(args []string) {
+	if len(args) < 3 {
+		fmt.Println("Usage: brain context <subcommand>")
+		fmt.Println("\nSubcommands:")
+		fmt.Println("  bundle         Show context bundle info")
+		fmt.Println("  curator run    Run context curator")
+		fmt.Println("  curator report Show curator report")
+		return
+	}
+
+	subcommand := args[2]
+	switch subcommand {
+	case "bundle":
+		resp, err := http.Get(DAEMON_URL + "/api/status")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Println("Context Status:")
+		fmt.Printf("  Environment: %v\n", res["environment"])
+		fmt.Printf("  Processes: %v\n", res["processes"])
+
+	case "curator":
+		if len(args) < 4 {
+			fmt.Println("Usage: brain context curator <run|report>")
+			return
+		}
+		action := args[3]
+		switch action {
+		case "run":
+			resp, err := http.Post(DAEMON_URL+"/api/context/curator/run?dry_run=true", "application/json", nil)
+			if err != nil {
+				fmt.Println("❌ Error:", err)
+				return
+			}
+			defer resp.Body.Close()
+			fmt.Println("✅ Curator analysis started (dry-run)")
+		case "report":
+			resp, err := http.Get(DAEMON_URL + "/api/context/curator/report")
+			if err != nil {
+				fmt.Println("❌ Error:", err)
+				return
+			}
+			defer resp.Body.Close()
+			var res map[string]interface{}
+			json.NewDecoder(resp.Body).Decode(&res)
+			fmt.Println("Curator Report:")
+			prettyPrint(res)
+		}
+
+	default:
+		fmt.Println("Unknown context subcommand:", subcommand)
+	}
+}
+
+func handleCostCommand(args []string) {
+	if len(args) < 3 {
+		fmt.Println("Usage: brain cost <subcommand>")
+		fmt.Println("\nSubcommands:")
+		fmt.Println("  budget [id]          Show budget status")
+		fmt.Println("  report               Show cost report")
+		return
+	}
+
+	subcommand := args[2]
+	switch subcommand {
+	case "budget":
+		id := "default"
+		if len(args) >= 4 {
+			id = args[3]
+		}
+		resp, err := http.Get(DAEMON_URL + "/api/runtime/budget/" + id)
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Printf("Budget [%s]:\n", id)
+		prettyPrint(res)
+
+	case "report":
+		resp, err := http.Get(DAEMON_URL + "/api/cost/report")
+		if err != nil {
+			fmt.Println("❌ Error:", err)
+			return
+		}
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Println("Cost Report:")
+		prettyPrint(res)
+
+	default:
+		fmt.Println("Unknown cost subcommand:", subcommand)
+	}
+}
+
+func prettyPrint(v interface{}) {
+	data, _ := json.MarshalIndent(v, "  ", "  ")
+	fmt.Println(string(data))
 }

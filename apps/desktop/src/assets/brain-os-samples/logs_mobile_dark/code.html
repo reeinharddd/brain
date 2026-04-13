@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary": "#3f008e",
+                        "primary-fixed-dim": "#d2bbff",
+                        "outline-variant": "#4a4455",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "inverse-primary": "#732ee4",
+                        "secondary": "#c8c6c5",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#353534",
+                        "on-secondary": "#313030",
+                        "on-primary-fixed": "#25005a",
+                        "secondary-container": "#474746",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#7c3aed",
+                        "surface-bright": "#3a3939",
+                        "on-secondary-fixed-variant": "#474746",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary": "#4f2500",
+                        "surface-tint": "#d2bbff",
+                        "on-tertiary-container": "#ffe0cd",
+                        "surface-container": "#201f1f",
+                        "primary": "#d2bbff",
+                        "tertiary-fixed": "#ffdcc6",
+                        "surface-dim": "#131313",
+                        "outline": "#958da1",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-container": "#ede0ff",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary-container": "#a15100",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "surface-variant": "#353534",
+                        "tertiary": "#ffb784",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "background": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#eaddff",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#b7b4b4",
+                        "on-surface-variant": "#ccc3d8",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "surface": "#131313",
+                        "on-tertiary-fixed": "#301400"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Space Grotesk"],
+                        "label": ["Space Grotesk"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0A0A0A;
+            color: #F5F5F3;
+        }
+        /* Hide scrollbar but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body selection:bg-primary-container selection:text-on-primary">
+<!-- TopNavBar (Mobile Execution) -->
+<header class="fixed top-0 left-0 w-full h-12 bg-[#0A0A0A] flex items-center justify-between px-4 z-50">
+<div class="flex items-center gap-3">
+<span class="font-headline font-bold text-lg tracking-tighter text-[#F5F5F3]">brain</span>
+<span class="font-mono text-[10px] text-outline px-1.5 py-0.5 border border-outline-variant bg-surface-container-low">V1.0.4-STABLE</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#A1A1A1] text-xl">cloud_done</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-xl">account_circle</span>
+</div>
+</header>
+<!-- Sub-Header / Filter Bar -->
+<nav class="fixed top-12 left-0 w-full bg-[#111111] border-b border-outline-variant z-40">
+<div class="flex items-center px-4 h-10 overflow-x-auto no-scrollbar gap-6">
+<button class="font-mono text-xs font-bold whitespace-nowrap text-[#7C3AED] border-b-2 border-[#7C3AED] h-full flex items-center">Logs</button>
+<button class="font-mono text-xs font-bold whitespace-nowrap text-[#A1A1A1] h-full flex items-center">System</button>
+<button class="font-mono text-xs font-bold whitespace-nowrap text-[#A1A1A1] h-full flex items-center">Network</button>
+<button class="font-mono text-xs font-bold whitespace-nowrap text-[#A1A1A1] h-full flex items-center">Nodes</button>
+</div>
+</nav>
+<!-- Filter/Action Bar (Mobile specific) -->
+<section class="fixed top-[88px] left-0 w-full bg-[#171717] px-4 py-3 flex items-center justify-between gap-3 z-30">
+<div class="flex-1 relative">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-xs text-outline">search</span>
+<input class="w-full bg-[#0A0A0A] border border-outline-variant text-[11px] font-mono pl-8 py-1.5 focus:outline-none focus:border-[#7C3AED] text-[#F5F5F3]" placeholder="FILTER_LOGS..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-high p-1.5 border border-outline-variant">
+<span class="material-symbols-outlined text-sm text-[#A1A1A1]">filter_list</span>
+</button>
+<button class="bg-surface-container-high p-1.5 border border-outline-variant">
+<span class="material-symbols-outlined text-sm text-[#A1A1A1]">download</span>
+</button>
+</div>
+</section>
+<!-- Main Terminal Output -->
+<main class="pt-36 pb-12 min-h-screen bg-[#0A0A0A]">
+<div class="overflow-x-auto w-full">
+<div class="min-w-[600px] p-4 font-mono text-[10px] leading-relaxed space-y-1">
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:02:11</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[SYSTEM]</span>
+<span class="text-[#A1A1A1] whitespace-nowrap">Kernel initialization sequence completed in 42ms. CPU: 0.4% Load.</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:02:12</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[AGENTS]</span>
+<span class="text-[#F5F5F3] whitespace-nowrap">Instantiating NeuralEngine_Alpha... <span class="text-tertiary">SUCCESS</span></span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:02:14</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[MEMORY]</span>
+<span class="text-[#A1A1A1] whitespace-nowrap">Hydrating vector database index 'primary_knowledge_base'</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:02:15</span>
+<span class="text-error shrink-0 font-bold">[ERR_04]</span>
+<span class="text-error whitespace-nowrap bg-error-container/20 px-1 border-l-2 border-error">Network latency peak detected in region US-EAST-1: 450ms.</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:02:18</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[RUNTIME]</span>
+<span class="text-[#A1A1A1] whitespace-nowrap">Executing workflow step: [data_ingestion_v2] - PID: 9942</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:03:01</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[AGENTS]</span>
+<span class="text-[#F5F5F3] whitespace-nowrap">Request processed: <span class="text-[#7C3AED]">"Explain quantum entanglement"</span> -&gt; 0.0042 tokens/sec</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:03:05</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[POLICY]</span>
+<span class="text-[#A1A1A1] whitespace-nowrap">Access policy check: USER_ROOT -&gt; GRANTED for module MCP_TOOLS</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:03:10</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[SYSTEM]</span>
+<span class="text-[#A1A1A1] whitespace-nowrap">Autoscaling event triggered. Spinning up node_worker_04...</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:03:12</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[MCP]</span>
+<span class="text-[#F5F5F3] whitespace-nowrap">Tool registered: <span class="text-tertiary">github_repo_analyzer</span> (Version 2.1)</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:03:15</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[MEMORY]</span>
+<span class="text-[#A1A1A1] whitespace-nowrap">Optimizing context window. Cache cleared for Session_ID: 0x882A</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:04:00</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[LOGS]</span>
+<span class="text-[#F5F5F3] whitespace-nowrap">Log rotation starting... <span class="text-outline">ARCHIVING_CURRENT</span></span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:04:02</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[EVALS]</span>
+<span class="text-[#A1A1A1] whitespace-nowrap">Benchmark results: Consistency [0.94], Latency [11ms], Coherence [HIGH]</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:04:10</span>
+<span class="text-error shrink-0 font-bold">[WARN]</span>
+<span class="text-error whitespace-nowrap italic opacity-80">Unrecognized command syntax detected at index: 401. Silently dropping.</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:04:22</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[AGENTS]</span>
+<span class="text-[#F5F5F3] whitespace-nowrap">Collaborative resolution reached between Agent_A and Agent_B</span>
+</div>
+<!-- Log Entry -->
+<div class="flex gap-3 hover:bg-[#111111] group">
+<span class="text-outline-variant shrink-0 w-16">14:04:25</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">[SYSTEM]</span>
+<span class="text-[#A1A1A1] whitespace-nowrap">Pulse signal stable. 104 nodes heartbeat active.</span>
+</div>
+<!-- Active Cursor Simulation -->
+<div class="flex gap-3 mt-4">
+<span class="text-outline-variant shrink-0 w-16">14:04:30</span>
+<span class="text-[#7C3AED] shrink-0 font-bold">root@brain:~$</span>
+<span class="w-1.5 h-3.5 bg-[#7C3AED] animate-pulse"></span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Shell) -->
+<footer class="fixed bottom-0 left-0 w-full h-10 bg-[#171717] border-t border-outline-variant flex items-center px-4 z-50">
+<div class="flex items-center justify-between w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#7C3AED] text-sm">keyboard_arrow_right</span>
+<span class="font-mono text-[11px] uppercase text-[#7C3AED]">COMMAND_LINE</span>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg">terminal</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-lg">settings</span>
+</div>
+</div>
+</footer>
+<!-- Side Navigation Menu (Hidden by default, shown via specific mobile UI triggers) -->
+<!-- Not rendered as it's a sub-page/focused task -->
+</body></html>

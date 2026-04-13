@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#3f008e",
+                        "primary-fixed-dim": "#d2bbff",
+                        "outline-variant": "#4a4455",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "inverse-primary": "#732ee4",
+                        "secondary": "#c8c6c5",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#353534",
+                        "on-secondary": "#313030",
+                        "on-primary-fixed": "#25005a",
+                        "secondary-container": "#474746",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#7c3aed",
+                        "surface-bright": "#3a3939",
+                        "on-secondary-fixed-variant": "#474746",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary": "#4f2500",
+                        "surface-tint": "#d2bbff",
+                        "on-tertiary-container": "#ffe0cd",
+                        "surface-container": "#201f1f",
+                        "primary": "#d2bbff",
+                        "tertiary-fixed": "#ffdcc6",
+                        "surface-dim": "#131313",
+                        "outline": "#958da1",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-container": "#ede0ff",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary-container": "#a15100",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "surface-variant": "#353534",
+                        "tertiary": "#ffb784",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "background": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#eaddff",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#b7b4b4",
+                        "on-surface-variant": "#ccc3d8",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "surface": "#131313",
+                        "on-tertiary-fixed": "#301400"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Space Grotesk"],
+                        "label": ["Space Grotesk"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0A0A0A;
+            color: #F5F5F3;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col w-[240px] bg-[#111111] border-r border-[#4A4455] font-mono text-sm tracking-tight z-50">
+<div class="p-6 flex flex-col gap-1">
+<span class="font-['Space_Grotesk'] font-bold text-2xl tracking-tighter text-[#F5F5F3]">brain</span>
+<span class="text-[10px] text-[#A1A1A1] tracking-widest uppercase">V1.0.4-STABLE</span>
+</div>
+<div class="px-3 mb-6">
+<button class="w-full py-2 bg-[#7C3AED] text-[#3F008E] font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#D2BBFF] transition-none">
+<span class="material-symbols-outlined">add</span>
+                NEW_SESSION
+            </button>
+</div>
+<nav class="flex-1 flex flex-col">
+<!-- Navigation Items with Semantic Mapping (MCP Tools active) -->
+<a class="flex items-center py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">terminal</span>
+                Runtime
+            </a>
+<a class="flex items-center py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">psychology</span>
+                Agents
+            </a>
+<a class="flex items-center py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">database</span>
+                Memory
+            </a>
+<a class="flex items-center py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">policy</span>
+                Rules
+            </a>
+<!-- Active State: MCP Tools -->
+<a class="flex items-center py-3 text-[#7C3AED] font-bold border-l-2 border-[#7C3AED] pl-4 bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">extension</span>
+                MCP Tools
+            </a>
+<a class="flex items-center py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">subject</span>
+                Logs
+            </a>
+<a class="flex items-center py-3 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] hover:bg-[#171717] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">analytics</span>
+                Evals
+            </a>
+</nav>
+<footer class="mt-auto border-t border-[#4A4455] py-4 flex flex-col">
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+                Settings
+            </a>
+<a class="flex items-center py-2 text-[#A1A1A1] pl-4 hover:text-[#F5F5F3] transition-none" href="#">
+<span class="material-symbols-outlined mr-3">description</span>
+                Docs
+            </a>
+</footer>
+</aside>
+<!-- Main Execution Canvas -->
+<main class="flex-1 ml-[240px] flex flex-col relative min-h-screen bg-[#0A0A0A]">
+<!-- TopNavBar (Authority: JSON) -->
+<header class="flex items-center justify-between px-6 h-12 bg-[#0A0A0A] w-full sticky top-0 z-40">
+<div class="flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">System</a>
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#A1A1A1] hover:text-[#F5F5F3]" href="#">Network</a>
+<a class="font-['Space_Grotesk'] uppercase text-xs font-bold tracking-widest text-[#F5F5F3] border-b border-[#7C3AED]" href="#">Nodes</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[#A1A1A1] text-sm">search</span>
+<input class="bg-[#111111] border border-[#4A4455] text-[10px] pl-8 pr-4 py-1 w-48 focus:outline-none focus:border-[#7C3AED] transition-none placeholder:text-[#4A4455]" placeholder="QUERY_RESOURCES..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-[#A1A1A1]">
+<span class="material-symbols-outlined cursor-pointer hover:text-[#F5F5F3]">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-[#F5F5F3]">cloud_done</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-[#F5F5F3]">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-8 pb-20">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h1 class="font-['Space_Grotesk'] font-bold text-4xl tracking-tighter mb-2">MCP_PROTOCOLS</h1>
+<p class="text-[#A1A1A1] text-xs max-w-md">Connected Model Context Protocol instances and external resource bridging layers. Real-time telemetry active.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-[#111111] border border-[#4A4455] px-4 py-2 flex flex-col min-w-[120px]">
+<span class="text-[9px] text-[#A1A1A1] uppercase tracking-tighter">Active_Tools</span>
+<span class="text-xl font-bold text-[#7C3AED]">14</span>
+</div>
+<div class="bg-[#111111] border border-[#4A4455] px-4 py-2 flex flex-col min-w-[120px]">
+<span class="text-[9px] text-[#A1A1A1] uppercase tracking-tighter">Total_Calls</span>
+<span class="text-xl font-bold text-[#F5F5F3]">1.2M</span>
+</div>
+</div>
+</div>
+<!-- Functional Data Grid -->
+<div class="bg-[#111111] border border-[#4A4455]">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#171717] border-b border-[#4A4455]">
+<th class="px-6 py-4 text-[10px] font-bold text-[#A1A1A1] uppercase tracking-widest">Tool Name</th>
+<th class="px-6 py-4 text-[10px] font-bold text-[#A1A1A1] uppercase tracking-widest">Protocol Type</th>
+<th class="px-6 py-4 text-[10px] font-bold text-[#A1A1A1] uppercase tracking-widest">Connection Status</th>
+<th class="px-6 py-4 text-[10px] font-bold text-[#A1A1A1] uppercase tracking-widest">Total Calls</th>
+<th class="px-6 py-4 text-[10px] font-bold text-[#A1A1A1] uppercase tracking-widest text-right">Action</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="hover:bg-[#1a1a1a] transition-none group">
+<td class="px-6 py-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#7C3AED]">storage</span>
+<span class="text-[#F5F5F3]">PostgreSQL_Bridge</span>
+</td>
+<td class="px-6 py-4"><span class="bg-[#201F1F] px-2 py-0.5 text-[10px] text-[#A1A1A1]">SQL_V1</span></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-[#7C3AED] rounded-full"></div>
+<span class="text-[#7C3AED] text-[11px] font-bold uppercase">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 font-mono text-xs">842,109</td>
+<td class="px-6 py-4 text-right">
+<button class="border border-[#4A4455] px-3 py-1 text-[10px] hover:bg-[#F5F5F3] hover:text-[#0A0A0A] transition-none">CONFIG</button>
+</td>
+</tr>
+<tr class="hover:bg-[#1a1a1a] transition-none border-t border-[#4A4455]">
+<td class="px-6 py-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#A1A1A1]">web</span>
+<span class="text-[#F5F5F3]">Web_Search_Enricher</span>
+</td>
+<td class="px-6 py-4"><span class="bg-[#201F1F] px-2 py-0.5 text-[10px] text-[#A1A1A1]">HTTPS_JSON</span></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-[#7C3AED] rounded-full"></div>
+<span class="text-[#7C3AED] text-[11px] font-bold uppercase">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 font-mono text-xs">215,552</td>
+<td class="px-6 py-4 text-right">
+<button class="border border-[#4A4455] px-3 py-1 text-[10px] hover:bg-[#F5F5F3] hover:text-[#0A0A0A] transition-none">CONFIG</button>
+</td>
+</tr>
+<tr class="hover:bg-[#1a1a1a] transition-none border-t border-[#4A4455]">
+<td class="px-6 py-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#A1A1A1]">folder_open</span>
+<span class="text-[#F5F5F3]">Local_FS_Inspector</span>
+</td>
+<td class="px-6 py-4"><span class="bg-[#201F1F] px-2 py-0.5 text-[10px] text-[#A1A1A1]">NATIVE_OS</span></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-[#4A4455] rounded-full"></div>
+<span class="text-[#4A4455] text-[11px] font-bold uppercase">Inactive</span>
+</div>
+</td>
+<td class="px-6 py-4 font-mono text-xs">0</td>
+<td class="px-6 py-4 text-right">
+<button class="border border-[#4A4455] px-3 py-1 text-[10px] hover:bg-[#F5F5F3] hover:text-[#0A0A0A] transition-none">CONFIG</button>
+</td>
+</tr>
+<tr class="hover:bg-[#1a1a1a] transition-none border-t border-[#4A4455]">
+<td class="px-6 py-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#7C3AED]">api</span>
+<span class="text-[#F5F5F3]">GitHub_API_Connector</span>
+</td>
+<td class="px-6 py-4"><span class="bg-[#201F1F] px-2 py-0.5 text-[10px] text-[#A1A1A1]">OAUTH2</span></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-[#7C3AED] rounded-full"></div>
+<span class="text-[#7C3AED] text-[11px] font-bold uppercase">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 font-mono text-xs">104,912</td>
+<td class="px-6 py-4 text-right">
+<button class="border border-[#4A4455] px-3 py-1 text-[10px] hover:bg-[#F5F5F3] hover:text-[#0A0A0A] transition-none">CONFIG</button>
+</td>
+</tr>
+<tr class="hover:bg-[#1a1a1a] transition-none border-t border-[#4A4455]">
+<td class="px-6 py-4 flex items-center gap-3">
+<span class="material-symbols-outlined text-[#7C3AED]">cloud_sync</span>
+<span class="text-[#F5F5F3]">Vector_Sync_Node</span>
+</td>
+<td class="px-6 py-4"><span class="bg-[#201F1F] px-2 py-0.5 text-[10px] text-[#A1A1A1]">GRPC</span></td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 bg-[#7C3AED] rounded-full"></div>
+<span class="text-[#7C3AED] text-[11px] font-bold uppercase">Active</span>
+</div>
+</td>
+<td class="px-6 py-4 font-mono text-xs">52,001</td>
+<td class="px-6 py-4 text-right">
+<button class="border border-[#4A4455] px-3 py-1 text-[10px] hover:bg-[#F5F5F3] hover:text-[#0A0A0A] transition-none">CONFIG</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Details Section / Asymmetric Bento Component -->
+<div class="mt-12 grid grid-cols-12 gap-6">
+<div class="col-span-8 bg-[#111111] border border-[#4A4455] p-6">
+<h3 class="text-xs font-bold uppercase tracking-widest text-[#A1A1A1] mb-6">Connection_Dynamics</h3>
+<div class="h-48 flex items-end gap-1">
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[40%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[60%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[45%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[80%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[95%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[70%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[55%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[30%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[65%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[85%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[100%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[75%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[40%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[60%] transition-none"></div>
+<div class="flex-1 bg-[#171717] hover:bg-[#7C3AED] h-[45%] transition-none"></div>
+</div>
+<div class="mt-4 flex justify-between text-[10px] text-[#4A4455]">
+<span>T-30H</span>
+<span>REALTIME_THROUGHPUT</span>
+<span>T-NOW</span>
+</div>
+</div>
+<div class="col-span-4 bg-[#7C3AED] text-[#3F008E] p-6 flex flex-col justify-between">
+<div>
+<h3 class="text-xs font-bold uppercase tracking-widest mb-4">Node_Health</h3>
+<p class="text-2xl font-bold tracking-tighter leading-tight">SYSTEM INTEGRITY NOMINAL [99.98%]</p>
+</div>
+<div class="mt-8 flex flex-col gap-2">
+<div class="flex justify-between items-center text-[11px] border-b border-[#3F008E]/20 pb-1">
+<span class="font-bold">LATENCY</span>
+<span>12ms</span>
+</div>
+<div class="flex justify-between items-center text-[11px] border-b border-[#3F008E]/20 pb-1">
+<span class="font-bold">UPLINK</span>
+<span>4.2 GB/s</span>
+</div>
+<div class="flex justify-between items-center text-[11px]">
+<span class="font-bold">STATUS</span>
+<span>ENCRYPTED</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- BottomNavBar (Authority: JSON) -->
+<footer class="fixed bottom-0 ml-[240px] w-[calc(100%-240px)] bg-[#171717] border-t border-[#4A4455] h-10 flex items-center px-4 z-50 font-mono text-[11px] uppercase">
+<div class="flex items-center text-[#7C3AED] gap-2">
+<span class="material-symbols-outlined">keyboard_arrow_right</span>
+<span>COMMAND_LINE</span>
+</div>
+<div class="flex-1 mx-4">
+<input class="w-full bg-transparent border-none text-[#F5F5F3] focus:ring-0 p-0 placeholder:text-[#4A4455]" placeholder="ENTER_SYSTEM_COMMAND_OR_EXECUTE_TOOL_ID..." type="text"/>
+</div>
+<div class="flex gap-4 text-[#A1A1A1]">
+<span class="hover:text-[#F5F5F3] cursor-pointer">UTF-8</span>
+<span class="hover:text-[#F5F5F3] cursor-pointer">LN: 42, COL: 12</span>
+<span class="text-[#7C3AED] font-bold">STABLE</span>
+</div>
+</footer>
+</main>
+</body></html>

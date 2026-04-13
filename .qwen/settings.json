@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(www.iswift.dev)",
+      "WebFetch(techwithibrahim.medium.com)",
+      "WebFetch(bridgeapp.ai)",
+      "WebFetch(deepkaria.medium.com)",
+      "WebFetch(www.paulserban.eu)",
+      "WebFetch(mem0.ai)",
+      "WebFetch(qwenlm.github.io)",
+      "WebFetch(abdulkadersafi.com)",
+      "WebFetch(cline.bot)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  },
+  "$version": 3
+}

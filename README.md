@@ -27,3 +27,10 @@ The repository is moving toward a clean structure built around:
 - `deploy/`
 
 The implementation is still transitional, but the current source of truth for product direction is `docs/`.
+
+## Login and access control
+
+- `brain auth login --email <email> --password <password>` stores a local session and unlocks the daemon-protected surfaces.
+- `brain auth status` shows the daemon auth posture plus the local session state.
+- `brain auth logout` revokes the stored session.
+- The desktop shell uses the same bearer token, so logging in once unlocks both CLI and UI.

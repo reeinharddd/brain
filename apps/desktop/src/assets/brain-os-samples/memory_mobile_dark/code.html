@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0A0A0A;
+            color: #F5F5F3;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .font-headline { font-family: 'Space Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary": "#3f008e",
+                        "primary-fixed-dim": "#d2bbff",
+                        "outline-variant": "#4a4455",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "inverse-primary": "#732ee4",
+                        "secondary": "#c8c6c5",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#353534",
+                        "on-secondary": "#313030",
+                        "on-primary-fixed": "#25005a",
+                        "secondary-container": "#474746",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#7c3aed",
+                        "surface-bright": "#3a3939",
+                        "on-secondary-fixed-variant": "#474746",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary": "#4f2500",
+                        "surface-tint": "#d2bbff",
+                        "on-tertiary-container": "#ffe0cd",
+                        "surface-container": "#201f1f",
+                        "primary": "#d2bbff",
+                        "tertiary-fixed": "#ffdcc6",
+                        "surface-dim": "#131313",
+                        "outline": "#958da1",
+                        "inverse-on-surface": "#313030",
+                        "on-primary-container": "#ede0ff",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "tertiary-container": "#a15100",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "surface-variant": "#353534",
+                        "tertiary": "#ffb784",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "background": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#eaddff",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#b7b4b4",
+                        "on-surface-variant": "#ccc3d8",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "surface": "#131313",
+                        "on-tertiary-fixed": "#301400"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Space Grotesk"],
+                        "label": ["Space Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased overflow-x-hidden">
+<!-- TopNavBar Simplified for Mobile -->
+<header class="fixed top-0 left-0 right-0 h-14 bg-[#0A0A0A] flex items-center justify-between px-4 z-50">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-lg tracking-tighter text-[#F5F5F3]">brain</span>
+<span class="text-[10px] bg-surface-container-highest px-1.5 py-0.5 rounded text-on-surface-variant">V1.0.4</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#A1A1A1] text-xl" data-icon="cloud_done">cloud_done</span>
+<span class="material-symbols-outlined text-[#F5F5F3] text-xl" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-14 pb-24 px-4 min-h-screen">
+<!-- Memory Header Section -->
+<section class="mt-6 mb-8">
+<h1 class="font-headline font-bold text-3xl tracking-tight text-[#F5F5F3] leading-none mb-2">Memory</h1>
+<p class="text-on-surface-variant text-xs uppercase tracking-widest font-medium">Latent Vector Space / Temporal Logs</p>
+</section>
+<!-- Search / Filter Bar (Technical Brutalist) -->
+<div class="mb-8 p-3 bg-surface-container-low border border-outline-variant rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-outline" data-icon="terminal">terminal</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-mono w-full text-on-surface placeholder:text-surface-container-highest" placeholder="grep --query 'latent_memory'..." type="text"/>
+</div>
+<!-- Vertical Timeline Layout -->
+<div class="relative">
+<!-- Timeline Spine -->
+<div class="absolute left-[11px] top-0 bottom-0 w-[1px] bg-outline-variant opacity-30"></div>
+<!-- Timeline Entry 1 -->
+<div class="relative pl-10 mb-10">
+<div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-[#0A0A0A] border-2 border-primary-container flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="database" style="font-variation-settings: 'FILL' 1;">database</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">02:44:12 UTC</span>
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high rounded text-primary border border-primary/20">VECTOR_CLUSTER_A</span>
+</div>
+<h3 class="text-sm font-bold text-on-surface mt-1">Core architectural constraints updated</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">Integrated technical brutalism guidelines into generation pipeline. High contrast enforced.</p>
+<div class="mt-3 flex items-center gap-2">
+<button class="bg-primary-container text-on-primary text-[10px] font-bold py-1 px-4 rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-xs" data-icon="refresh">refresh</span>
+                            RECALL
+                        </button>
+<button class="border border-outline-variant text-on-surface text-[10px] font-bold py-1 px-3 rounded-lg">
+                            METADATA
+                        </button>
+</div>
+</div>
+</div>
+<!-- Timeline Entry 2 -->
+<div class="relative pl-10 mb-10">
+<div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-[#0A0A0A] border-2 border-outline-variant flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[14px] text-outline" data-icon="psychology">psychology</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Yesterday 22:15</span>
+<span class="text-[9px] px-1.5 py-0.5 bg-surface-container-high rounded text-on-surface-variant">LONG_TERM_STORAGE</span>
+</div>
+<h3 class="text-sm font-bold text-on-surface mt-1">User preference: 'Minimalist'</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">Stored preference for low-density information display during dashboard operations.</p>
+<div class="mt-3">
+<button class="bg-surface-container-high text-on-surface text-[10px] font-bold py-1 px-4 rounded-lg flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-xs" data-icon="lock">lock</span>
+                            PROTECTED
+                        </button>
+</div>
+</div>
+</div>
+<!-- Image/Visual Memory Card (Bento Style) -->
+<div class="relative pl-10 mb-10">
+<div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-[#0A0A0A] border-2 border-primary-container flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="image">image</span>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-2 rounded-xl">
+<div class="aspect-video w-full rounded-lg overflow-hidden mb-3 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Abstract 3D render of purple and black topographic waves representing complex neural data mapping" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDioac-Ot-2-EPDebh1LAnQEumR8nwmaE-H-y7dw3peH7trtVMwdwL4M5PWsIRwY1b05yXOzg8vLBd7XyUBjhrXnd1sf6APqZZwPvvIWr13CvjVcviq3IJUs4HdJRK6aKMzKj7YYiQktPyecNIw5dKxsJfbZeII1_PDPSoUFtJusNmIO2168ZnrH07rNmDbbBcgXGJIwGcqpX4X9tepTKvHI6fo4k9KNNpIpusH99VNANCnMjDBPLltviCJJJl3oKOGRJj0eKQl7pcc"/>
+</div>
+<div class="px-2 pb-2">
+<span class="text-[10px] font-bold text-primary mb-1 block">VISUAL_ASSET_449</span>
+<h3 class="text-xs font-bold text-on-surface">Latent vector visualization</h3>
+<div class="mt-3">
+<button class="w-full bg-primary-container text-on-primary text-[10px] font-bold py-2 rounded-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span>
+                                RECONSTRUCT_DATA
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Timeline Entry 3 -->
+<div class="relative pl-10 mb-4">
+<div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-[#0A0A0A] border-2 border-outline-variant flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[14px] text-outline" data-icon="history">history</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Oct 24, 08:30</span>
+</div>
+<h3 class="text-sm font-bold text-on-surface mt-1">Session Initialized</h3>
+<p class="text-xs text-on-surface-variant leading-relaxed">System kernel load successful. Environment: Mobile_Production.</p>
+</div>
+</div>
+</div>
+<!-- FAB: Specialized for Recall on Memory Screen -->
+<div class="fixed bottom-16 right-6 z-50">
+<button class="w-14 h-14 rounded-full bg-primary-container text-on-primary shadow-2xl flex items-center justify-center border-2 border-[#D2BBFF]">
+<span class="material-symbols-outlined text-3xl" data-icon="psychology" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar as per JSON -->
+<nav class="fixed bottom-0 left-0 right-0 bg-[#171717] border-t border-[#4A4455] h-12 flex items-center px-4 z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#7C3AED] text-lg" data-icon="keyboard_arrow_right">keyboard_arrow_right</span>
+<span class="font-mono text-[11px] uppercase tracking-wider text-[#7C3AED]">COMMAND_LINE</span>
+</div>
+<div class="ml-auto flex items-center gap-6">
+<span class="material-symbols-outlined text-[#A1A1A1] text-xl" data-icon="terminal">terminal</span>
+<span class="material-symbols-outlined text-[#7C3AED] text-xl" data-icon="database" style="font-variation-settings: 'FILL' 1;">database</span>
+<span class="material-symbols-outlined text-[#A1A1A1] text-xl" data-icon="settings">settings</span>
+</div>
+</nav>
+</body></html>

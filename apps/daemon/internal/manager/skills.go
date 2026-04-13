@@ -39,9 +39,13 @@ type CatalogItem struct {
 	Path        string   `json:"path"` // file or context path
 
 	// Metadata
-	Version    string `json:"version,omitempty"`
-	Maintained bool   `json:"maintained"`
-	Source     string `json:"source"` // "registry.yml" or "dynamic-registry.tsv"
+	Version       string `json:"version,omitempty"`
+	Maintained    bool   `json:"maintained"`
+	Source        string `json:"source"` // "registry.yml" or "dynamic-registry.tsv"
+	SourceType    string `json:"source_type,omitempty"`
+	SourceURI     string `json:"source_uri,omitempty"`
+	SourceVariant string `json:"source_variant,omitempty"`
+	ArtifactPath  string `json:"artifact_path,omitempty"`
 
 	// Legacy aliases for backward compatibility with CLI and existing consumers
 	Type     string   `json:"type,omitempty"`    // alias for Kind in legacy YAML (internal/external or context-pack)
@@ -78,6 +82,22 @@ func (r *SkillsRegistry) contextPacksPath() string {
 
 func (r *SkillsRegistry) skillsDir() string {
 	return coreartifacts.NewLocator(r.brainRoot).DomainDir("skills")
+}
+
+func (r *SkillsRegistry) skillSourcesDir() string {
+	candidates := []string{
+		filepath.Join(r.brainRoot, ".github", "skills"),
+		filepath.Join(r.brainRoot, "artifacts", "skills"),
+		filepath.Join(r.brainRoot, "skills"),
+	}
+
+	for _, candidate := range candidates {
+		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+			return candidate
+		}
+	}
+
+	return candidates[0]
 }
 
 // Load reads skills from registry.yml and context-packs from dynamic-registry.tsv
@@ -166,6 +186,18 @@ func (r *SkillsRegistry) loadSkillsFromYAML() error {
 		}
 		if v, ok := skillMap["category"].(string); ok {
 			item.Category = v
+		}
+		if v, ok := skillMap["source_type"].(string); ok {
+			item.SourceType = v
+		}
+		if v, ok := skillMap["source_uri"].(string); ok {
+			item.SourceURI = v
+		}
+		if v, ok := skillMap["source_variant"].(string); ok {
+			item.SourceVariant = v
+		}
+		if v, ok := skillMap["artifact_path"].(string); ok {
+			item.ArtifactPath = v
 		}
 		if v, ok := skillMap["maintained"].(bool); ok {
 			item.Maintained = v
@@ -758,6 +790,18 @@ func (r *SkillsRegistry) catalogItemToYAMLSkill(item *CatalogItem) map[string]in
 	if item.Category != "" {
 		m["category"] = item.Category
 	}
+	if item.SourceType != "" {
+		m["source_type"] = item.SourceType
+	}
+	if item.SourceURI != "" {
+		m["source_uri"] = item.SourceURI
+	}
+	if item.SourceVariant != "" {
+		m["source_variant"] = item.SourceVariant
+	}
+	if item.ArtifactPath != "" {
+		m["artifact_path"] = item.ArtifactPath
+	}
 	if len(item.Tags) > 0 {
 		m["tags"] = item.Tags
 	}
@@ -792,7 +836,7 @@ func (r *SkillsRegistry) ValidateSyncStatus(ctx context.Context) (bool, []string
 
 // getOrphansLocked finds filesystem directories not in registry (must hold read lock)
 func (r *SkillsRegistry) getOrphansLocked() []string {
-	skillsPath := r.skillsDir()
+	skillsPath := r.skillSourcesDir()
 
 	entries, err := os.ReadDir(skillsPath)
 	if err != nil {
@@ -809,6 +853,7 @@ func (r *SkillsRegistry) getOrphansLocked() []string {
 		// Skip special directories
 		if dirName == "." || dirName == ".." || dirName == ".git" ||
 			dirName == ".gitignore" || dirName == "__pycache__" ||
+			dirName == "manifests" ||
 			strings.HasPrefix(dirName, ".") {
 			continue
 		}
@@ -827,7 +872,7 @@ func (r *SkillsRegistry) getMissingLocked() []string {
 	var missing []string
 
 	for id := range r.catalog {
-		skillPath := filepath.Join(r.skillsDir(), id)
+		skillPath := filepath.Join(r.skillSourcesDir(), id)
 		if _, err := os.Stat(skillPath); os.IsNotExist(err) {
 			missing = append(missing, id)
 		}

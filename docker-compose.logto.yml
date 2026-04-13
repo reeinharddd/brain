@@ -1,0 +1,62 @@
+# Logto OIDC Provider (development mode)
+# Usage: docker compose -f docker-compose.logto.yml up -d
+#
+# Ports:
+#   3001 - Logto Admin Console
+#   3002 - Logto OIDC endpoints (issuer base URL)
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: brain-logto-postgres
+    restart: "no"
+    environment:
+      POSTGRES_USER: ${LOGTO_PG_USER:-logto}
+      POSTGRES_PASSWORD: ${LOGTO_PG_PASSWORD:-logto_password_dev}
+      POSTGRES_DB: ${LOGTO_PG_DATABASE:-logto}
+    ports:
+      - "5432:5432"
+    volumes:
+      - brain_logto_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${LOGTO_PG_USER:-logto} -d ${LOGTO_PG_DATABASE:-logto}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - brain_logto
+
+  logto:
+    image: ghcr.io/logto-io/logto:latest
+    container_name: brain-logto
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      TRUST_PROXY_HEADER: "1"
+      DB_URL: postgres://${LOGTO_PG_USER:-logto}:${LOGTO_PG_PASSWORD:-logto_password_dev}@postgres:5432/${LOGTO_PG_DATABASE:-logto}
+      ENDPOINT: ${LOGTO_ENDPOINT:-http://127.0.0.1:3002}
+      ADMIN_ENDPOINT: ${LOGTO_ADMIN_ENDPOINT:-http://127.0.0.1:3001}
+      # Seed the admin user on first boot
+      INITIAL_ADMIN_EMAIL: ${LOGTO_ADMIN_EMAIL:-admin@brain.local}
+      INITIAL_ADMIN_PASSWORD: ${LOGTO_ADMIN_PASSWORD:-Admin123456!}
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    entrypoint: ["sh", "-c", "npm run cli db seed -- -- swe && npm start"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3002/healthz || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+    networks:
+      - brain_logto
+
+volumes:
+  brain_logto_postgres_data:
+
+networks:
+  brain_logto:
+    name: brain_logto
+    driver: bridge

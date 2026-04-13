@@ -1,0 +1,43 @@
+# E2E Test Configuration
+# This file documents the test configuration schema. Actual values are set
+# via environment variables in the test code -- no external services required.
+
+test:
+  # Bootstrap credentials for authentication tests
+  bootstrap:
+    email: "test@brain.local"
+    password: "secret123"
+    name: "Test User"
+    role: "owner"
+
+  # Port configuration
+  # Tests use random free ports (port 0) to avoid conflicts.
+  port: 0  # 0 = OS assigns a random available port
+
+  # Store path
+  # Each test gets an isolated temp directory with its own SQLite store.
+  store_path: ""  # Set dynamically per test via BRAIN_AUTH_STORE_PATH
+
+  # Timeout settings
+  timeouts:
+    daemon_start: "15s"    # How long to wait for daemon to become ready
+    daemon_stop: "5s"      # How long to wait for daemon to exit
+    request: "5s"          # HTTP request timeout
+    health_poll: "200ms"   # Interval between health endpoint polls
+
+  # Environment variables set for each test daemon instance
+  environment:
+    BRAIN_AUTH_REQUIRED: "true"
+    BRAIN_AUTH_MODE: "bootstrap"
+    BRAIN_PROFILE: "local"
+
+  # Test behavior
+  behavior:
+    # Each test gets its own isolated daemon process
+    isolated_processes: true
+    # Each test gets its own temp directory (cleaned up after test)
+    isolated_temp_dirs: true
+    # Tests build daemon binary once and reuse it
+    shared_binary: true
+    # No Docker, Logto, PostgreSQL, or external services
+    self_contained: true

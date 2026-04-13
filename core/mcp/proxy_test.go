@@ -12,14 +12,14 @@ func setupProxy(t *testing.T) (*MCPProxy, *ConnectionManager, *MCPRegistry) {
 	cm := NewConnectionManager()
 	reg := NewMCPRegistry()
 
-	// Register and start a test server
 	cfg := MCPServerConfig{
 		ID:        "proxy-test",
 		Name:      "Proxy Test Server",
 		Version:   "1.0.0",
 		Category:  "test",
 		Transport: TransportStdIO,
-		Command:   "test",
+		Command:   "brain-mcp-filesystem",
+		Args:      []string{},
 		Timeout:   30 * time.Second,
 	}
 
@@ -27,15 +27,11 @@ func setupProxy(t *testing.T) (*MCPProxy, *ConnectionManager, *MCPRegistry) {
 		t.Fatalf("failed to register server: %v", err)
 	}
 
-	// Start with tools
-	cfgWithTools := cfg
-	cfgWithTools.Args = []string{}
-	inst, err := cm.Start(ctx, cfgWithTools)
+	inst, err := cm.Start(ctx, cfg)
 	if err != nil {
 		t.Fatalf("failed to start server: %v", err)
 	}
 
-	// Add some tools
 	inst.Tools = []MCPTool{
 		{Name: "tool1", Description: "Test tool 1", InputSchema: map[string]interface{}{"type": "object"}},
 		{Name: "tool2", Description: "Test tool 2", InputSchema: map[string]interface{}{"type": "object"}},
@@ -46,6 +42,9 @@ func setupProxy(t *testing.T) (*MCPProxy, *ConnectionManager, *MCPRegistry) {
 }
 
 func TestMCPProxy_CallTool(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode: requires real MCP server binaries")
+	}
 	ctx := context.Background()
 
 	t.Run("successful tool call", func(t *testing.T) {
@@ -143,6 +142,9 @@ func TestMCPProxy_CallTool(t *testing.T) {
 }
 
 func TestMCPProxy_ListTools(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode: requires real MCP server binaries")
+	}
 	ctx := context.Background()
 
 	t.Run("aggregate tools from multiple servers", func(t *testing.T) {
@@ -206,6 +208,9 @@ func TestMCPProxy_ListTools(t *testing.T) {
 }
 
 func TestMCPProxy_Metrics(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
 	ctx := context.Background()
 
 	t.Run("track successful calls", func(t *testing.T) {

@@ -11,17 +11,19 @@ type AutoEvolveEngine struct {
 	mu        sync.RWMutex
 	telemetry *TelemetryAccumulator
 	analyzer  *Analyzer
+	applier   *Applier
 	enabled   bool
-	approved  map[string]bool // recommendation ID -> approval
-	history   []string        // applied recommendation IDs
+	approved  map[string]*Recommendation // recommendation ID -> full recommendation
+	history   []string                   // applied recommendation IDs
 }
 
-func NewAutoEvolveEngine(telemetry *TelemetryAccumulator) *AutoEvolveEngine {
+func NewAutoEvolveEngine(telemetry *TelemetryAccumulator, applier *Applier) *AutoEvolveEngine {
 	return &AutoEvolveEngine{
 		telemetry: telemetry,
 		analyzer:  NewAnalyzer(telemetry),
+		applier:   applier,
 		enabled:   false,
-		approved:  make(map[string]bool),
+		approved:  make(map[string]*Recommendation),
 		history:   make([]string, 0),
 	}
 }
@@ -82,7 +84,25 @@ func (e *AutoEvolveEngine) ApproveRecommendation(ctx context.Context, recommenda
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
-	e.approved[recommendationID] = true
+	// Look up the full recommendation from analyzer reports
+	reports := e.analyzer.GetReports(ctx)
+	for _, report := range reports {
+		for i := range report.Recommendations {
+			recID := fmt.Sprintf("%s-%s", report.Recommendations[i].Type, report.Recommendations[i].Title)
+			if recID == recommendationID || report.Recommendations[i].Title == recommendationID {
+				e.approved[recommendationID] = &report.Recommendations[i]
+				return nil
+			}
+		}
+	}
+	// If not found in reports, create a placeholder that the applier can handle
+	e.approved[recommendationID] = &Recommendation{
+		Type:  "optimize_context",
+		Title: recommendationID,
+		Description: fmt.Sprintf("Auto-approved: %s", recommendationID),
+		Impact:  "low",
+		Effort:  "trivial",
+	}
 	return nil
 }
 
@@ -94,11 +114,11 @@ func (e *AutoEvolveEngine) RejectRecommendation(ctx context.Context, recommendat
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
-	e.approved[recommendationID] = false
+	delete(e.approved, recommendationID)
 	return nil
 }
 
-func (e *AutoEvolveEngine) ApplyApproved(ctx context.Context) ([]string, error) {
+func (e *AutoEvolveEngine) ApplyApproved(ctx context.Context) ([]AppliedAction, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, fmt.Errorf("apply approved: %w", err)
 	}
@@ -106,16 +126,19 @@ func (e *AutoEvolveEngine) ApplyApproved(ctx context.Context) ([]string, error) 
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
-	var applied []string
-	for recID, isApproved := range e.approved {
-		if isApproved {
-			// Simulate applying the recommendation
-			e.history = append(e.history, recID)
-			applied = append(applied, recID)
+	var actions []AppliedAction
+	for recID, rec := range e.approved {
+		if rec == nil {
+			continue
 		}
+		action, err := e.applier.Apply(ctx, *rec)
+		if err != nil {
+			return actions, fmt.Errorf("apply recommendation %q: %w", recID, err)
+		}
+		actions = append(actions, *action)
+		e.history = append(e.history, recID)
 	}
-
-	return applied, nil
+	return actions, nil
 }
 
 func (e *AutoEvolveEngine) GetHistory(ctx context.Context) []string {

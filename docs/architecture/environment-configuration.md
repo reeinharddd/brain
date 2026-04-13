@@ -86,6 +86,17 @@ The boundary is considered correct only if all of the following are true:
 - the team can still use the same repo for development
 - CI can detect accidental leakage before release
 
+## Relationship to deployment profiles
+
+This document defines the dev/staging/production boundary. It works alongside the deployment profile baseline, which defines where Brain runs and which infrastructure pieces are available in each mode.
+
+- Environment = what is allowed to load (`dev-only` vs `prod-safe`)
+- Profile = what infrastructure is present or optional (`local personal`, `self-hosted corporate`, `hosted cloud`)
+
+See `docs/architecture/deployment-profiles-and-infrastructure-baseline.md` for the profile matrix.
+
+The concrete technology choices for database, cache, identity, storage, CDN/WAF, observability, backups, and secrets live in `docs/architecture/infrastructure-baseline-canonical.md`.
+
 ## Decision summary
 
 The recommended approach is a deny-by-default runtime policy plus allowlisted production packaging.

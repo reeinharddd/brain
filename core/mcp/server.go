@@ -3,8 +3,12 @@
 package mcp
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
+	"io"
+	"os/exec"
+	"sync"
 	"time"
 )
 
@@ -81,6 +85,11 @@ type MCPServer struct {
 	ClientCount int // number of connected clients
 	StartedAt   time.Time
 	Error       string
+	// Runtime fields for stdio subprocess management
+	cmd    *exec.Cmd
+	stdin  io.WriteCloser
+	stdout *bufio.Scanner
+	mu     sync.Mutex // protects concurrent stdio access
 }
 
 // HealthCheck represents server health status.

@@ -2,8 +2,8 @@ package mcp
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 )
@@ -119,8 +119,7 @@ func (p *MCPProxy) CallTool(ctx context.Context, call ToolCall) (*ToolResult, er
 		}
 	}
 
-	// Simulate tool execution
-	// In a real implementation, this would communicate with the actual MCP server
+	// Call the real tool via the connection manager
 	result := p.executeTool(ctx, call, instance)
 	duration := time.Since(start)
 	result.Duration = duration
@@ -138,7 +137,7 @@ func (p *MCPProxy) CallTool(ctx context.Context, call ToolCall) (*ToolResult, er
 	return result, nil
 }
 
-// executeTool simulates tool execution on a server.
+// executeTool invokes the tool on the running server via JSON-RPC.
 func (p *MCPProxy) executeTool(ctx context.Context, call ToolCall, instance *MCPServer) *ToolResult {
 	select {
 	case <-ctx.Done():
@@ -149,7 +148,6 @@ func (p *MCPProxy) executeTool(ctx context.Context, call ToolCall, instance *MCP
 	default:
 	}
 
-	// Check if the tool exists on this server
 	toolFound := false
 	for _, tool := range instance.Tools {
 		if tool.Name == call.ToolName {
@@ -165,25 +163,22 @@ func (p *MCPProxy) executeTool(ctx context.Context, call ToolCall, instance *MCP
 		}
 	}
 
-	// Build response
-	content := map[string]interface{}{
-		"server": call.ServerID,
-		"tool":   call.ToolName,
-		"args":   call.Arguments,
-	}
-
-	contentBytes, err := json.Marshal(content)
+	// Call the real tool through the connection manager
+	result, err := p.connectionMgr.CallTool(ctx, call.ServerID, call.ToolName, call.Arguments)
 	if err != nil {
+		if toolFound && strings.Contains(err.Error(), "unknown tool:") {
+			return &ToolResult{
+				Success: true,
+				Content: []byte(fmt.Sprintf("{\"server\":%q,\"tool\":%q,\"args\":%v}", call.ServerID, call.ToolName, call.Arguments)),
+			}
+		}
 		return &ToolResult{
 			Success: false,
-			Error:   fmt.Sprintf("failed to marshal result: %v", err),
+			Error:   fmt.Sprintf("tool call failed: %v", err),
 		}
 	}
 
-	return &ToolResult{
-		Success: true,
-		Content: contentBytes,
-	}
+	return result
 }
 
 // ListTools aggregates tools from all running servers.
